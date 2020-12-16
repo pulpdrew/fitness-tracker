@@ -33,7 +33,18 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "crypto-js/aes",
+              "modifyjs",
+              "is-my-json-valid",
+              "deep-equal",
+              "object-path",
+              "immediate",
+              "@babel/runtime/regenerator",
+              "crypto-js/enc-utf8",
+              "@babel/runtime/helpers/wrapNativeSuper"
+            ]
           },
           "configurations": {
             "production": {
