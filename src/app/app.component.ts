@@ -4,12 +4,10 @@ import { RxdbService } from './rxdb.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'fitness-tracker';
 
-  constructor(private rxdb: RxdbService) {
-    
-  }
+  constructor(private rxdb: RxdbService) {}
 }

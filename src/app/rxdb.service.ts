@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { addRxPlugin, createRxDatabase, RxDatabase } from 'rxdb';
 import { RxDBValidatePlugin } from 'rxdb/plugins/validate';
+import * as adapter from 'pouchdb-adapter-indexeddb';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RxdbService {
-
   db: RxDatabase | null = null;
 
   constructor() {
@@ -14,7 +14,7 @@ export class RxdbService {
   }
 
   private async init() {
-    addRxPlugin(require('pouchdb-adapter-indexeddb'));
+    addRxPlugin(adapter);
     addRxPlugin(RxDBValidatePlugin);
 
     this.db = await createRxDatabase({
@@ -27,20 +27,20 @@ export class RxdbService {
         schema: {
           properties: {
             name: {
-              type: "string",
+              type: 'string',
               primary: true,
-            }
+            },
           },
-          type: "object",
-          version: 0
-        }
-      }
+          type: 'object',
+          version: 0,
+        },
+      },
     });
 
     await this.db.stuff.upsert({
-      name: "Andrew"
+      name: 'Andrew',
     });
 
-    console.log((await this.db.stuff.find().exec()).map(d => d.name));
+    console.log((await this.db.stuff.find().exec()).map((d) => d.name));
   }
 }

@@ -43,7 +43,8 @@
               "immediate",
               "@babel/runtime/regenerator",
               "crypto-js/enc-utf8",
-              "@babel/runtime/helpers/wrapNativeSuper"
+              "@babel/runtime/helpers/wrapNativeSuper",
+              "zone.js/dist/zone-error"
             ]
           },
           "configurations": {
