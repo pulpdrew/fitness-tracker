@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RxdbService } from './rxdb.service';
+import { RxdbService } from './services/rxdb.service';
 
 @Component({
   selector: 'app-root',
