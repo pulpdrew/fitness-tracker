@@ -1,3 +1,15 @@
+/**
+ * The fields that can be stored in a Set
+ */
+export enum SetField {
+  WEIGHT = 'weight',
+  REPS = 'reps',
+  TIME = 'time',
+}
+
+/**
+ * One Set of a single exercise, with associated Data
+ */
 export interface Set {
   weight?: number;
   weightUnits?: 'kg' | 'lb';
@@ -5,11 +17,17 @@ export interface Set {
   time?: number;
 }
 
+/**
+ * One Exercise, with sets
+ */
 export interface Exercise {
   name: string;
   sets: Set[];
 }
 
+/**
+ * A collection of exercises completed at one time
+ */
 export interface Workout {
   id: string;
   date: string;

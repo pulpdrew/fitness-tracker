@@ -16,6 +16,7 @@ import { WorkoutLogPageComponent } from './pages/workout-log-page/workout-log.co
 import { DashboardCardComponent } from './components/dashboard-card/dashboard-card.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ExerciseFormComponent } from './components/exercise-form/exercise-form.component';
+import { ExerciseRepoPageComponent } from './pages/exercise-repo-page/exercise-repo-page.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ExerciseFormComponent } from './components/exercise-form/exercise-form.
     WorkoutLogPageComponent,
     DashboardCardComponent,
     ExerciseFormComponent,
+    ExerciseRepoPageComponent,
   ],
   imports: [
     BrowserModule,

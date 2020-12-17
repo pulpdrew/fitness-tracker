@@ -1,1 +1,3 @@
-<p>workout-log-page works!</p>
+<p *ngFor="let workout of workouts$ | async">
+  {{ workout }}
+</p>
