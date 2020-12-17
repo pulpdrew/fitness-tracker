@@ -9,7 +9,7 @@ import { RxdbService } from 'src/app/services/rxdb.service';
 })
 export class WorkoutLogPageComponent {
   workouts$ = this.rxdb.workouts$.pipe(
-    map((ws) => ws.map((w) => w.exercises.map((e) => e.name).toString()))
+    map((ws) => ws.map((w) => w.exercises.map((e) => e.templateId).toString()))
   );
 
   constructor(private rxdb: RxdbService) {}

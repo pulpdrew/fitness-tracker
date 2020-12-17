@@ -1,8 +1,9 @@
-<div [formGroup]="form">
-  <div formArrayName="exercises">
-    <div *ngFor="let exercise of exercises.controls; let i = index">
-      <app-exercise-form [exercise]="getExercise(i)"></app-exercise-form>
-    </div>
+<div>
+  <div *ngFor="let exercise of exercises; let i = index">
+    <app-exercise-form
+      [exercise]="exercise"
+      (update)="updateExercise(i, $event)"
+    ></app-exercise-form>
   </div>
   <button (click)="addExercise()">Add Exercise</button>
   <button (click)="save()">Save</button>

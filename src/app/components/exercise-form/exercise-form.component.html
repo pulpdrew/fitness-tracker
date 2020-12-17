@@ -1,17 +1,21 @@
-<div [formGroup]="exercise">
-  <label>
-    Name:
-    <input type="text" formControlName="name" />
-  </label>
-
-  <button (click)="addSet()">Add Set</button>
-
-  <div formArrayName="sets">
-    <div *ngFor="let set of sets.controls; let i = index" [formGroupName]="i">
-      <label>
-        Set:
-        <input type="text" formControlName="reps" />
-      </label>
+<mat-card>
+  <mat-card-title>{{ name$ | async }}</mat-card-title>
+  <mat-card-content>
+    <div [formGroup]="form">
+      <div formArrayName="sets">
+        <div
+          *ngFor="let set of sets.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <span *ngFor="let field of fields$ | async">
+            <mat-form-field>
+              <mat-label>{{ field }}</mat-label>
+              <input matInput [placeholder]="field" [formControlName]="field" />
+            </mat-form-field>
+          </span>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+  </mat-card-content>
+  <button mat-button color="accent" (click)="addSet()">Add Set</button>
+</mat-card>

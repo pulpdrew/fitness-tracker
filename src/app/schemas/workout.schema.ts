@@ -22,9 +22,9 @@ const setSchema: JsonSchema = {
 
 const exerciseSchema: JsonSchema = {
   type: 'object',
-  required: ['name', 'sets'],
+  required: ['templateId', 'sets'],
   properties: {
-    name: {
+    templateId: {
       type: 'string',
     },
     sets: {
@@ -53,7 +53,7 @@ const workoutSchema: RxJsonSchema<Workout> = {
     },
   },
   required: ['id', 'exercises', 'date'],
-  indexes: ['exercises.[].name'],
+  indexes: ['exercises.[].templateId'],
 };
 
 export default workoutSchema;

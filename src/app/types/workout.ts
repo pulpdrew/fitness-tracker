@@ -21,7 +21,7 @@ export interface Set {
  * One Exercise, with sets
  */
 export interface Exercise {
-  name: string;
+  templateId: string;
   sets: Set[];
 }
 

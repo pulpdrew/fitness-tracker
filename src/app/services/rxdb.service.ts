@@ -37,20 +37,18 @@ type Database = RxDatabase<Collections>;
 })
 export class RxdbService {
   /**
-   * Current database and whether it is initialized
-   */
-  // private _rawDb$: Observable<[Database, boolean]>;
-
-  /**
    * Database that is guaranteed to be initialized
    */
   private _db$: Observable<Database>;
 
   /**
-   * The exercise templates that are contained in the database
+   * The exercise templates that are stored in the database
    */
   exercises$: Observable<ExerciseTemplate[]>;
 
+  /**
+   * The completed workouts that are stored in the database
+   */
   workouts$: Observable<Workout[]>;
 
   constructor() {
@@ -63,9 +61,6 @@ export class RxdbService {
       name: 'fitnesstracker',
       adapter: 'indexeddb',
     }).then((db) => this.init(db));
-
-    // Initialize the created database
-    // this._rawDb$ = from(dbPromise);
 
     // Filter for initialized databases
     this._db$ = from(dbPromise);

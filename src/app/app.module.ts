@@ -13,6 +13,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { AddWorkoutPageComponent } from './pages/add-workout-page/add-workout-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
@@ -22,6 +23,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ExerciseFormComponent } from './components/exercise-form/exercise-form.component';
 import { ExerciseRepoPageComponent } from './pages/exercise-repo-page/exercise-repo-page.component';
 import { ExerciseTemplateDialogComponent } from './components/exercise-template-dialog/exercise-template-dialog.component';
+import { AddExerciseDialogComponent } from './components/add-exercise-dialog/add-exercise-dialog.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +35,7 @@ import { ExerciseTemplateDialogComponent } from './components/exercise-template-
     ExerciseFormComponent,
     ExerciseRepoPageComponent,
     ExerciseTemplateDialogComponent,
+    AddExerciseDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -47,6 +50,7 @@ import { ExerciseTemplateDialogComponent } from './components/exercise-template-
     MatIconModule,
     MatCheckboxModule,
     MatInputModule,
+    MatAutocompleteModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
