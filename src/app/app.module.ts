@@ -14,6 +14,8 @@ import { AddWorkoutPageComponent } from './pages/add-workout-page/add-workout-pa
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { WorkoutLogPageComponent } from './pages/workout-log-page/workout-log.component';
 import { DashboardCardComponent } from './components/dashboard-card/dashboard-card.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ExerciseFormComponent } from './components/exercise-form/exercise-form.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,7 @@ import { DashboardCardComponent } from './components/dashboard-card/dashboard-ca
     DashboardPageComponent,
     WorkoutLogPageComponent,
     DashboardCardComponent,
+    ExerciseFormComponent,
   ],
   imports: [
     BrowserModule,
@@ -31,6 +34,7 @@ import { DashboardCardComponent } from './components/dashboard-card/dashboard-ca
     MatCardModule,
     MatButtonModule,
     MatGridListModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

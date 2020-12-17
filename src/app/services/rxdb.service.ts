@@ -1,13 +1,27 @@
 import { Injectable } from '@angular/core';
-import { addRxPlugin, createRxDatabase, RxDatabase } from 'rxdb';
+import {
+  addRxPlugin,
+  createRxDatabase,
+  RxCollection,
+  RxDatabase,
+  RxDocument,
+} from 'rxdb';
 import { RxDBValidatePlugin } from 'rxdb/plugins/validate';
 import * as adapter from 'pouchdb-adapter-indexeddb';
+import workoutSchema from '../schemas/workout.schema';
+import { Workout } from '../types/workout';
+
+type WorkoutCollection = RxCollection<Workout, unknown, unknown>;
+type Collections = {
+  workouts: WorkoutCollection;
+};
+type Database = RxDatabase<Collections>;
 
 @Injectable({
   providedIn: 'root',
 })
 export class RxdbService {
-  db: RxDatabase | null = null;
+  db: Database | null = null;
 
   constructor() {
     this.init();
@@ -17,30 +31,28 @@ export class RxdbService {
     addRxPlugin(adapter);
     addRxPlugin(RxDBValidatePlugin);
 
-    this.db = await createRxDatabase({
+    this.db = await createRxDatabase<Collections>({
       name: 'workout',
       adapter: 'indexeddb',
     });
 
     await this.db.addCollections({
-      stuff: {
-        schema: {
-          properties: {
-            name: {
-              type: 'string',
-              primary: true,
-            },
-          },
-          type: 'object',
-          version: 0,
-        },
+      workouts: {
+        schema: workoutSchema,
       },
     });
+  }
 
-    await this.db.stuff.upsert({
-      name: 'Andrew',
-    });
+  async addWorkout(workout: Workout): Promise<RxDocument<Workout, unknown>> {
+    return this.db?.workouts.insert(workout) || Promise.reject();
+  }
 
-    console.log((await this.db.stuff.find().exec()).map((d) => d.name));
+  async printWorkouts(): Promise<void> {
+    const docs = await this.db?.workouts.find().exec();
+    docs?.forEach((doc) =>
+      console.log(
+        `Document with ${doc.exercises.length} exercises completed ${doc.date}`
+      )
+    );
   }
 }

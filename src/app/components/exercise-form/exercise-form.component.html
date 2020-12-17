@@ -1,0 +1,17 @@
+<div [formGroup]="exercise">
+  <label>
+    Name:
+    <input type="text" formControlName="name" />
+  </label>
+
+  <button (click)="addSet()">Add Set</button>
+
+  <div formArrayName="sets">
+    <div *ngFor="let set of sets.controls; let i = index" [formGroupName]="i">
+      <label>
+        Set:
+        <input type="text" formControlName="reps" />
+      </label>
+    </div>
+  </div>
+</div>
