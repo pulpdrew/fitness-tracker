@@ -42,7 +42,7 @@ export class AddWorkoutPageComponent {
 
   save(): void {
     const workout = this.fromForm(this.form);
-    this.rxdb.addWorkout(workout);
+    this.rxdb.saveWorkout(workout);
   }
 
   private getEmptyExerciseGroup(): FormGroup {

@@ -9,7 +9,7 @@ import {
 import { RxDBValidatePlugin } from 'rxdb/plugins/validate';
 import * as IndexedDbAdapter from 'pouchdb-adapter-indexeddb';
 import workoutSchema from '../schemas/workout.schema';
-import { SetField, Workout } from '../types/workout';
+import { Workout } from '../types/workout';
 import { exerciseTemplateSchema } from '../schemas/exercises.schema';
 import { ExerciseTemplate } from '../types/exercise-template';
 import { from, Observable } from 'rxjs';
@@ -107,12 +107,6 @@ export class RxdbService {
       },
     });
 
-    // Insert some dummy data
-    await db.exercises.upsert({
-      name: 'Pushups',
-      fields: [SetField.REPS],
-    });
-
     return db;
   }
 
@@ -128,23 +122,22 @@ export class RxdbService {
     document: ExerciseTemplateDoc
   ): ExerciseTemplate {
     return {
+      id: document.id,
       fields: document.fields,
       userDefined: document.userDefined,
       name: document.name,
     };
   }
 
-  async addWorkout(workout: Workout): Promise<void> {
+  async saveWorkout(workout: Workout): Promise<void> {
     this._db$.subscribe((db) => db.workouts.upsert(workout));
   }
 
-  printWorkouts(): void {
-    this._db$.subscribe(async (db) =>
-      (await db.workouts.find().exec()).forEach((doc) => {
-        console.log(
-          `Document with ${doc.exercises.length} exercises completed ${doc.date}`
-        );
-      })
-    );
+  async saveExerciseTemplate(template: ExerciseTemplate): Promise<void> {
+    this._db$.subscribe((db) => db.exercises.upsert(template));
+  }
+
+  async deleteExerciseTemplate(template: ExerciseTemplate): Promise<void> {
+    this._db$.subscribe((db) => db.exercises.findOne(template.id).remove());
   }
 }

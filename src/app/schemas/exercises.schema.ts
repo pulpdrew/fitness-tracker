@@ -11,8 +11,11 @@ export const exerciseTemplateSchema: RxJsonSchema<ExerciseTemplate> = {
   description: '',
   type: 'object',
   properties: {
-    name: {
+    id: {
       primary: true,
+      type: 'string',
+    },
+    name: {
       type: 'string',
     },
     userDefined: {
@@ -28,5 +31,5 @@ export const exerciseTemplateSchema: RxJsonSchema<ExerciseTemplate> = {
       default: [SetField.WEIGHT, SetField.REPS],
     },
   },
-  required: ['name', 'userDefined', 'fields'],
+  required: ['id', 'name', 'userDefined', 'fields'],
 };

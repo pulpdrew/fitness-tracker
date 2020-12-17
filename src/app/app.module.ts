@@ -9,6 +9,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
 
 import { AddWorkoutPageComponent } from './pages/add-workout-page/add-workout-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
@@ -17,6 +21,7 @@ import { DashboardCardComponent } from './components/dashboard-card/dashboard-ca
 import { ReactiveFormsModule } from '@angular/forms';
 import { ExerciseFormComponent } from './components/exercise-form/exercise-form.component';
 import { ExerciseRepoPageComponent } from './pages/exercise-repo-page/exercise-repo-page.component';
+import { ExerciseTemplateDialogComponent } from './components/exercise-template-dialog/exercise-template-dialog.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +32,7 @@ import { ExerciseRepoPageComponent } from './pages/exercise-repo-page/exercise-r
     DashboardCardComponent,
     ExerciseFormComponent,
     ExerciseRepoPageComponent,
+    ExerciseTemplateDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,6 +43,10 @@ import { ExerciseRepoPageComponent } from './pages/exercise-repo-page/exercise-r
     MatButtonModule,
     MatGridListModule,
     ReactiveFormsModule,
+    MatDialogModule,
+    MatIconModule,
+    MatCheckboxModule,
+    MatInputModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
