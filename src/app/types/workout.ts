@@ -1,5 +1,4 @@
 export interface Set {
-  index: number;
   weight?: number;
   weightUnits?: 'kg' | 'lb';
   reps?: number;

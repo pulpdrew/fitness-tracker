@@ -3,12 +3,7 @@ import { Workout } from '../types/workout';
 
 const setSchema: JsonSchema = {
   type: 'object',
-  required: ['index'],
   properties: {
-    index: {
-      type: 'number',
-      minimum: 1,
-    },
     weight: {
       type: 'number',
     },

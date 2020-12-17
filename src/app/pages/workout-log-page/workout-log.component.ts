@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { RxdbService } from 'src/app/services/rxdb.service';
 
 @Component({
   selector: 'app-workout-log',
@@ -6,7 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./workout-log.component.scss'],
 })
 export class WorkoutLogPageComponent implements OnInit {
-  constructor() {}
+  constructor(private rxdb: RxdbService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.rxdb.printWorkouts();
+  }
 }

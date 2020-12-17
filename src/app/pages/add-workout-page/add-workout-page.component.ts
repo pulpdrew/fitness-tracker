@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { Workout } from 'src/app/types/workout';
+import { RxdbService } from 'src/app/services/rxdb.service';
+import { Set, Exercise, Workout } from 'src/app/types/workout';
 
 const dummyWO: Workout = {
   id: 'id123',
@@ -8,11 +9,11 @@ const dummyWO: Workout = {
   exercises: [
     {
       name: 'pushups',
-      sets: [{ index: 1, reps: 10 }],
+      sets: [{ reps: 10 }],
     },
     {
       name: 'situps',
-      sets: [{ index: 1, reps: 12 }],
+      sets: [{ reps: 12 }],
     },
   ],
 };
@@ -23,6 +24,8 @@ const dummyWO: Workout = {
   styleUrls: ['./add-workout-page.component.scss'],
 })
 export class AddWorkoutPageComponent {
+  constructor(private rxdb: RxdbService) {}
+
   form = this.toForm(dummyWO);
 
   get exercises(): FormArray {
@@ -37,11 +40,59 @@ export class AddWorkoutPageComponent {
     this.exercises.push(this.getEmptyExerciseGroup());
   }
 
+  save(): void {
+    const workout = this.fromForm(this.form);
+    this.rxdb.addWorkout(workout);
+  }
+
   private getEmptyExerciseGroup(): FormGroup {
     return new FormGroup({
       name: new FormControl(''),
       sets: new FormArray([]),
     });
+  }
+
+  private fromForm(form: FormGroup): Workout {
+    const exerciseGroups = (form.get('exercises') as FormArray)
+      .controls as FormGroup[];
+
+    const exercises: Exercise[] = exerciseGroups.map((eg) => {
+      const name = eg.get('name')?.value || '';
+      const setGroups = (eg.get('sets') as FormArray).controls as FormGroup[];
+
+      const sets: Set[] = setGroups.map((sg) => {
+        const set: Set = <Set>{};
+
+        if (sg.get('reps')?.value) {
+          set['reps'] = Number.parseInt(sg.get('reps')?.value || '0');
+        }
+
+        if (sg.get('time')?.value) {
+          set['time'] = Number.parseInt(sg.get('time')?.value || '0');
+        }
+
+        if (sg.get('weight')?.value) {
+          set['weight'] = Number.parseInt(sg.get('weight')?.value || '0');
+        }
+
+        if (sg.get('weightUnits')?.value) {
+          set['weightUnits'] = sg.get('weightUnits')?.value;
+        }
+
+        return set;
+      });
+
+      return {
+        name,
+        sets,
+      };
+    });
+
+    return {
+      id: Date.now().toString(),
+      date: new Date().toUTCString(),
+      exercises,
+    };
   }
 
   private toForm(workout: Workout): FormGroup {
