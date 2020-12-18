@@ -7,8 +7,9 @@
           *ngFor="let set of sets.controls; let i = index"
           [formGroupName]="i"
         >
+          <span class="set-field">{{ i + 1 }}: </span>
           <span *ngFor="let field of fields$ | async">
-            <mat-form-field>
+            <mat-form-field class="set-field">
               <mat-label>{{ field }}</mat-label>
               <input matInput [placeholder]="field" [formControlName]="field" />
             </mat-form-field>

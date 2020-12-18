@@ -1,3 +1,17 @@
-<p *ngFor="let workout of workouts$ | async">
-  {{ workout }}
-</p>
+<div class="container">
+  <mat-card *ngFor="let workout of workouts$ | async">
+    <h3>{{ workout.date }}</h3>
+    <div *ngFor="let exercise of workout.exerciseDisplays">
+      <p>{{ exercise.name }}</p>
+
+      <div *ngFor="let set of exercise.sets; let i = index">
+        <span class="set-field">{{ i + 1 }}: </span>
+        <span *ngIf="set.reps" class="set-field">{{ set.reps }} Reps</span>
+        <span *ngIf="set.weight" class="set-field"
+          >{{ set.weight }} {{ set.weightUnits || "lb" }}</span
+        >
+        <span *ngIf="set.time" class="set-field">{{ set.time }} Seconds</span>
+      </div>
+    </div>
+  </mat-card>
+</div>

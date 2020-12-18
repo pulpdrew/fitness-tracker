@@ -1,10 +1,15 @@
-<div>
-  <div *ngFor="let exercise of exercises; let i = index">
+<div class="container">
+  <div class="buttons">
+    <button mat-raised-button (click)="addExercise()" color="accent">
+      Add Exercise
+    </button>
+    <button mat-raised-button (click)="save()" color="accent">Save</button>
+  </div>
+
+  <div *ngFor="let exercise of templateIds; let i = index" class="exercise">
     <app-exercise-form
-      [exercise]="exercise"
-      (update)="updateExercise(i, $event)"
+      [form]="getChildForm(i)"
+      [templateId]="templateIds[i]"
     ></app-exercise-form>
   </div>
-  <button (click)="addExercise()">Add Exercise</button>
-  <button (click)="save()">Save</button>
 </div>

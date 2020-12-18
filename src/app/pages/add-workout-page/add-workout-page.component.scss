@@ -1,0 +1,22 @@
+.container {
+  width: 50%;
+  min-width: 50ex;
+  margin: 3em auto;
+}
+
+.mat-fab {
+  position: absolute;
+  bottom: 5vh;
+  right: 30vw;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 3em;
+}
+
+.exercise {
+  margin-bottom: 1em;
+}
