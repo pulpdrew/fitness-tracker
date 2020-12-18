@@ -1,13 +1,13 @@
 import { RxJsonSchema } from 'rxdb';
-import { SetField } from '../types/workout';
-import { ExerciseTemplate } from '../types/exercise-template';
+import { setFields } from '../types/workout';
+import { ExerciseType } from '../types/exercise-type';
 
 /**
- * The schema for the collection of Exercise Templates
+ * The schema for the collection of Exercise Types
  */
-export const exerciseTemplateSchema: RxJsonSchema<ExerciseTemplate> = {
+export const exerciseTypeSchema: RxJsonSchema<ExerciseType> = {
   version: 0,
-  title: 'exercise template schema',
+  title: 'exercise type schema',
   description: '',
   type: 'object',
   properties: {
@@ -26,9 +26,8 @@ export const exerciseTemplateSchema: RxJsonSchema<ExerciseTemplate> = {
       type: 'array',
       items: {
         type: 'string',
-        enum: [SetField.REPS, SetField.TIME, SetField.WEIGHT],
+        enum: setFields,
       },
-      default: [SetField.WEIGHT, SetField.REPS],
     },
   },
   required: ['id', 'name', 'userDefined', 'fields'],

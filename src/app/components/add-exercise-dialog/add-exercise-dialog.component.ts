@@ -4,8 +4,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { combineLatest, concat, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RxdbService } from 'src/app/services/rxdb.service';
-import { ExerciseTemplate } from 'src/app/types/exercise-template';
-import { ExerciseTemplateDialogComponent } from '../exercise-template-dialog/exercise-template-dialog.component';
+import { ExerciseType } from 'src/app/types/exercise-type';
+import { EditExerciseTypeDialogComponent } from '../edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 
 @Component({
   selector: 'app-add-exercise-dialog',
@@ -15,7 +15,7 @@ import { ExerciseTemplateDialogComponent } from '../exercise-template-dialog/exe
 export class AddExerciseDialogComponent {
   selected = new FormControl();
 
-  exercises$: Observable<ExerciseTemplate[]> = this.rxdb.exercises$;
+  exercises$: Observable<ExerciseType[]> = this.rxdb.exerciseTypes$;
 
   filter$: Observable<string> = concat(of(''), this.selected.valueChanges).pipe(
     map((f) => (typeof f === 'string' ? f : f.name))
@@ -34,11 +34,11 @@ export class AddExerciseDialogComponent {
   );
 
   constructor(
-    public dialogRef: MatDialogRef<ExerciseTemplateDialogComponent>,
+    public dialogRef: MatDialogRef<EditExerciseTypeDialogComponent>,
     private rxdb: RxdbService
   ) {}
 
-  display(exercise: ExerciseTemplate): string {
+  display(exercise: ExerciseType): string {
     return exercise?.name || '';
   }
 }

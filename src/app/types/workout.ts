@@ -1,28 +1,76 @@
 /**
- * The fields that can be stored in a Set
+ * The fields that can be stored in an ExerciseSet
  */
 export enum SetField {
   WEIGHT = 'weight',
+  WEIGHT_UNITS = 'weightUnits',
   REPS = 'reps',
-  TIME = 'time',
+  DURATION = 'duration',
 }
 
 /**
- * One Set of a single exercise, with associated Data
+ * Format a SetField for display.
+ *
+ * @param field the field to format.
+ * @returns the formatted display string
  */
-export interface Set {
+export function fmtDisplaySetField(field: SetField): string {
+  switch (field) {
+    case SetField.REPS:
+      return 'Reps';
+    case SetField.WEIGHT:
+      return 'Weight';
+    case SetField.WEIGHT_UNITS:
+      return 'Weight Units';
+    case SetField.DURATION:
+      return 'Duration';
+  }
+}
+
+/**
+ * A list of all the available SetFields
+ */
+export const setFields: SetField[] = [
+  SetField.REPS,
+  SetField.DURATION,
+  SetField.WEIGHT,
+  SetField.WEIGHT_UNITS,
+];
+
+/**
+ * The available units of weight
+ */
+export enum WeightUnit {
+  KG = 'kg',
+  LB = 'lb',
+}
+
+/**
+ * A list of all the available WeightUnits
+ */
+export const weightUnits: WeightUnit[] = [WeightUnit.KG, WeightUnit.LB];
+
+/**
+ * The default Weight Unit
+ */
+export const DEFAULT_WEIGHT_UNIT: WeightUnit = WeightUnit.KG;
+
+/**
+ * One Set of a single exercise, with associated data fields
+ */
+export interface ExerciseSet {
   weight?: number;
   weightUnits?: 'kg' | 'lb';
   reps?: number;
-  time?: number;
+  duration?: number;
 }
 
 /**
- * One Exercise, with sets
+ * One exercise, with sets
  */
 export interface Exercise {
-  templateId: string;
-  sets: Set[];
+  type: string;
+  sets: ExerciseSet[];
 }
 
 /**
@@ -30,6 +78,7 @@ export interface Exercise {
  */
 export interface Workout {
   id: string;
+  name: string;
   date: string;
   exercises: Exercise[];
 }

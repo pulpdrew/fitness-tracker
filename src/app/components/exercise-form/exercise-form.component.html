@@ -2,7 +2,7 @@
   <mat-card-title>{{ name$ | async }}</mat-card-title>
   <mat-card-content>
     <div [formGroup]="form">
-      <div formArrayName="sets">
+      <div [formArrayName]="SETS_ARRAY_KEY">
         <div
           *ngFor="let set of sets.controls; let i = index"
           [formGroupName]="i"
@@ -10,8 +10,12 @@
           <span class="set-field">{{ i + 1 }}: </span>
           <span *ngFor="let field of fields$ | async">
             <mat-form-field class="set-field">
-              <mat-label>{{ field }}</mat-label>
-              <input matInput [placeholder]="field" [formControlName]="field" />
+              <mat-label>{{ field | displayField }}</mat-label>
+              <input
+                matInput
+                [placeholder]="field | displayField"
+                [formControlName]="field"
+              />
             </mat-form-field>
           </span>
           <button mat-icon-button color="accent" (click)="removeSet(i)">

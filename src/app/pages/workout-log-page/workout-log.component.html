@@ -10,7 +10,9 @@
         <span *ngIf="set.weight" class="set-field"
           >{{ set.weight }} {{ set.weightUnits || "lb" }}</span
         >
-        <span *ngIf="set.time" class="set-field">{{ set.time }} Seconds</span>
+        <span *ngIf="set.duration" class="set-field"
+          >{{ set.duration }} Seconds</span
+        >
       </div>
     </div>
   </mat-card>

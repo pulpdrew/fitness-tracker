@@ -6,10 +6,10 @@
     <button mat-raised-button (click)="save()" color="accent">Save</button>
   </div>
 
-  <div *ngFor="let exercise of templateIds; let i = index" class="exercise">
+  <div *ngFor="let exercise of types; let i = index" class="exercise">
     <app-exercise-form
       [form]="getChildForm(i)"
-      [templateId]="templateIds[i]"
+      [type]="types[i]"
     ></app-exercise-form>
   </div>
 </div>

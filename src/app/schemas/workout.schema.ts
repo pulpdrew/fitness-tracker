@@ -1,5 +1,5 @@
 import { JsonSchema, RxJsonSchema } from 'rxdb';
-import { Workout } from '../types/workout';
+import { weightUnits, Workout } from '../types/workout';
 
 const setSchema: JsonSchema = {
   type: 'object',
@@ -9,7 +9,7 @@ const setSchema: JsonSchema = {
     },
     weightUnits: {
       type: 'string',
-      enum: ['kg', 'lb'],
+      enum: weightUnits,
     },
     reps: {
       type: 'number',
@@ -22,9 +22,9 @@ const setSchema: JsonSchema = {
 
 const exerciseSchema: JsonSchema = {
   type: 'object',
-  required: ['templateId', 'sets'],
+  required: ['type', 'sets'],
   properties: {
-    templateId: {
+    type: {
       type: 'string',
     },
     sets: {
@@ -44,6 +44,9 @@ const workoutSchema: RxJsonSchema<Workout> = {
       primary: true,
       type: 'string',
     },
+    name: {
+      type: 'string',
+    },
     exercises: {
       type: 'array',
       items: exerciseSchema,
@@ -52,8 +55,8 @@ const workoutSchema: RxJsonSchema<Workout> = {
       type: 'string',
     },
   },
-  required: ['id', 'exercises', 'date'],
-  indexes: ['exercises.[].templateId'],
+  required: ['id', 'name', 'exercises', 'date'],
+  indexes: ['exercises.[].type'],
 };
 
 export default workoutSchema;

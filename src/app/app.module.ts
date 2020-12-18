@@ -22,8 +22,12 @@ import { DashboardCardComponent } from './components/dashboard-card/dashboard-ca
 import { ReactiveFormsModule } from '@angular/forms';
 import { ExerciseFormComponent } from './components/exercise-form/exercise-form.component';
 import { ExerciseRepoPageComponent } from './pages/exercise-repo-page/exercise-repo-page.component';
-import { ExerciseTemplateDialogComponent } from './components/exercise-template-dialog/exercise-template-dialog.component';
+import { EditExerciseTypeDialogComponent } from './components/edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 import { AddExerciseDialogComponent } from './components/add-exercise-dialog/add-exercise-dialog.component';
+import {
+  DisplayFieldsPipe,
+  DisplayFieldPipe,
+} from './pipes/display-fields.pipe';
 
 @NgModule({
   declarations: [
@@ -34,8 +38,10 @@ import { AddExerciseDialogComponent } from './components/add-exercise-dialog/add
     DashboardCardComponent,
     ExerciseFormComponent,
     ExerciseRepoPageComponent,
-    ExerciseTemplateDialogComponent,
+    EditExerciseTypeDialogComponent,
     AddExerciseDialogComponent,
+    DisplayFieldsPipe,
+    DisplayFieldPipe,
   ],
   imports: [
     BrowserModule,

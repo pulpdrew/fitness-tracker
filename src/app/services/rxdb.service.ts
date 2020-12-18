@@ -10,27 +10,26 @@ import { RxDBValidatePlugin } from 'rxdb/plugins/validate';
 import * as IndexedDbAdapter from 'pouchdb-adapter-indexeddb';
 import workoutSchema from '../schemas/workout.schema';
 import { Workout } from '../types/workout';
-import { exerciseTemplateSchema } from '../schemas/exercises.schema';
-import { ExerciseTemplate } from '../types/exercise-template';
+import { exerciseTypeSchema } from '../schemas/exercises.schema';
+import { ExerciseType } from '../types/exercise-type';
 import { from, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-type ExerciseTemplateDoc = RxDocument<ExerciseTemplate, unknown>;
+type ExerciseTypeDoc = RxDocument<ExerciseType, unknown>;
 type WorkoutDoc = RxDocument<Workout, unknown>;
 
 type WorkoutCollection = RxCollection<Workout, unknown, unknown>;
-type ExerciseTemplateCollection = RxCollection<
-  ExerciseTemplate,
-  unknown,
-  unknown
->;
+type ExerciseTypeCollection = RxCollection<ExerciseType, unknown, unknown>;
 
 type Collections = {
   workouts: WorkoutCollection;
-  exercises: ExerciseTemplateCollection;
+  exercises: ExerciseTypeCollection;
 };
 
 type Database = RxDatabase<Collections>;
+
+const DATABASE_NAME = 'fitnesstracker';
+const ADAPTER_NAME = 'indexeddb';
 
 @Injectable({
   providedIn: 'root',
@@ -42,9 +41,9 @@ export class RxdbService {
   private _db$: Observable<Database>;
 
   /**
-   * The exercise templates that are stored in the database
+   * The exercise types that are stored in the database
    */
-  exercises$: Observable<ExerciseTemplate[]>;
+  exerciseTypes$: Observable<ExerciseType[]>;
 
   /**
    * The completed workouts that are stored in the database
@@ -58,20 +57,20 @@ export class RxdbService {
 
     // Create the database
     const dbPromise: Promise<Database> = createRxDatabase<Collections>({
-      name: 'fitnesstracker',
-      adapter: 'indexeddb',
+      name: DATABASE_NAME,
+      adapter: ADAPTER_NAME,
     }).then((db) => this.init(db));
 
     // Filter for initialized databases
     this._db$ = from(dbPromise);
 
     // Get the exercises from the database
-    this.exercises$ = this._db$.pipe(
+    this.exerciseTypes$ = this._db$.pipe(
       switchMap((db) =>
         db.exercises
           .find()
           .$.pipe(
-            map((docs) => docs.map((doc) => this.projectExerciseTemplate(doc)))
+            map((docs) => docs.map((doc) => this.projectExerciseType(doc)))
           )
       )
     );
@@ -92,30 +91,38 @@ export class RxdbService {
    * @param db the database to initialize
    */
   private async init(db: Database): Promise<Database> {
-    // Create the collections
     await db.addCollections({
       workouts: {
         schema: workoutSchema,
       },
       exercises: {
-        schema: exerciseTemplateSchema,
+        schema: exerciseTypeSchema,
       },
     });
 
     return db;
   }
 
+  /**
+   * Projects only the Workout properties from a given RxDocument<Workout>
+   *
+   * @param document the RxDocument representing the Workout object
+   */
   private projectWorkout(document: WorkoutDoc): Workout {
     return {
+      name: document.name,
       date: document.date,
       exercises: document.exercises,
       id: document.id,
     };
   }
 
-  private projectExerciseTemplate(
-    document: ExerciseTemplateDoc
-  ): ExerciseTemplate {
+  /**
+   * Projects only the ExerciseType properties from a given RxDocument<ExerciseType>
+   *
+   * @param document the RxDocument representing the ExerciseType object
+   */
+  private projectExerciseType(document: ExerciseTypeDoc): ExerciseType {
     return {
       id: document.id,
       fields: document.fields,
@@ -128,11 +135,11 @@ export class RxdbService {
     this._db$.subscribe((db) => db.workouts.upsert(workout));
   }
 
-  async saveExerciseTemplate(template: ExerciseTemplate): Promise<void> {
-    this._db$.subscribe((db) => db.exercises.upsert(template));
+  async saveExerciseType(type: ExerciseType): Promise<void> {
+    this._db$.subscribe((db) => db.exercises.upsert(type));
   }
 
-  async deleteExerciseTemplate(template: ExerciseTemplate): Promise<void> {
-    this._db$.subscribe((db) => db.exercises.findOne(template.id).remove());
+  async deleteExerciseType(type: ExerciseType): Promise<void> {
+    this._db$.subscribe((db) => db.exercises.findOne(type.id).remove());
   }
 }

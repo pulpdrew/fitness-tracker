@@ -2,7 +2,7 @@
   <mat-card *ngFor="let exercise of exercises$ | async">
     <mat-card-title>{{ exercise.name }}</mat-card-title>
     <mat-card-content>
-      <p>{{ exercise.fields }}</p>
+      <p>{{ exercise.fields | displayFields }}</p>
     </mat-card-content>
     <mat-card-actions>
       <button mat-stroked-button color="accent" (click)="edit(exercise)">

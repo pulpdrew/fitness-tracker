@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ExerciseTemplateDialogComponent } from 'src/app/components/exercise-template-dialog/exercise-template-dialog.component';
+import { EditExerciseTypeDialogComponent } from 'src/app/components/edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 import { RxdbService } from 'src/app/services/rxdb.service';
-import {
-  emptyTemplate,
-  ExerciseTemplate,
-} from 'src/app/types/exercise-template';
+import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 
 @Component({
   selector: 'app-exercise-repo-page',
@@ -13,23 +10,23 @@ import {
   styleUrls: ['./exercise-repo-page.component.scss'],
 })
 export class ExerciseRepoPageComponent {
-  exercises$ = this.rxdb.exercises$;
+  exercises$ = this.rxdb.exerciseTypes$;
 
   constructor(private rxdb: RxdbService, private dialog: MatDialog) {}
 
-  edit(template: ExerciseTemplate = emptyTemplate()): void {
-    const ref = this.dialog.open(ExerciseTemplateDialogComponent, {
+  edit(type: ExerciseType = emptyExerciseType()): void {
+    const ref = this.dialog.open(EditExerciseTypeDialogComponent, {
       minWidth: '40ex',
       minHeight: '20em',
-      data: template,
+      data: type,
     });
 
-    ref.afterClosed().subscribe((editedTemplate) => {
-      if (editedTemplate) this.rxdb.saveExerciseTemplate(editedTemplate);
+    ref.afterClosed().subscribe((editedType) => {
+      if (editedType) this.rxdb.saveExerciseType(editedType);
     });
   }
 
-  remove(template: ExerciseTemplate): void {
-    this.rxdb.deleteExerciseTemplate(template);
+  remove(type: ExerciseType): void {
+    this.rxdb.deleteExerciseType(type);
   }
 }

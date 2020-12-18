@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { RxdbService } from 'src/app/services/rxdb.service';
-import { ExerciseTemplate } from 'src/app/types/exercise-template';
+import { ExerciseType } from 'src/app/types/exercise-type';
 import { Exercise, Workout } from 'src/app/types/workout';
 
 interface WorkoutDisplay extends Workout {
@@ -20,23 +20,22 @@ interface ExerciseDisplay extends Exercise {
 export class WorkoutLogPageComponent {
   workouts$: Observable<WorkoutDisplay[]> = combineLatest([
     this.rxdb.workouts$,
-    this.rxdb.exercises$,
+    this.rxdb.exerciseTypes$,
   ]).pipe(
     map(([workouts, exercises]) =>
       workouts.map((w) => this.formatWorkout(w, exercises))
-    ),
-    tap(console.log)
+    )
   );
 
   constructor(private rxdb: RxdbService) {}
 
   private formatWorkout(
     workout: Workout,
-    templates: ExerciseTemplate[]
+    types: ExerciseType[]
   ): WorkoutDisplay {
     return {
       exerciseDisplays: workout.exercises.map((e) =>
-        this.formatExercise(e, templates)
+        this.formatExercise(e, types)
       ),
       ...workout,
     };
@@ -44,11 +43,10 @@ export class WorkoutLogPageComponent {
 
   private formatExercise(
     exercise: Exercise,
-    templates: ExerciseTemplate[]
+    types: ExerciseType[]
   ): ExerciseDisplay {
     const name =
-      templates.find((t) => t.id === exercise.templateId)?.name ||
-      'Unknown Exercise';
+      types.find((t) => t.id === exercise.type)?.name || 'Unknown Exercise';
 
     return {
       name,
