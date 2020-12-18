@@ -36,11 +36,25 @@ export class ExerciseFormComponent implements OnInit {
   }
 
   addSet(): void {
-    this.sets.push(this.getEmptySetGroup());
+    if (this.sets.length > 0) {
+      this.sets.push(this.copyLastSetGroup());
+    } else {
+      this.sets.push(this.getEmptySetGroup());
+    }
   }
 
   removeSet(index: number): void {
     this.sets.removeAt(index);
+  }
+
+  private copyLastSetGroup(): FormGroup {
+    const lastGroup = this.sets.at(this.sets.length - 1);
+    return new FormGroup({
+      weight: new FormGroup(lastGroup.get(SetField.WEIGHT)?.value || ''),
+      weightUnits: new FormControl(lastGroup.get('weightUnits')?.value || ''),
+      reps: new FormControl(lastGroup.get(SetField.REPS)?.value || ''),
+      time: new FormControl(lastGroup.get(SetField.TIME)?.value || ''),
+    });
   }
 
   private getEmptySetGroup(): FormGroup {
