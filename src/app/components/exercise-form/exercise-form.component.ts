@@ -39,6 +39,10 @@ export class ExerciseFormComponent implements OnInit {
     this.sets.push(this.getEmptySetGroup());
   }
 
+  removeSet(index: number): void {
+    this.sets.removeAt(index);
+  }
+
   private getEmptySetGroup(): FormGroup {
     return new FormGroup({
       weight: new FormControl(),
