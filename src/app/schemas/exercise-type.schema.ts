@@ -1,6 +1,6 @@
 import { RxJsonSchema } from 'rxdb';
 import { setFields } from '../types/workout';
-import { ExerciseType } from '../types/exercise-type';
+import { exerciseCategories, ExerciseType } from '../types/exercise-type';
 
 /**
  * The schema for the collection of Exercise Types
@@ -29,6 +29,14 @@ export const exerciseTypeSchema: RxJsonSchema<ExerciseType> = {
         enum: setFields,
       },
     },
+    categories: {
+      type: 'array',
+      items: {
+        type: 'string',
+        enum: exerciseCategories,
+      },
+      default: [],
+    },
   },
-  required: ['id', 'name', 'userDefined', 'fields'],
+  required: ['id', 'name', 'userDefined', 'fields', 'categories'],
 };

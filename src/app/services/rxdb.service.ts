@@ -10,7 +10,7 @@ import { RxDBValidatePlugin } from 'rxdb/plugins/validate';
 import * as IndexedDbAdapter from 'pouchdb-adapter-indexeddb';
 import workoutSchema from '../schemas/workout.schema';
 import { Workout } from '../types/workout';
-import { exerciseTypeSchema } from '../schemas/exercises.schema';
+import { exerciseTypeSchema } from '../schemas/exercise-type.schema';
 import { ExerciseType } from '../types/exercise-type';
 import { from, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -128,6 +128,7 @@ export class RxdbService {
       fields: document.fields,
       userDefined: document.userDefined,
       name: document.name,
+      categories: document.categories,
     };
   }
 

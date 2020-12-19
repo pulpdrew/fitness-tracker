@@ -29,6 +29,10 @@ import {
   DisplayFieldsPipe,
   DisplayFieldPipe,
 } from './pipes/display-fields.pipe';
+import {
+  DisplayCategoriesPipe,
+  DisplayCategoryPipe,
+} from './pipes/display-categories.pipe';
 
 @NgModule({
   declarations: [
@@ -43,6 +47,8 @@ import {
     AddExerciseDialogComponent,
     DisplayFieldsPipe,
     DisplayFieldPipe,
+    DisplayCategoriesPipe,
+    DisplayCategoryPipe,
   ],
   imports: [
     BrowserModule,
