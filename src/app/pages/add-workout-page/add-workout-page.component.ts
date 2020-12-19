@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { AddExerciseDialogComponent } from 'src/app/components/add-exercise-dialog/add-exercise-dialog.component';
 import { RxdbService } from 'src/app/services/rxdb.service';
@@ -12,6 +12,7 @@ import {
 } from 'src/app/types/workout';
 import { v4 as uuidv4 } from 'uuid';
 
+const NAME_KEY = 'name';
 const EXERCISE_ARRAY_KEY = 'exercises';
 const ADD_EXERCISE_DIALOG_WIDTH = '30ex';
 export const SETS_ARRAY_KEY = 'sets';
@@ -30,6 +31,7 @@ export class AddWorkoutPageComponent {
    * The Reactive Form containing the Workout data
    */
   form = new FormGroup({
+    [NAME_KEY]: new FormControl(this.getDefaultWorkoutName()),
     [EXERCISE_ARRAY_KEY]: new FormArray([]),
   });
 
@@ -98,10 +100,14 @@ export class AddWorkoutPageComponent {
 
     return {
       date,
-      name: 'unset', // TODO
+      name: this.form.get(NAME_KEY)?.value || this.getDefaultWorkoutName(),
       id,
       exercises,
     };
+  }
+
+  private getDefaultWorkoutName(): string {
+    return `Workout on ${new Date().toLocaleDateString()}`;
   }
 
   private toSet(form: FormGroup): ExerciseSet {
