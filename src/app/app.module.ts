@@ -25,6 +25,8 @@ import { ExerciseFormComponent } from './components/exercise-form/exercise-form.
 import { ExerciseRepoPageComponent } from './pages/exercise-repo-page/exercise-repo-page.component';
 import { EditExerciseTypeDialogComponent } from './components/edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 import { AddExerciseDialogComponent } from './components/add-exercise-dialog/add-exercise-dialog.component';
+import { ImportExportPageComponent } from './pages/import-export-page/import-export-page.component';
+
 import {
   DisplayFieldsPipe,
   DisplayFieldPipe,
@@ -49,6 +51,7 @@ import {
     DisplayFieldPipe,
     DisplayCategoriesPipe,
     DisplayCategoryPipe,
+    ImportExportPageComponent,
   ],
   imports: [
     BrowserModule,

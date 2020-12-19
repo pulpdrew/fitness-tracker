@@ -98,8 +98,6 @@ export class AddWorkoutPageComponent {
       }
     );
 
-    console.log(exercises);
-
     return {
       date,
       name: this.form.get(NAME_KEY)?.value || this.getDefaultWorkoutName(),

@@ -5,6 +5,7 @@ import {
   RxCollection,
   RxDatabase,
   RxDocument,
+  RxDumpDatabase,
 } from 'rxdb';
 import { RxDBValidatePlugin } from 'rxdb/plugins/validate';
 import * as IndexedDbAdapter from 'pouchdb-adapter-indexeddb';
@@ -142,5 +143,17 @@ export class RxdbService {
 
   async deleteExerciseType(type: ExerciseType): Promise<void> {
     this._db$.subscribe((db) => db.exercises.findOne(type.id).remove());
+  }
+
+  async export(): Promise<string> {
+    const db = await this._db$.toPromise();
+    const dump = await db.dump();
+    return JSON.stringify(dump);
+  }
+
+  import(json: string): void {
+    this._db$.subscribe((db) =>
+      db.importDump(JSON.parse(json) as RxDumpDatabase<Collections>)
+    );
   }
 }
