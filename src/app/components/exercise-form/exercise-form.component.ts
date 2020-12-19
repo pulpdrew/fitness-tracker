@@ -5,7 +5,13 @@ import { map } from 'rxjs/operators';
 import { SETS_ARRAY_KEY } from 'src/app/pages/add-workout-page/add-workout-page.component';
 import { RxdbService } from 'src/app/services/rxdb.service';
 import { ExerciseType } from 'src/app/types/exercise-type';
-import { DEFAULT_WEIGHT_UNIT, SetField } from 'src/app/types/workout';
+import {
+  DEFAULT_WEIGHT_UNIT,
+  SetField,
+  weightUnits,
+} from 'src/app/types/workout';
+
+const DEFAULT_EXERCISE_NAME = 'Exercise name is unavailable';
 
 @Component({
   selector: 'app-exercise-form',
@@ -40,7 +46,10 @@ export class ExerciseFormComponent implements OnInit {
    */
   fields$: Observable<SetField[]> = of([]);
 
+  // Imports used in the template
   SETS_ARRAY_KEY = SETS_ARRAY_KEY;
+  SetField = SetField;
+  units = weightUnits;
 
   constructor(private rxdb: RxdbService) {}
 
@@ -49,7 +58,7 @@ export class ExerciseFormComponent implements OnInit {
       map((exercises) => exercises.find((e) => e.id === this.type))
     );
 
-    this.name$ = this.type$.pipe(map((t) => t?.name || 'Unknown Name'));
+    this.name$ = this.type$.pipe(map((t) => t?.name || DEFAULT_EXERCISE_NAME));
     this.fields$ = this.type$.pipe(map((t) => t?.fields || []));
   }
 

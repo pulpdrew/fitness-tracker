@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AddWorkoutPageComponent } from './pages/add-workout-page/add-workout-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
@@ -57,6 +58,7 @@ import {
     MatCheckboxModule,
     MatInputModule,
     MatAutocompleteModule,
+    MatSelectModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -98,6 +98,8 @@ export class AddWorkoutPageComponent {
       }
     );
 
+    console.log(exercises);
+
     return {
       date,
       name: this.form.get(NAME_KEY)?.value || this.getDefaultWorkoutName(),
@@ -119,6 +121,10 @@ export class AddWorkoutPageComponent {
 
     if (form.get(SetField.WEIGHT)?.value) {
       set[SetField.WEIGHT] = Number.parseInt(form.get(SetField.WEIGHT)?.value);
+    }
+
+    if (form.get(SetField.WEIGHT_UNITS)?.value) {
+      set[SetField.WEIGHT_UNITS] = form.get(SetField.WEIGHT_UNITS)?.value;
     }
 
     if (form.get(SetField.DURATION)?.value) {
