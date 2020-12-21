@@ -2,24 +2,24 @@
   <app-dashboard-card
     title="Start a Workout"
     subtitle="Record your reps, sets, weights, and times."
-    [links]="[{ route: '/add-workout', title: 'Start' }]"
+    [links]="[{ route: workoutRoute, title: 'Start' }]"
   ></app-dashboard-card>
 
   <app-dashboard-card
     title="View Workouts"
     subtitle="View a list of your previously completed workouts"
-    [links]="[{ route: '/workout-log', title: 'View' }]"
+    [links]="[{ route: workoutLogRoute, title: 'View' }]"
   ></app-dashboard-card>
 
   <app-dashboard-card
     title="View Exercises"
     subtitle="View a list of exerises and your historical performance for each"
-    [links]="[{ route: '/exercises', title: 'View' }]"
+    [links]="[{ route: exercisesRoute, title: 'View' }]"
   ></app-dashboard-card>
 
   <app-dashboard-card
     title="Manage Data"
     subtitle="Import or export Fitness Tracker Data"
-    [links]="[{ route: '/import-export', title: 'Manage' }]"
+    [links]="[{ route: dataRoute, title: 'Manage' }]"
   ></app-dashboard-card>
 </div>
