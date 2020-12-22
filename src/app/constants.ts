@@ -1,0 +1,11 @@
+export const WORKOUT_LOG_ROUTE = 'workout-log';
+export const DASHBOARD_ROUTE = 'dashboard';
+export const EXERCISE_TYPES_ROUTE = 'exercises';
+export const DATA_MANAGEMENT_ROUTE = 'import-export';
+export const WORKOUT_ROUTE = 'workout';
+export const NAME_KEY = 'name';
+export const DATE_KEY = 'date';
+export const EXERCISE_ARRAY_KEY = 'exercises';
+export const ADD_EXERCISE_DIALOG_WIDTH = '30ex';
+export const SETS_ARRAY_KEY = 'sets';
+export const EXERCISE_TYPE_ID_KEY = 'exercise-type-id';

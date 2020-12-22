@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DASHBOARD_ROUTE } from './app-routing.module';
+import { DASHBOARD_ROUTE } from './constants';
 import { RxdbService } from './services/rxdb.service';
 
 @Component({

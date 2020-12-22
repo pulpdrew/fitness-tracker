@@ -16,7 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSelectModule } from '@angular/material/select';
 
-import { AddWorkoutPageComponent } from './pages/add-workout-page/add-workout-page.component';
+import { EditWorkoutPageComponent } from './pages/edit-workout-page/edit-workout-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { WorkoutLogPageComponent } from './pages/workout-log-page/workout-log.component';
 import { DashboardCardComponent } from './components/dashboard-card/dashboard-card.component';
@@ -39,7 +39,7 @@ import {
 @NgModule({
   declarations: [
     AppComponent,
-    AddWorkoutPageComponent,
+    EditWorkoutPageComponent,
     DashboardPageComponent,
     WorkoutLogPageComponent,
     DashboardCardComponent,

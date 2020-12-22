@@ -1,6 +1,7 @@
 <div class="container">
   <mat-card *ngFor="let workout of workouts$ | async">
     <h3>{{ workout.name }}</h3>
+    <a [routerLink]="WORKOUT_ROUTE + '/' + workout.id">edit</a>
     <div *ngFor="let exercise of workout.exerciseDisplays">
       <p>{{ exercise.name }}</p>
 

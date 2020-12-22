@@ -11,10 +11,10 @@
     <button mat-raised-button (click)="save()" color="accent">Save</button>
   </div>
 
-  <div *ngFor="let exercise of types; let i = index" class="exercise">
-    <app-exercise-form
-      [form]="getChildForm(i)"
-      [type]="types[i]"
-    ></app-exercise-form>
+  <div
+    *ngFor="let exercise of exerciseForms.controls; let i = index"
+    class="exercise"
+  >
+    <app-exercise-form [form]="getChildForm(i)"></app-exercise-form>
   </div>
 </div>

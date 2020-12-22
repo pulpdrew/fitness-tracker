@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { WORKOUT_ROUTE } from 'src/app/constants';
 import { RxdbService } from 'src/app/services/rxdb.service';
 import { ExerciseType } from 'src/app/types/exercise-type';
 import { Exercise, Workout } from 'src/app/types/workout';
@@ -18,6 +19,8 @@ interface ExerciseDisplay extends Exercise {
   styleUrls: ['./workout-log.component.scss'],
 })
 export class WorkoutLogPageComponent {
+  WORKOUT_ROUTE = '/' + WORKOUT_ROUTE;
+
   workouts$: Observable<WorkoutDisplay[]> = combineLatest([
     this.rxdb.workouts$,
     this.rxdb.exerciseTypes$,

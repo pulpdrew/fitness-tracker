@@ -139,5 +139,8 @@
       }
     }
   },
-  "defaultProject": "fitness-tracker"
+  "defaultProject": "fitness-tracker",
+  "cli": {
+    "analytics": "7c45bb6b-b744-4203-96ef-8f78e5d44014"
+  }
 }

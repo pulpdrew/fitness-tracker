@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SETS_ARRAY_KEY } from 'src/app/pages/add-workout-page/add-workout-page.component';
+import { EXERCISE_TYPE_ID_KEY, SETS_ARRAY_KEY } from 'src/app/constants';
 import { RxdbService } from 'src/app/services/rxdb.service';
 import { ExerciseType } from 'src/app/types/exercise-type';
 import {
-  DEFAULT_WEIGHT_UNIT,
+  copySetForm,
+  emptySetForm,
   SetField,
   weightUnits,
 } from 'src/app/types/workout';
@@ -19,11 +20,6 @@ const DEFAULT_EXERCISE_NAME = 'Exercise name is unavailable';
   styleUrls: ['./exercise-form.component.scss'],
 })
 export class ExerciseFormComponent implements OnInit {
-  /**
-   * The exercise type of this Exercise
-   */
-  @Input() type = '';
-
   /**
    * The form backing the exercise data
    */
@@ -55,7 +51,11 @@ export class ExerciseFormComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.type$ = this.rxdb.exerciseTypes$.pipe(
-      map((exercises) => exercises.find((e) => e.id === this.type))
+      map((exercises) =>
+        exercises.find(
+          (e) => e.id === this.form.get(EXERCISE_TYPE_ID_KEY)?.value || ''
+        )
+      )
     );
 
     this.name$ = this.type$.pipe(map((t) => t?.name || DEFAULT_EXERCISE_NAME));
@@ -68,40 +68,15 @@ export class ExerciseFormComponent implements OnInit {
 
   addSet(): void {
     if (this.sets.length > 0) {
-      this.sets.push(this.copyLastSetGroup());
+      this.sets.push(
+        copySetForm(this.sets.at(this.sets.length - 1) as FormGroup)
+      );
     } else {
-      this.sets.push(this.getEmptySetGroup());
+      this.sets.push(emptySetForm());
     }
   }
 
   removeSet(index: number): void {
     this.sets.removeAt(index);
-  }
-
-  private copyLastSetGroup(): FormGroup {
-    const lastGroup = this.sets.at(this.sets.length - 1);
-    return new FormGroup({
-      [SetField.WEIGHT]: new FormControl(
-        lastGroup.get(SetField.WEIGHT)?.value || ''
-      ),
-      [SetField.WEIGHT_UNITS]: new FormControl(
-        lastGroup.get(SetField.WEIGHT_UNITS)?.value || ''
-      ),
-      [SetField.REPS]: new FormControl(
-        lastGroup.get(SetField.REPS)?.value || ''
-      ),
-      [SetField.DURATION]: new FormControl(
-        lastGroup.get(SetField.DURATION)?.value || ''
-      ),
-    });
-  }
-
-  private getEmptySetGroup(): FormGroup {
-    return new FormGroup({
-      [SetField.WEIGHT]: new FormControl(''),
-      [SetField.WEIGHT_UNITS]: new FormControl(DEFAULT_WEIGHT_UNIT),
-      [SetField.REPS]: new FormControl(''),
-      [SetField.DURATION]: new FormControl(''),
-    });
   }
 }
