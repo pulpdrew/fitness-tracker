@@ -1,10 +1,10 @@
-<h2 mat-dialog-title>Add an exercise</h2>
+<h2 mat-dialog-title>Add an Exercise</h2>
 
-<mat-dialog-content>
-  <mat-form-field>
+<mat-dialog-content class="space-row">
+  <mat-form-field class="select">
     <input
       type="text"
-      placeholder="Exercise Name"
+      placeholder="Select Exercise Type"
       matInput
       [formControl]="selected"
       [matAutocomplete]="auto"
@@ -18,11 +18,15 @@
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="createExercise()">
+    Create New
+  </button>
 </mat-dialog-content>
 
-<mat-dialog-actions>
-  <button mat-button color="accent" mat-dialog-close>Cancel</button>
-  <button mat-button color="accent" [mat-dialog-close]="selected.value">
-    Add
+<mat-dialog-actions class="space-row">
+  <button mat-stroked-button color="accent" mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="selected.value">
+    Add to Workout
   </button>
 </mat-dialog-actions>

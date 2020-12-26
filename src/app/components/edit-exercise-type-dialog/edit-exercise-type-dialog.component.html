@@ -1,32 +1,30 @@
-<div class="container">
-  <h2 mat-dialog-title>Edit an Exercise</h2>
+<h2 mat-dialog-title>Edit Exercise</h2>
 
-  <div mat-dialog-content [formGroup]="form">
-    <mat-form-field>
-      <mat-label>Name</mat-label>
-      <input matInput placeholder="Ex. Pushups" formControlName="name" />
-    </mat-form-field>
+<mat-dialog-content class="content" [formGroup]="form">
+  <mat-form-field class="full-width">
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="Ex. Pushups" formControlName="name" />
+  </mat-form-field>
 
-    <div>
-      <mat-checkbox formControlName="reps">Reps</mat-checkbox>
-      <mat-checkbox formControlName="weight">Weight</mat-checkbox>
-      <mat-checkbox formControlName="duration">Duration</mat-checkbox>
-    </div>
+  <mat-form-field class="full-width">
+    <mat-label>Categories</mat-label>
+    <mat-select formControlName="categories" multiple>
+      <mat-option
+        *ngFor="let category of exerciseCategories"
+        [value]="category"
+        >{{ category | displayCategory }}</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Categories</mat-label>
-      <mat-select formControlName="categories" multiple>
-        <mat-option
-          *ngFor="let category of exerciseCategories"
-          [value]="category"
-          >{{ category }}</mat-option
-        >
-      </mat-select>
-    </mat-form-field>
+  <div class="fields">
+    <mat-checkbox formControlName="reps">Reps</mat-checkbox>
+    <mat-checkbox formControlName="weight">Weight</mat-checkbox>
+    <mat-checkbox formControlName="duration">Duration</mat-checkbox>
   </div>
+</mat-dialog-content>
 
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-button (click)="save()">Save</button>
-  </mat-dialog-actions>
-</div>
+<mat-dialog-actions class="actions">
+  <button mat-stroked-button mat-dialog-close color="accent">Cancel</button>
+  <button mat-raised-button color="primary" (click)="save()">Save</button>
+</mat-dialog-actions>

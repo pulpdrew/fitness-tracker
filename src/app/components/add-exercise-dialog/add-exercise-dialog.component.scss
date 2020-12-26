@@ -1,0 +1,11 @@
+.space-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.select {
+  flex: 1;
+  margin-right: 2ex;
+}

@@ -6,6 +6,6 @@ export const WORKOUT_ROUTE = 'workout';
 export const NAME_KEY = 'name';
 export const DATE_KEY = 'date';
 export const EXERCISE_ARRAY_KEY = 'exercises';
-export const ADD_EXERCISE_DIALOG_WIDTH = '30ex';
+export const ADD_EXERCISE_DIALOG_WIDTH = '50ex';
 export const SETS_ARRAY_KEY = 'sets';
 export const EXERCISE_TYPE_ID_KEY = 'exercise-type-id';

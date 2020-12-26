@@ -17,7 +17,6 @@ export class ExerciseRepoPageComponent {
   edit(type: ExerciseType = emptyExerciseType()): void {
     const ref = this.dialog.open(EditExerciseTypeDialogComponent, {
       minWidth: '40ex',
-      minHeight: '20em',
       data: type,
     });
 
