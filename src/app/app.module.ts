@@ -27,6 +27,7 @@ import { ExerciseRepoPageComponent } from './pages/exercise-repo-page/exercise-r
 import { EditExerciseTypeDialogComponent } from './components/edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 import { AddExerciseDialogComponent } from './components/add-exercise-dialog/add-exercise-dialog.component';
 import { ImportExportPageComponent } from './pages/import-export-page/import-export-page.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import {
   DisplayFieldsPipe,
@@ -37,6 +38,7 @@ import {
   DisplayCategoryPipe,
 } from './pipes/display-categories.pipe';
 import { MatNativeDateModule } from '@angular/material/core';
+import { ExerciseChartComponent } from './components/exercise-chart/exercise-chart.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +56,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     DisplayCategoriesPipe,
     DisplayCategoryPipe,
     ImportExportPageComponent,
+    ExerciseChartComponent,
   ],
   imports: [
     BrowserModule,
@@ -72,6 +75,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    NgxChartsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
