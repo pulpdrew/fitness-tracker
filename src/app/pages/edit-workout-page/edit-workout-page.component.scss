@@ -20,3 +20,17 @@
 .exercise {
   margin-bottom: 1em;
 }
+
+.name-date-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.name {
+  flex: 1;
+}
+
+.date {
+  margin-left: 2ex;
+}

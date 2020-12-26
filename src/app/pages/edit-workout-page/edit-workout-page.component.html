@@ -1,8 +1,17 @@
 <div class="container" [formGroup]="form">
-  <mat-form-field>
-    <mat-label>Name</mat-label>
-    <input matInput placeholder="Ex. Pushups" formControlName="name" />
-  </mat-form-field>
+  <div class="name-date-container">
+    <mat-form-field class="name">
+      <mat-label>Name</mat-label>
+      <input matInput placeholder="Ex. Pushups" formControlName="name" />
+    </mat-form-field>
+
+    <mat-form-field class="date">
+      <mat-label>Workout Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
 
   <div class="buttons">
     <button mat-raised-button (click)="addExercise()" color="accent">
