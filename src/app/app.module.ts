@@ -39,6 +39,7 @@ import {
 } from './pipes/display-categories.pipe';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ExerciseChartComponent } from './components/exercise-chart/exercise-chart.component';
+import { SetPipe } from './pipes/set.pipe';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { ExerciseChartComponent } from './components/exercise-chart/exercise-cha
     DisplayCategoryPipe,
     ImportExportPageComponent,
     ExerciseChartComponent,
+    SetPipe,
   ],
   imports: [
     BrowserModule,

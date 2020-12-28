@@ -14,7 +14,7 @@ import { Workout } from '../types/workout';
 import { exerciseTypeSchema } from '../schemas/exercise-type.schema';
 import { ExerciseType } from '../types/exercise-type';
 import { from, Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 
 type ExerciseTypeDoc = RxDocument<ExerciseType, unknown>;
 type WorkoutDoc = RxDocument<Workout, unknown>;
@@ -137,12 +137,20 @@ export class RxdbService {
     this._db$.subscribe((db) => db.workouts.upsert(workout));
   }
 
+  async deleteWorkout(workout: Workout): Promise<void> {
+    this._db$
+      .pipe(first())
+      .subscribe((db) => db.workouts.findOne(workout.id).remove());
+  }
+
   async saveExerciseType(type: ExerciseType): Promise<void> {
-    this._db$.subscribe((db) => db.exercises.upsert(type));
+    this._db$.pipe(first()).subscribe((db) => db.exercises.upsert(type));
   }
 
   async deleteExerciseType(type: ExerciseType): Promise<void> {
-    this._db$.subscribe((db) => db.exercises.findOne(type.id).remove());
+    this._db$
+      .pipe(first())
+      .subscribe((db) => db.exercises.findOne(type.id).remove());
   }
 
   async export(): Promise<string> {

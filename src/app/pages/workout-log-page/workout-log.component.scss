@@ -6,9 +6,17 @@
 
 mat-card {
   width: 100%;
-  margin-bottom: 2em;
+  margin-bottom: 1em;
 }
 
-.set-field {
-  margin-right: 1ex;
+.exercise {
+  margin-bottom: 0.5em;
+}
+
+.exercise-name {
+  font-weight: bold;
+}
+
+.set {
+  margin-left: 1ex;
 }
