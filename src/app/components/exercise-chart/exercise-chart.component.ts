@@ -62,6 +62,41 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
               value: day.totalReps,
             })),
           },
+          {
+            name: 'Max Reps',
+            series: days.map((day) => ({
+              name: day.date.toLocaleDateString(),
+              value: day.maxReps,
+            })),
+          },
+          {
+            name: 'Total Weight',
+            series: days.map((day) => ({
+              name: day.date.toLocaleDateString(),
+              value: day.totalWeight,
+            })),
+          },
+          {
+            name: 'Max Weight',
+            series: days.map((day) => ({
+              name: day.date.toLocaleDateString(),
+              value: day.maxWeight,
+            })),
+          },
+          {
+            name: 'Total Duration',
+            series: days.map((day) => ({
+              name: day.date.toLocaleDateString(),
+              value: day.totalDuration,
+            })),
+          },
+          {
+            name: 'Max Duration',
+            series: days.map((day) => ({
+              name: day.date.toLocaleDateString(),
+              value: day.maxDuration,
+            })),
+          },
         ];
         console.log(this.data);
       });
