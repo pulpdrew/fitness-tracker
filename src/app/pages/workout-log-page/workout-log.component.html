@@ -3,12 +3,24 @@
     <mat-card-title>{{ workout.name }}</mat-card-title>
     <mat-card-subtitle>{{ workout.date | date }}</mat-card-subtitle>
 
-    <mat-card-content>
-      <div class="exercise" *ngFor="let exercise of workout.exerciseDisplays">
-        <span class="exercise-name">{{ exercise.name }}:</span>
-        <span class="set" *ngFor="let set of exercise.sets; let i = index">
-          {{ set | set }}
-        </span>
+    <mat-card-content class="content">
+      <div class="exercises">
+        <div class="exercise" *ngFor="let exercise of workout.exerciseDisplays">
+          <span class="exercise-name">{{ exercise.name }}:</span>
+          <span class="set" *ngFor="let set of exercise.sets; let i = index">
+            {{ set | set }}
+          </span>
+        </div>
+      </div>
+      <div class="chart">
+        <ngx-charts-pie-chart
+          [results]="workout.categoryData"
+          [gradient]="false"
+          [legend]="false"
+          [labels]="true"
+          [doughnut]="true"
+        >
+        </ngx-charts-pie-chart>
       </div>
     </mat-card-content>
 

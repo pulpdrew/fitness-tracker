@@ -3,12 +3,17 @@ import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WORKOUT_ROUTE } from 'src/app/constants';
 import { RxdbService } from 'src/app/services/rxdb.service';
-import { ExerciseType } from 'src/app/types/exercise-type';
+import { ExerciseCategory, ExerciseType } from 'src/app/types/exercise-type';
 import { Exercise, Workout } from 'src/app/types/workout';
 
+interface CategoryCount {
+  name: string;
+  value: number;
+}
 interface WorkoutDisplay extends Workout {
   exerciseDisplays: ExerciseDisplay[];
   link: string;
+  categoryData: CategoryCount[];
 }
 
 interface ExerciseDisplay extends Exercise {
@@ -47,8 +52,28 @@ export class WorkoutLogPageComponent {
         this.formatExercise(e, types)
       ),
       link: `/${WORKOUT_ROUTE}/${workout.id}`,
+      categoryData: this.countCategories(workout, types),
       ...workout,
     };
+  }
+
+  private countCategories(
+    workout: Workout,
+    types: ExerciseType[]
+  ): CategoryCount[] {
+    const counts = new Map<ExerciseCategory, number>();
+    for (const exercise of workout.exercises) {
+      const categories =
+        types.find((t) => t.id === exercise.type)?.categories || [];
+      for (const category of categories) {
+        counts.set(category, (counts.get(category) || 0) + 1);
+      }
+    }
+
+    return Array.from(counts.entries()).map(([category, count]) => ({
+      name: category,
+      value: count,
+    }));
   }
 
   private formatExercise(

@@ -9,8 +9,22 @@ mat-card {
   margin-bottom: 1em;
 }
 
+.content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.chart {
+  flex: 1;
+}
+
 .exercise {
   margin-bottom: 0.5em;
+}
+
+.exercises {
+  min-width: 40ex;
 }
 
 .exercise-name {
