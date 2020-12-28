@@ -17,7 +17,17 @@
     <button mat-raised-button (click)="addExercise()" color="accent">
       Add Exercise
     </button>
-    <button mat-raised-button (click)="save()" color="accent">Save</button>
+    <div>
+      <button
+        mat-raised-button
+        id="save-copy-button"
+        (click)="saveCopy()"
+        color="accent"
+      >
+        Save Copy
+      </button>
+      <button mat-raised-button (click)="save()" color="accent">Save</button>
+    </div>
   </div>
 
   <div

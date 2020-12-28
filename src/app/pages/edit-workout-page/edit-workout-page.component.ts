@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Observable } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { AddExerciseDialogComponent } from 'src/app/components/add-exercise-dialog/add-exercise-dialog.component';
 import {
   EXERCISE_ARRAY_KEY,
   ADD_EXERCISE_DIALOG_WIDTH,
+  WORKOUT_ROUTE,
 } from 'src/app/constants';
 import { RxdbService } from 'src/app/services/rxdb.service';
 import { ExerciseType } from 'src/app/types/exercise-type';
@@ -18,6 +19,7 @@ import {
   workoutToForm,
   getDefaultWorkoutName,
 } from 'src/app/types/workout';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-edit-workout-page',
@@ -47,7 +49,8 @@ export class EditWorkoutPageComponent {
   constructor(
     private rxdb: RxdbService,
     private dialog: MatDialog,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.preexistingWorkout$.subscribe((workout) => {
       if (workout) this.form = workoutToForm(workout);
@@ -82,6 +85,15 @@ export class EditWorkoutPageComponent {
     this.id$.pipe(first()).subscribe((id) => {
       this.rxdb.saveWorkout(formToWorkout(this.form, id));
     });
+  }
+
+  /**
+   * Save the current Workout as a copy with a new id.
+   */
+  saveCopy(): void {
+    const id = uuidv4();
+    this.rxdb.saveWorkout(formToWorkout(this.form, id));
+    this.router.navigate([WORKOUT_ROUTE, id]);
   }
 
   /**
