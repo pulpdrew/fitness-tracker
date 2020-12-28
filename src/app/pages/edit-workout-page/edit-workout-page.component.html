@@ -19,14 +19,17 @@
     </button>
     <div>
       <button
+        *ngIf="isEditingExisting$ | async"
+        id="save-changes-button"
         mat-raised-button
-        id="save-copy-button"
-        (click)="saveCopy()"
+        (click)="saveChanges()"
         color="accent"
       >
-        Save Copy
+        Save Changes
       </button>
-      <button mat-raised-button (click)="save()" color="accent">Save</button>
+      <button mat-raised-button (click)="saveAsNew()" color="accent">
+        Save as New
+      </button>
     </div>
   </div>
 

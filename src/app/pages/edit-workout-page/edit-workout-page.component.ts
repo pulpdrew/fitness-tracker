@@ -46,6 +46,10 @@ export class EditWorkoutPageComponent {
     this.rxdb.workouts$,
   ]).pipe(map(([id, workouts]) => workouts.find((w) => w.id === id)));
 
+  isEditingExisting$: Observable<boolean> = this.preexistingWorkout$.pipe(
+    map((w) => !!w)
+  );
+
   constructor(
     private rxdb: RxdbService,
     private dialog: MatDialog,
@@ -81,7 +85,7 @@ export class EditWorkoutPageComponent {
   /**
    * Save the current Workout.
    */
-  save(): void {
+  saveChanges(): void {
     this.id$.pipe(first()).subscribe((id) => {
       this.rxdb.saveWorkout(formToWorkout(this.form, id));
     });
@@ -90,7 +94,7 @@ export class EditWorkoutPageComponent {
   /**
    * Save the current Workout as a copy with a new id.
    */
-  saveCopy(): void {
+  saveAsNew(): void {
     const id = uuidv4();
     this.rxdb.saveWorkout(formToWorkout(this.form, id));
     this.router.navigate([WORKOUT_ROUTE, id]);
