@@ -6,6 +6,8 @@
 .exercise-list {
   min-width: 40ex;
   margin-right: 2ex;
+  height: 90vh;
+  overflow-y: scroll;
 }
 
 .chart-container {

@@ -20,12 +20,12 @@
     </mat-card>
   </div>
 
-  <mat-card *ngIf="!!(currentlyViewing$ | async)" class="chart-container">
-    <h2 mat-card-title>Progress for {{ (currentlyViewing$ | async)?.name }}</h2>
+  <div *ngIf="!!(currentlyViewing$ | async)" class="chart-container">
+    <h2>Progress for {{ (currentlyViewing$ | async)?.name }}</h2>
     <app-exercise-chart
       [exerciseType]="currentlyViewing$ | async"
     ></app-exercise-chart>
-  </mat-card>
+  </div>
 </div>
 
 <button id="add-button" mat-fab color="primary" (click)="edit()">
