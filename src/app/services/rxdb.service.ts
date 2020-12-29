@@ -14,17 +14,23 @@ import { Workout } from '../types/workout';
 import { exerciseTypeSchema } from '../schemas/exercise-type.schema';
 import { ExerciseType } from '../types/exercise-type';
 import { from, Observable } from 'rxjs';
-import { first, map, switchMap } from 'rxjs/operators';
+import { first, map, switchMap, take } from 'rxjs/operators';
+import { Settings } from '../types/settings';
+import { getDefaultSettings } from '../types/settings';
+import { settingsSchema } from '../schemas/settings.schema';
 
 type ExerciseTypeDoc = RxDocument<ExerciseType, unknown>;
 type WorkoutDoc = RxDocument<Workout, unknown>;
+type SettingsDoc = RxDocument<Settings, unknown>;
 
 type WorkoutCollection = RxCollection<Workout, unknown, unknown>;
 type ExerciseTypeCollection = RxCollection<ExerciseType, unknown, unknown>;
+type SettingsCollection = RxCollection<Settings, unknown, unknown>;
 
 type Collections = {
   workouts: WorkoutCollection;
   exercises: ExerciseTypeCollection;
+  settings: SettingsCollection;
 };
 
 type Database = RxDatabase<Collections>;
@@ -50,6 +56,11 @@ export class RxdbService {
    * The completed workouts that are stored in the database
    */
   workouts$: Observable<Workout[]>;
+
+  /**
+   * The current settings for this application
+   */
+  settings$: Observable<Settings>;
 
   constructor() {
     // Add plugins to enable validation and storage in indexed db
@@ -84,6 +95,19 @@ export class RxdbService {
           .$.pipe(map((docs) => docs.map((doc) => this.projectWorkout(doc))))
       )
     );
+
+    // Get the current settings from the database
+    this.settings$ = this._db$.pipe(
+      switchMap((db) =>
+        db.settings
+          .findOne()
+          .$.pipe(
+            map((doc) =>
+              doc ? this.projectSettings(doc!) : getDefaultSettings()
+            )
+          )
+      )
+    );
   }
 
   /**
@@ -98,6 +122,9 @@ export class RxdbService {
       },
       exercises: {
         schema: exerciseTypeSchema,
+      },
+      settings: {
+        schema: settingsSchema,
       },
     });
 
@@ -115,6 +142,18 @@ export class RxdbService {
       date: document.date,
       exercises: document.exercises,
       id: document.id,
+    };
+  }
+
+  /**
+   * Projects only the Settings properties from a given RxDocument<Settings>
+   *
+   * @param document the RxDocument representing the Settings object
+   */
+  private projectSettings(document: SettingsDoc): Settings {
+    return {
+      id: document.id,
+      defaultWeightUnit: document.defaultWeightUnit,
     };
   }
 
@@ -160,8 +199,15 @@ export class RxdbService {
   }
 
   import(json: string): void {
-    this._db$.subscribe((db) =>
-      db.importDump(JSON.parse(json) as RxDumpDatabase<Collections>)
-    );
+    this._db$
+      .pipe(first())
+      .subscribe((db) =>
+        db.importDump(JSON.parse(json) as RxDumpDatabase<Collections>)
+      );
+  }
+
+  async saveSettings(settings: Settings): Promise<void> {
+    const db = await this._db$.pipe(take(1)).toPromise();
+    await db.settings.upsert(settings);
   }
 }

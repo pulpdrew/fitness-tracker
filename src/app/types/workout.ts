@@ -61,11 +61,6 @@ export enum WeightUnit {
 export const weightUnits: WeightUnit[] = [WeightUnit.KG, WeightUnit.LB];
 
 /**
- * The default Weight Unit
- */
-export const DEFAULT_WEIGHT_UNIT: WeightUnit = WeightUnit.KG;
-
-/**
  * One Set of a single exercise, with associated data fields
  */
 export interface ExerciseSet {

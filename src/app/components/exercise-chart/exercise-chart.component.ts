@@ -98,7 +98,6 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
             })),
           },
         ];
-        console.log(this.data);
       });
   }
 

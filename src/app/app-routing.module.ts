@@ -9,9 +9,11 @@ import {
   DASHBOARD_ROUTE,
   DATA_MANAGEMENT_ROUTE,
   EXERCISE_TYPES_ROUTE,
+  SETTINGS_ROUTE,
   WORKOUT_LOG_ROUTE,
   WORKOUT_ROUTE,
 } from './constants';
+import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 
 const routes: Routes = [
   { path: `${WORKOUT_ROUTE}/:id`, component: EditWorkoutPageComponent },
@@ -19,6 +21,7 @@ const routes: Routes = [
   { path: EXERCISE_TYPES_ROUTE, component: ExerciseRepoPageComponent },
   { path: DATA_MANAGEMENT_ROUTE, component: ImportExportPageComponent },
   { path: DASHBOARD_ROUTE, component: DashboardPageComponent },
+  { path: SETTINGS_ROUTE, component: SettingsPageComponent },
   { path: '', redirectTo: DASHBOARD_ROUTE, pathMatch: 'full' },
 ];
 

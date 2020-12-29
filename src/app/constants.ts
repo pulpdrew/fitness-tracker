@@ -3,6 +3,7 @@ export const DASHBOARD_ROUTE = 'dashboard';
 export const EXERCISE_TYPES_ROUTE = 'exercises';
 export const DATA_MANAGEMENT_ROUTE = 'import-export';
 export const WORKOUT_ROUTE = 'workout';
+export const SETTINGS_ROUTE = 'settings';
 export const NAME_KEY = 'name';
 export const DATE_KEY = 'date';
 export const EXERCISE_ARRAY_KEY = 'exercises';

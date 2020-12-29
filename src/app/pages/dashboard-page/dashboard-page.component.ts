@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {
   DATA_MANAGEMENT_ROUTE,
   EXERCISE_TYPES_ROUTE,
+  SETTINGS_ROUTE,
   WORKOUT_LOG_ROUTE,
   WORKOUT_ROUTE,
 } from 'src/app/constants';
@@ -16,4 +17,5 @@ export class DashboardPageComponent {
   workoutLogRoute = '/' + WORKOUT_LOG_ROUTE;
   exercisesRoute = '/' + EXERCISE_TYPES_ROUTE;
   dataRoute = '/' + DATA_MANAGEMENT_ROUTE;
+  settingsRoute = '/' + SETTINGS_ROUTE;
 }

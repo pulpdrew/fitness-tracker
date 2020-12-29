@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EXERCISE_TYPE_ID_KEY, SETS_ARRAY_KEY } from 'src/app/constants';
 import { RxdbService } from 'src/app/services/rxdb.service';
+import { SettingsService } from 'src/app/services/settings.service';
 import { ExerciseType } from 'src/app/types/exercise-type';
 import {
   copySetForm,
@@ -47,7 +48,7 @@ export class ExerciseFormComponent implements OnInit {
   SetField = SetField;
   units = weightUnits;
 
-  constructor(private rxdb: RxdbService) {}
+  constructor(private rxdb: RxdbService, private settings: SettingsService) {}
 
   async ngOnInit(): Promise<void> {
     this.type$ = this.rxdb.exerciseTypes$.pipe(
@@ -72,7 +73,11 @@ export class ExerciseFormComponent implements OnInit {
         copySetForm(this.sets.at(this.sets.length - 1) as FormGroup)
       );
     } else {
-      this.sets.push(emptySetForm());
+      const setForm = emptySetForm();
+      setForm
+        .get(SetField.WEIGHT_UNITS)
+        ?.setValue(this.settings.defaultWeightUnit);
+      this.sets.push(setForm);
     }
   }
 

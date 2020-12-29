@@ -40,6 +40,7 @@ import {
 import { MatNativeDateModule } from '@angular/material/core';
 import { ExerciseChartComponent } from './components/exercise-chart/exercise-chart.component';
 import { SetPipe } from './pipes/set.pipe';
+import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { SetPipe } from './pipes/set.pipe';
     ImportExportPageComponent,
     ExerciseChartComponent,
     SetPipe,
+    SettingsPageComponent,
   ],
   imports: [
     BrowserModule,
