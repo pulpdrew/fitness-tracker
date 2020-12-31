@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WORKOUT_ROUTE } from 'src/app/constants';
+import { DisplayCategoryPipe } from 'src/app/pipes/display-categories.pipe';
 import { RxdbService } from 'src/app/services/rxdb.service';
 import { ExerciseCategory, ExerciseType } from 'src/app/types/exercise-type';
 import { Exercise, Workout } from 'src/app/types/workout';
@@ -37,7 +38,10 @@ export class WorkoutLogPageComponent {
     )
   );
 
-  constructor(private rxdb: RxdbService) {}
+  constructor(
+    private rxdb: RxdbService,
+    private displayCategory: DisplayCategoryPipe
+  ) {}
 
   deleteWorkout(workout: Workout): void {
     this.rxdb.deleteWorkout(workout);
@@ -71,7 +75,7 @@ export class WorkoutLogPageComponent {
     }
 
     return Array.from(counts.entries()).map(([category, count]) => ({
-      name: category,
+      name: this.displayCategory.transform(category),
       value: count,
     }));
   }

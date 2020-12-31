@@ -81,7 +81,7 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
     MatNativeDateModule,
     NgxChartsModule,
   ],
-  providers: [],
+  providers: [DisplayCategoryPipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

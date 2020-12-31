@@ -13,10 +13,12 @@ mat-card {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  align-items: stretch;
 }
 
 .chart {
   flex: 1;
+  min-width: 40ex;
 }
 
 .exercise {

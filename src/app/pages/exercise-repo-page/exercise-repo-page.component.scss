@@ -1,30 +1,30 @@
 .exercise {
-  min-width: 40ex;
-  margin: 0 1ex 1em;
+  margin-bottom: 1em;
 }
 
-.exercise-list {
-  min-width: 40ex;
-  margin-right: 2ex;
-  height: 90vh;
+.exercise-container {
+  display: flex;
+  flex-direction: column;
+  width: 45ex;
+  padding: 1em 1ex;
   overflow-y: scroll;
 }
 
 .chart-container {
   flex: 1;
-  margin-bottom: 1em;
-  height: 80vh;
+  overflow-y: scroll;
+  padding: 1em 2ex;
 }
 
 .container {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin: 1em 5ex;
+  height: calc(100vh - 64px);
 }
 
 #add-button {
   position: absolute;
-  left: 5ex;
-  bottom: 5vh;
+  left: 40ex;
+  bottom: 3vh;
 }

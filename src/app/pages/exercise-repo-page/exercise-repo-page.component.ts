@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { EditExerciseTypeDialogComponent } from 'src/app/components/edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 import { RxdbService } from 'src/app/services/rxdb.service';
 import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
@@ -13,17 +13,19 @@ import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 })
 export class ExerciseRepoPageComponent {
   exercises$ = this.rxdb.exerciseTypes$.pipe(
-    tap((types) => {
-      if (types.length > 0 && !this._currentlyViewing$.value) {
-        this._currentlyViewing$.next(types[0]);
-      }
-    })
+    map((types) => types.sort((a, b) => a.name.localeCompare(b.name)))
   );
 
   private _currentlyViewing$ = new BehaviorSubject<ExerciseType | null>(null);
   currentlyViewing$: Observable<ExerciseType | null> = this._currentlyViewing$.asObservable();
 
-  constructor(private rxdb: RxdbService, private dialog: MatDialog) {}
+  constructor(private rxdb: RxdbService, private dialog: MatDialog) {
+    this.exercises$.subscribe((types) => {
+      if (types.length > 0 && !this._currentlyViewing$.value) {
+        this._currentlyViewing$.next(types[0]);
+      }
+    });
+  }
 
   edit(type: ExerciseType = emptyExerciseType()): void {
     const ref = this.dialog.open(EditExerciseTypeDialogComponent, {

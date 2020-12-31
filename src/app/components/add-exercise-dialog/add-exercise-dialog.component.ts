@@ -15,7 +15,9 @@ import { EditExerciseTypeDialogComponent } from '../edit-exercise-type-dialog/ed
 export class AddExerciseDialogComponent {
   selected = new FormControl();
 
-  exercises$: Observable<ExerciseType[]> = this.rxdb.exerciseTypes$;
+  exercises$: Observable<ExerciseType[]> = this.rxdb.exerciseTypes$.pipe(
+    map((types) => types.sort((a, b) => a.name.localeCompare(b.name)))
+  );
 
   filter$: Observable<string> = concat(of(''), this.selected.valueChanges).pipe(
     map((f) => (typeof f === 'string' ? f : f.name))
