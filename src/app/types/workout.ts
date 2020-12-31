@@ -4,9 +4,10 @@ import {
   DATE_KEY,
   EXERCISE_ARRAY_KEY,
   SETS_ARRAY_KEY,
-  EXERCISE_TYPE_ID_KEY,
+  EXERCISE_TYPE_KEY,
 } from '../constants';
 import { v4 as uuidv4 } from 'uuid';
+import { emptyExerciseType, ExerciseType } from './exercise-type';
 
 /**
  * The fields that can be stored in an ExerciseSet
@@ -124,14 +125,14 @@ export function copySetForm(form: FormGroup): FormGroup {
  * One exercise, with sets
  */
 export interface Exercise {
-  type: string;
+  type: ExerciseType;
   sets: ExerciseSet[];
 }
 
 export function formToExercise(form: FormGroup): Exercise {
   const setForms = (form.get(SETS_ARRAY_KEY) as FormArray)?.controls || [];
   const sets = setForms.map((set) => formToSet(set as FormGroup));
-  const type = form.get(EXERCISE_TYPE_ID_KEY)?.value || '';
+  const type = form.get(EXERCISE_TYPE_KEY)?.value || emptyExerciseType();
 
   return {
     type,
@@ -139,7 +140,7 @@ export function formToExercise(form: FormGroup): Exercise {
   };
 }
 
-export function emptyExerciseForm(type: string): FormGroup {
+export function emptyExerciseForm(type: ExerciseType): FormGroup {
   return exerciseToForm({
     sets: [],
     type,
@@ -148,7 +149,7 @@ export function emptyExerciseForm(type: string): FormGroup {
 
 export function exerciseToForm(exercise: Exercise): FormGroup {
   return new FormGroup({
-    [EXERCISE_TYPE_ID_KEY]: new FormControl(exercise.type),
+    [EXERCISE_TYPE_KEY]: new FormControl(exercise.type),
     [SETS_ARRAY_KEY]: new FormArray(exercise.sets.map(setToForm)),
   });
 }
@@ -159,7 +160,7 @@ export function exerciseToForm(exercise: Exercise): FormGroup {
 export interface Workout {
   id: string;
   name: string;
-  date: string;
+  date: Date;
   exercises: Exercise[];
 }
 

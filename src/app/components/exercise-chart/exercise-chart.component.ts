@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RxdbService } from 'src/app/services/rxdb.service';
+import { DATA_SOURCE_INJECTION_TOKEN } from 'src/app/constants';
+import DataSource from 'src/app/types/data-source';
 import { ExerciseType } from 'src/app/types/exercise-type';
 import { Exercise, ExerciseSet, Workout } from 'src/app/types/workout';
 
@@ -35,7 +36,9 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
   private dataSubscription = this.getDataSubscription();
   data: Series[] = [];
 
-  constructor(private rxdb: RxdbService) {}
+  constructor(
+    @Inject(DATA_SOURCE_INJECTION_TOKEN) private dataSource: DataSource
+  ) {}
 
   ngOnInit(): void {
     this.dataSubscription.unsubscribe();
@@ -48,7 +51,7 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
   }
 
   private getDataSubscription(): Subscription {
-    return this.rxdb.workouts$
+    return this.dataSource.workouts$
       .pipe(
         map((workouts) => workouts.filter(this.workoutIsRelevant.bind(this))),
         map((workouts) => workouts.map(this.toSummary.bind(this)))
@@ -137,6 +140,6 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
   }
 
   private exerciseMatches(exercise: Exercise): boolean {
-    return exercise.type === this.exerciseType?.id;
+    return exercise.type.id === this.exerciseType?.id;
   }
 }

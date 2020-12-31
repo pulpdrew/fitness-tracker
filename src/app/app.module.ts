@@ -41,6 +41,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { ExerciseChartComponent } from './components/exercise-chart/exercise-chart.component';
 import { SetPipe } from './pipes/set.pipe';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
+import { RxdbService } from './services/rxdb.service';
+import { DATA_SOURCE_INJECTION_TOKEN } from './constants';
 
 @NgModule({
   declarations: [
@@ -81,7 +83,10 @@ import { SettingsPageComponent } from './pages/settings-page/settings-page.compo
     MatNativeDateModule,
     NgxChartsModule,
   ],
-  providers: [DisplayCategoryPipe],
+  providers: [
+    DisplayCategoryPipe,
+    { provide: DATA_SOURCE_INJECTION_TOKEN, useClass: RxdbService },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

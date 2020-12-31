@@ -5,8 +5,8 @@
 
     <mat-card-content class="content">
       <div class="exercises">
-        <div class="exercise" *ngFor="let exercise of workout.exerciseDisplays">
-          <span class="exercise-name">{{ exercise.name }}:</span>
+        <div class="exercise" *ngFor="let exercise of workout.exercises">
+          <span class="exercise-name">{{ exercise.type.name }}:</span>
           <span class="set" *ngFor="let set of exercise.sets; let i = index">
             {{ set | set }}
           </span>

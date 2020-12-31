@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EditExerciseTypeDialogComponent } from 'src/app/components/edit-exercise-type-dialog/edit-exercise-type-dialog.component';
-import { RxdbService } from 'src/app/services/rxdb.service';
+import { DATA_SOURCE_INJECTION_TOKEN } from 'src/app/constants';
+import DataSource from 'src/app/types/data-source';
 import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 
 @Component({
@@ -12,14 +13,17 @@ import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
   styleUrls: ['./exercise-repo-page.component.scss'],
 })
 export class ExerciseRepoPageComponent {
-  exercises$ = this.rxdb.exerciseTypes$.pipe(
+  exercises$ = this.data.exerciseTypes$.pipe(
     map((types) => types.sort((a, b) => a.name.localeCompare(b.name)))
   );
 
   private _currentlyViewing$ = new BehaviorSubject<ExerciseType | null>(null);
   currentlyViewing$: Observable<ExerciseType | null> = this._currentlyViewing$.asObservable();
 
-  constructor(private rxdb: RxdbService, private dialog: MatDialog) {
+  constructor(
+    @Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource,
+    private dialog: MatDialog
+  ) {
     this.exercises$.subscribe((types) => {
       if (types.length > 0 && !this._currentlyViewing$.value) {
         this._currentlyViewing$.next(types[0]);
@@ -34,12 +38,12 @@ export class ExerciseRepoPageComponent {
     });
 
     ref.afterClosed().subscribe((editedType) => {
-      if (editedType) this.rxdb.saveExerciseType(editedType);
+      if (editedType) this.data.upsertExerciseType(editedType);
     });
   }
 
   remove(type: ExerciseType): void {
-    this.rxdb.deleteExerciseType(type);
+    this.data.deleteExerciseType(type);
   }
 
   view(exercise: ExerciseType): void {

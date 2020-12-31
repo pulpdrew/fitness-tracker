@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { RxdbService } from 'src/app/services/rxdb.service';
+import { DATA_SOURCE_INJECTION_TOKEN } from 'src/app/constants';
+import DataSource from 'src/app/types/data-source';
 
 interface FileInputTarget extends EventTarget {
   files?: File[];
@@ -20,14 +21,17 @@ export class ImportExportPageComponent implements OnInit {
   downloadUrl: SafeUrl | null = null;
   reader = new FileReader();
 
-  constructor(private rxdb: RxdbService, private sanitizer: DomSanitizer) {
+  constructor(
+    @Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource,
+    private sanitizer: DomSanitizer
+  ) {
     this.reader.onload = () => {
-      this.rxdb.import(this.reader.result?.toString() || '');
+      this.data.importData(this.reader.result?.toString() || '');
     };
   }
 
   async ngOnInit(): Promise<void> {
-    const data = await this.rxdb.export();
+    const data = await this.data.exportData();
     const blob = new Blob([data], { type: 'text/json' });
     this.downloadUrl = this.sanitizer.bypassSecurityTrustUrl(
       URL.createObjectURL(blob)

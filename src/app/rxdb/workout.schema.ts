@@ -1,5 +1,5 @@
 import { JsonSchema, RxJsonSchema } from 'rxdb';
-import { weightUnits, Workout } from '../types/workout';
+import { ExerciseSet, weightUnits } from '../types/workout';
 
 const setSchema: JsonSchema = {
   type: 'object',
@@ -20,6 +20,11 @@ const setSchema: JsonSchema = {
   },
 };
 
+export interface ExerciseDocument {
+  type: string;
+  sets: ExerciseSet[];
+}
+
 const exerciseSchema: JsonSchema = {
   type: 'object',
   required: ['type', 'sets'],
@@ -34,7 +39,14 @@ const exerciseSchema: JsonSchema = {
   },
 };
 
-const workoutSchema: RxJsonSchema<Workout> = {
+export interface WorkoutDocument {
+  id: string;
+  name: string;
+  date: string;
+  exercises: ExerciseDocument[];
+}
+
+export const workoutSchema: RxJsonSchema<WorkoutDocument> = {
   version: 0,
   title: 'workout schema',
   description: '',
@@ -58,5 +70,3 @@ const workoutSchema: RxJsonSchema<Workout> = {
   required: ['id', 'name', 'exercises', 'date'],
   indexes: ['exercises.[].type'],
 };
-
-export default workoutSchema;

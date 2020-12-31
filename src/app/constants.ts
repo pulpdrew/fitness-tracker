@@ -9,4 +9,5 @@ export const DATE_KEY = 'date';
 export const EXERCISE_ARRAY_KEY = 'exercises';
 export const ADD_EXERCISE_DIALOG_WIDTH = '50ex';
 export const SETS_ARRAY_KEY = 'sets';
-export const EXERCISE_TYPE_ID_KEY = 'exercise-type-id';
+export const EXERCISE_TYPE_KEY = 'exercise-type';
+export const DATA_SOURCE_INJECTION_TOKEN = 'DataSource';

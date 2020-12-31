@@ -9,21 +9,20 @@ import {
 } from 'rxdb';
 import { RxDBValidatePlugin } from 'rxdb/plugins/validate';
 import * as IndexedDbAdapter from 'pouchdb-adapter-indexeddb';
-import workoutSchema from '../schemas/workout.schema';
+
+import { combineLatest, from, Observable } from 'rxjs';
+import { map, switchMap, take } from 'rxjs/operators';
+
 import { Workout } from '../types/workout';
-import { exerciseTypeSchema } from '../schemas/exercise-type.schema';
-import { ExerciseType } from '../types/exercise-type';
-import { from, Observable } from 'rxjs';
-import { first, map, switchMap, take } from 'rxjs/operators';
-import { Settings } from '../types/settings';
-import { getDefaultSettings } from '../types/settings';
-import { settingsSchema } from '../schemas/settings.schema';
+import { emptyExerciseType, ExerciseType } from '../types/exercise-type';
+import { Settings, getDefaultSettings } from '../types/settings';
 
-type ExerciseTypeDoc = RxDocument<ExerciseType, unknown>;
-type WorkoutDoc = RxDocument<Workout, unknown>;
-type SettingsDoc = RxDocument<Settings, unknown>;
+import { WorkoutDocument, workoutSchema } from '../rxdb/workout.schema';
+import { settingsSchema } from '../rxdb/settings.schema';
+import { exerciseTypeSchema } from '../rxdb/exercise-type.schema';
+import DataSource from '../types/data-source';
 
-type WorkoutCollection = RxCollection<Workout, unknown, unknown>;
+type WorkoutCollection = RxCollection<WorkoutDocument, unknown, unknown>;
 type ExerciseTypeCollection = RxCollection<ExerciseType, unknown, unknown>;
 type SettingsCollection = RxCollection<Settings, unknown, unknown>;
 
@@ -41,25 +40,19 @@ const ADAPTER_NAME = 'indexeddb';
 @Injectable({
   providedIn: 'root',
 })
-export class RxdbService {
+export class RxdbService implements DataSource {
   /**
    * Database that is guaranteed to be initialized
    */
   private _db$: Observable<Database>;
 
   /**
-   * The exercise types that are stored in the database
+   * Raw workout documents from the database
    */
+  private _workouts$: Observable<WorkoutDocument[]>;
+
   exerciseTypes$: Observable<ExerciseType[]>;
-
-  /**
-   * The completed workouts that are stored in the database
-   */
   workouts$: Observable<Workout[]>;
-
-  /**
-   * The current settings for this application
-   */
   settings$: Observable<Settings>;
 
   constructor() {
@@ -88,11 +81,13 @@ export class RxdbService {
     );
 
     // Get the workouts from the database
-    this.workouts$ = this._db$.pipe(
+    this._workouts$ = this._db$.pipe(
       switchMap((db) =>
         db.workouts
           .find()
-          .$.pipe(map((docs) => docs.map((doc) => this.projectWorkout(doc))))
+          .$.pipe(
+            map((docs) => docs.map((doc) => this.projectWorkoutDocument(doc)))
+          )
       )
     );
 
@@ -108,6 +103,54 @@ export class RxdbService {
           )
       )
     );
+
+    // Join the raw workouts and the exercise types
+    this.workouts$ = combineLatest([this._workouts$, this.exerciseTypes$]).pipe(
+      map(([workouts, types]) => this.join(workouts, types))
+    );
+  }
+
+  async upsertWorkout(workout: Workout): Promise<void> {
+    const db = await this.getDatabase();
+    await db.workouts.upsert(this.toWorkoutDocument(workout));
+  }
+
+  async deleteWorkout(workout: Workout): Promise<void> {
+    const db = await this.getDatabase();
+    await db.workouts.findOne(workout.id).remove();
+  }
+
+  async upsertExerciseType(type: ExerciseType): Promise<void> {
+    const db = await this.getDatabase();
+    await db.exercises.upsert(type);
+  }
+
+  async deleteExerciseType(type: ExerciseType): Promise<void> {
+    const db = await this.getDatabase();
+    await db.exercises.findOne(type.id).remove();
+  }
+
+  async exportData(): Promise<string> {
+    const db = await this.getDatabase();
+    const dump = await db.dump();
+    return JSON.stringify(dump);
+  }
+
+  async importData(json: string): Promise<void> {
+    const db = await this.getDatabase();
+    await db.importDump(JSON.parse(json) as RxDumpDatabase<Collections>);
+  }
+
+  async updateSettings(settings: Settings): Promise<void> {
+    const db = await this.getDatabase();
+    await db.settings.upsert(settings);
+  }
+
+  /**
+   * Get the current database instance
+   */
+  private async getDatabase(): Promise<Database> {
+    return this._db$.pipe(take(1)).toPromise();
   }
 
   /**
@@ -132,11 +175,13 @@ export class RxdbService {
   }
 
   /**
-   * Projects only the Workout properties from a given RxDocument<Workout>
+   * Projects only the WorkoutDocument properties from a given RxDocument<WorkoutDocument>
    *
-   * @param document the RxDocument representing the Workout object
+   * @param document the RxDocument representing the raw WorkoutDocument object
    */
-  private projectWorkout(document: WorkoutDoc): Workout {
+  private projectWorkoutDocument(
+    document: RxDocument<WorkoutDocument, unknown>
+  ): WorkoutDocument {
     return {
       name: document.name,
       date: document.date,
@@ -150,7 +195,7 @@ export class RxdbService {
    *
    * @param document the RxDocument representing the Settings object
    */
-  private projectSettings(document: SettingsDoc): Settings {
+  private projectSettings(document: RxDocument<Settings, unknown>): Settings {
     return {
       id: document.id,
       defaultWeightUnit: document.defaultWeightUnit,
@@ -162,7 +207,9 @@ export class RxdbService {
    *
    * @param document the RxDocument representing the ExerciseType object
    */
-  private projectExerciseType(document: ExerciseTypeDoc): ExerciseType {
+  private projectExerciseType(
+    document: RxDocument<ExerciseType, unknown>
+  ): ExerciseType {
     return {
       id: document.id,
       fields: document.fields,
@@ -172,42 +219,38 @@ export class RxdbService {
     };
   }
 
-  async saveWorkout(workout: Workout): Promise<void> {
-    this._db$.subscribe((db) => db.workouts.upsert(workout));
+  /**
+   * Convert the given workout to a Workout Document.
+   *
+   * @param workout the Workout to convert
+   */
+  private toWorkoutDocument(workout: Workout): WorkoutDocument {
+    return {
+      date: workout.date.toUTCString(),
+      id: workout.id,
+      name: workout.name,
+      exercises: workout.exercises.map((e) => ({
+        sets: e.sets,
+        type: e.type.id,
+      })),
+    };
   }
 
-  async deleteWorkout(workout: Workout): Promise<void> {
-    this._db$
-      .pipe(first())
-      .subscribe((db) => db.workouts.findOne(workout.id).remove());
-  }
-
-  async saveExerciseType(type: ExerciseType): Promise<void> {
-    this._db$.pipe(first()).subscribe((db) => db.exercises.upsert(type));
-  }
-
-  async deleteExerciseType(type: ExerciseType): Promise<void> {
-    this._db$
-      .pipe(first())
-      .subscribe((db) => db.exercises.findOne(type.id).remove());
-  }
-
-  async export(): Promise<string> {
-    const db = await this._db$.toPromise();
-    const dump = await db.dump();
-    return JSON.stringify(dump);
-  }
-
-  import(json: string): void {
-    this._db$
-      .pipe(first())
-      .subscribe((db) =>
-        db.importDump(JSON.parse(json) as RxDumpDatabase<Collections>)
-      );
-  }
-
-  async saveSettings(settings: Settings): Promise<void> {
-    const db = await this._db$.pipe(take(1)).toPromise();
-    await db.settings.upsert(settings);
+  /**
+   * Joins the given WorkoutDocuments with the given ExerciseTypes.
+   *
+   * @param workouts The raw workout documents with a foreign key into Exercise Types
+   * @param types The exercise type documents
+   */
+  private join(workouts: WorkoutDocument[], types: ExerciseType[]): Workout[] {
+    return workouts.map((wDoc) => ({
+      date: new Date(wDoc.date),
+      id: wDoc.id,
+      name: wDoc.name,
+      exercises: wDoc.exercises.map((eDoc) => ({
+        sets: eDoc.sets,
+        type: types.find((t) => t.id === eDoc.type) || emptyExerciseType(),
+      })),
+    }));
   }
 }

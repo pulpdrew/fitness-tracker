@@ -1,19 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { EXERCISE_TYPE_ID_KEY, SETS_ARRAY_KEY } from 'src/app/constants';
-import { RxdbService } from 'src/app/services/rxdb.service';
+import { EXERCISE_TYPE_KEY, SETS_ARRAY_KEY } from 'src/app/constants';
 import { SettingsService } from 'src/app/services/settings.service';
-import { ExerciseType } from 'src/app/types/exercise-type';
+import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 import {
   copySetForm,
   emptySetForm,
+  exerciseToForm,
   SetField,
   weightUnits,
 } from 'src/app/types/workout';
-
-const DEFAULT_EXERCISE_NAME = 'Exercise name is unavailable';
 
 @Component({
   selector: 'app-exercise-form',
@@ -24,43 +20,25 @@ export class ExerciseFormComponent implements OnInit {
   /**
    * The form backing the exercise data
    */
-  @Input() form: FormGroup = new FormGroup({
-    [SETS_ARRAY_KEY]: new FormArray([]),
+  @Input() form: FormGroup = exerciseToForm({
+    sets: [],
+    type: emptyExerciseType(),
   });
 
   /**
-   * The exercise type corresponding to the input `type`
+   * The ExerciseType corresponding to the given exercise form
    */
-  type$: Observable<ExerciseType | undefined> = of();
-
-  /**
-   * The name of this exercise, from `type$`
-   */
-  name$: Observable<string> = of('');
-
-  /**
-   * The fields displayed for this exercise type, from `type$`
-   */
-  fields$: Observable<SetField[]> = of([]);
+  type: ExerciseType = emptyExerciseType();
 
   // Imports used in the template
   SETS_ARRAY_KEY = SETS_ARRAY_KEY;
   SetField = SetField;
   units = weightUnits;
 
-  constructor(private rxdb: RxdbService, private settings: SettingsService) {}
+  constructor(private settings: SettingsService) {}
 
   async ngOnInit(): Promise<void> {
-    this.type$ = this.rxdb.exerciseTypes$.pipe(
-      map((exercises) =>
-        exercises.find(
-          (e) => e.id === this.form.get(EXERCISE_TYPE_ID_KEY)?.value || ''
-        )
-      )
-    );
-
-    this.name$ = this.type$.pipe(map((t) => t?.name || DEFAULT_EXERCISE_NAME));
-    this.fields$ = this.type$.pipe(map((t) => t?.fields || []));
+    this.type = this.form.get(EXERCISE_TYPE_KEY)?.value || emptyExerciseType();
   }
 
   get sets(): FormArray {

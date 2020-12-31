@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, concat, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RxdbService } from 'src/app/services/rxdb.service';
+import { DATA_SOURCE_INJECTION_TOKEN } from 'src/app/constants';
+import DataSource from 'src/app/types/data-source';
 import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 import { EditExerciseTypeDialogComponent } from '../edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 
@@ -15,7 +16,7 @@ import { EditExerciseTypeDialogComponent } from '../edit-exercise-type-dialog/ed
 export class AddExerciseDialogComponent {
   selected = new FormControl();
 
-  exercises$: Observable<ExerciseType[]> = this.rxdb.exerciseTypes$.pipe(
+  exercises$: Observable<ExerciseType[]> = this.data.exerciseTypes$.pipe(
     map((types) => types.sort((a, b) => a.name.localeCompare(b.name)))
   );
 
@@ -36,9 +37,8 @@ export class AddExerciseDialogComponent {
   );
 
   constructor(
-    private dialogRef: MatDialogRef<EditExerciseTypeDialogComponent>,
     private dialog: MatDialog,
-    private rxdb: RxdbService
+    @Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource
   ) {}
 
   display(exercise: ExerciseType): string {
@@ -54,7 +54,7 @@ export class AddExerciseDialogComponent {
 
     ref.afterClosed().subscribe((newType) => {
       if (newType) {
-        this.rxdb.saveExerciseType(newType);
+        this.data.upsertExerciseType(newType);
         this.selected.setValue(newType);
       }
     });

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,8 +9,9 @@ import {
   EXERCISE_ARRAY_KEY,
   ADD_EXERCISE_DIALOG_WIDTH,
   WORKOUT_ROUTE,
+  DATA_SOURCE_INJECTION_TOKEN,
 } from 'src/app/constants';
-import { RxdbService } from 'src/app/services/rxdb.service';
+import DataSource from 'src/app/types/data-source';
 import { ExerciseType } from 'src/app/types/exercise-type';
 import {
   Workout,
@@ -31,7 +32,7 @@ export class EditWorkoutPageComponent {
    * The Reactive Form containing the Workout data
    */
   form = workoutToForm({
-    date: new Date().toUTCString(),
+    date: new Date(),
     exercises: [],
     name: getDefaultWorkoutName(),
     id: '',
@@ -43,7 +44,7 @@ export class EditWorkoutPageComponent {
 
   preexistingWorkout$: Observable<Workout | undefined> = combineLatest([
     this.id$,
-    this.rxdb.workouts$,
+    this.data.workouts$,
   ]).pipe(map(([id, workouts]) => workouts.find((w) => w.id === id)));
 
   isEditingExisting$: Observable<boolean> = this.preexistingWorkout$.pipe(
@@ -51,7 +52,7 @@ export class EditWorkoutPageComponent {
   );
 
   constructor(
-    private rxdb: RxdbService,
+    @Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router
@@ -78,7 +79,7 @@ export class EditWorkoutPageComponent {
     });
 
     ref.afterClosed().subscribe((exercise: ExerciseType) => {
-      if (exercise) this.exerciseForms.push(emptyExerciseForm(exercise.id));
+      if (exercise) this.exerciseForms.push(emptyExerciseForm(exercise));
     });
   }
 
@@ -87,7 +88,7 @@ export class EditWorkoutPageComponent {
    */
   saveChanges(): void {
     this.id$.pipe(first()).subscribe((id) => {
-      this.rxdb.saveWorkout(formToWorkout(this.form, id));
+      this.data.upsertWorkout(formToWorkout(this.form, id));
     });
   }
 
@@ -96,7 +97,7 @@ export class EditWorkoutPageComponent {
    */
   saveAsNew(): void {
     const id = uuidv4();
-    this.rxdb.saveWorkout(formToWorkout(this.form, id));
+    this.data.upsertWorkout(formToWorkout(this.form, id));
     this.router.navigate([WORKOUT_ROUTE, id]);
   }
 
