@@ -178,8 +178,8 @@ export function workoutToForm(workout: Workout): FormGroup {
  * @param id the id of the new workout object, defaults to a new UUID.
  */
 export function formToWorkout(form: FormGroup, id = uuidv4()): Workout {
-  const date =
-    form.get(DATE_KEY)?.value.toUTCString() || new Date().toUTCString();
+  const date: Date =
+    form.get(DATE_KEY)?.value || new Date();
   const name = form.get(NAME_KEY)?.value || getDefaultWorkoutName(date);
 
   const exerciseForms =
