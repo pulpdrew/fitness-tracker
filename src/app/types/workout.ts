@@ -66,7 +66,7 @@ export const weightUnits: WeightUnit[] = [WeightUnit.KG, WeightUnit.LB];
  */
 export interface ExerciseSet {
   weight?: number;
-  weightUnits?: 'kg' | 'lb';
+  weightUnits?: WeightUnit;
   reps?: number;
   duration?: number;
 }
@@ -178,8 +178,7 @@ export function workoutToForm(workout: Workout): FormGroup {
  * @param id the id of the new workout object, defaults to a new UUID.
  */
 export function formToWorkout(form: FormGroup, id = uuidv4()): Workout {
-  const date: Date =
-    form.get(DATE_KEY)?.value || new Date();
+  const date: Date = form.get(DATE_KEY)?.value || new Date();
   const name = form.get(NAME_KEY)?.value || getDefaultWorkoutName(date);
 
   const exerciseForms =

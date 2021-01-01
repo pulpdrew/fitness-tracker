@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" *ngIf="!dataIsEmpty; else empty">
   <ngx-charts-line-chart
     [results]="data"
     [xAxis]="true"
@@ -6,8 +6,18 @@
     [autoScale]="true"
     [timeline]="true"
     xAxisLabel="Day"
+    [yAxisLabel]="weightUnit"
     [showXAxisLabel]="true"
+    [showYAxisLabel]="true"
     [rotateXAxisTicks]="true"
+    [legend]="true"
   >
   </ngx-charts-line-chart>
 </div>
+
+<ng-template #empty>
+  <p>
+    There is no data for this exercise type yet. Complete this exercise to see
+    progress data.
+  </p>
+</ng-template>

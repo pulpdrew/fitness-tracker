@@ -1,26 +1,17 @@
-import { Component, Inject, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { DATA_SOURCE_INJECTION_TOKEN } from 'src/app/constants';
-import DataSource from 'src/app/types/data-source';
+import {
+  ExerciseStatsService,
+  ExerciseStatsSummary,
+} from 'src/app/services/exercise-stats.service';
+import { SettingsService } from 'src/app/services/settings.service';
 import { ExerciseType } from 'src/app/types/exercise-type';
-import { Exercise, ExerciseSet, Workout } from 'src/app/types/workout';
-
-interface DaySummary {
-  date: Date;
-  sets: ExerciseSet[];
-  totalWeight: number;
-  maxWeight: number;
-  totalReps: number;
-  maxReps: number;
-  totalDuration: number;
-  maxDuration: number;
-}
+import { WeightUnit } from 'src/app/types/workout';
 
 interface Series {
   name: string;
   series: {
-    name: string;
+    name: Date;
     value: number;
   }[];
 }
@@ -36,9 +27,17 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
   private dataSubscription = this.getDataSubscription();
   data: Series[] = [];
 
+  dataIsEmpty = true;
+  weightUnit = WeightUnit.KG;
+
   constructor(
-    @Inject(DATA_SOURCE_INJECTION_TOKEN) private dataSource: DataSource
-  ) {}
+    private statsService: ExerciseStatsService,
+    private settings: SettingsService
+  ) {
+    this.settings.defaultWeightUnit$.subscribe(
+      (unit) => (this.weightUnit = unit)
+    );
+  }
 
   ngOnInit(): void {
     this.dataSubscription.unsubscribe();
@@ -51,95 +50,85 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
   }
 
   private getDataSubscription(): Subscription {
-    return this.dataSource.workouts$
-      .pipe(
-        map((workouts) => workouts.filter(this.workoutIsRelevant.bind(this))),
-        map((workouts) => workouts.map(this.toSummary.bind(this)))
-      )
-      .subscribe((days) => {
-        this.data = [
-          {
-            name: 'Total Reps',
-            series: days.map((day) => ({
-              name: day.date.toLocaleDateString(),
-              value: day.totalReps,
-            })),
-          },
-          {
-            name: 'Max Reps',
-            series: days.map((day) => ({
-              name: day.date.toLocaleDateString(),
-              value: day.maxReps,
-            })),
-          },
-          {
-            name: 'Total Weight',
-            series: days.map((day) => ({
-              name: day.date.toLocaleDateString(),
-              value: day.totalWeight,
-            })),
-          },
-          {
-            name: 'Max Weight',
-            series: days.map((day) => ({
-              name: day.date.toLocaleDateString(),
-              value: day.maxWeight,
-            })),
-          },
-          {
-            name: 'Total Duration',
-            series: days.map((day) => ({
-              name: day.date.toLocaleDateString(),
-              value: day.totalDuration,
-            })),
-          },
-          {
-            name: 'Max Duration',
-            series: days.map((day) => ({
-              name: day.date.toLocaleDateString(),
-              value: day.maxDuration,
-            })),
-          },
-        ];
+    return this.statsService.stats$.subscribe((stats) => {
+      const type = this.exerciseType?.id || '';
+      this.data = this.buildSeries(type, stats);
+      this.dataIsEmpty = this.data.length == 0;
+    });
+  }
+
+  private buildSeries(
+    type: string,
+    stats: Map<string, ExerciseStatsSummary[]>
+  ): Series[] {
+    const data = [];
+
+    if (stats.get(type)?.some((day) => day.totalReps != 0)) {
+      data.push({
+        name: 'Total Reps',
+        series:
+          stats.get(type)?.map((day) => ({
+            name: day.date,
+            value: day.totalReps,
+          })) || [],
       });
-  }
+    }
 
-  private toSummary(workout: Workout): DaySummary {
-    const sets = workout.exercises
-      .filter(this.exerciseMatches.bind(this))
-      .flatMap((exercise) => exercise.sets);
+    if (stats.get(type)?.some((day) => day.maxReps != 0)) {
+      data.push({
+        name: 'Max Reps',
+        series:
+          stats.get(type)?.map((day) => ({
+            name: day.date,
+            value: day.maxReps,
+          })) || [],
+      });
+    }
 
-    const date = new Date(workout.date);
+    if (stats.get(type)?.some((day) => day.totalDuration != 0)) {
+      data.push({
+        name: 'Total Duration',
+        series:
+          stats.get(type)?.map((day) => ({
+            name: day.date,
+            value: day.totalDuration,
+          })) || [],
+      });
+    }
 
-    return {
-      date,
-      sets,
-      totalWeight: sets
-        .map((s) => s.weight || 0)
-        .reduce((total, next) => total + next),
-      totalDuration: sets
-        .map((s) => s.duration || 0)
-        .reduce((total, next) => total + next),
-      totalReps: sets
-        .map((s) => s.reps || 0)
-        .reduce((total, next) => total + next),
-      maxDuration: sets
-        .map((s) => s.duration || 0)
-        .reduce((max, next) => Math.max(max, next)),
-      maxWeight: sets
-        .map((s) => s.weight || 0)
-        .reduce((max, next) => Math.max(max, next)),
-      maxReps: sets
-        .map((s) => s.reps || 0)
-        .reduce((max, next) => Math.max(max, next)),
-    };
-  }
+    if (stats.get(type)?.some((day) => day.maxDuration != 0)) {
+      data.push({
+        name: 'Max Duration',
+        series:
+          stats.get(type)?.map((day) => ({
+            name: day.date,
+            value: day.maxDuration,
+          })) || [],
+      });
+    }
 
-  private workoutIsRelevant(workout: Workout): boolean {
-    return !!workout.exercises.some(this.exerciseMatches.bind(this));
-  }
+    if (stats.get(type)?.some((day) => day.totalWeight != 0)) {
+      data.push({
+        name: 'Total Weight',
+        series:
+          stats.get(type)?.map((day) => ({
+            name: day.date,
+            value: day.totalWeight,
+          })) || [],
+      });
+    }
 
-  private exerciseMatches(exercise: Exercise): boolean {
-    return exercise.type.id === this.exerciseType?.id;
+    if (stats.get(type)?.some((day) => day.maxWeight != 0)) {
+      data.push({
+        name: 'Max Weight',
+        series:
+          stats.get(type)?.map((day) => ({
+            name: day.date,
+            value: day.maxWeight,
+          })) || [],
+      });
+    }
+
+    return data;
   }
 }
