@@ -107,4 +107,26 @@ export class EditWorkoutPageComponent {
   getChildForm(index: number): FormGroup {
     return this.exerciseForms.at(index) as FormGroup;
   }
+
+  moveUp(index: number): void {
+    if (index > 0 && index < this.exerciseForms.length) {
+      const moved = this.exerciseForms.at(index);
+      this.exerciseForms.removeAt(index);
+      this.exerciseForms.insert(index - 1, moved);
+    }
+  }
+
+  moveDown(index: number): void {
+    if (index >= 0 && index < this.exerciseForms.length - 1) {
+      const moved = this.exerciseForms.at(index);
+      this.exerciseForms.removeAt(index);
+      this.exerciseForms.insert(index + 1, moved);
+    }
+  }
+
+  remove(index: number): void {
+    if (index >= 0 && index < this.exerciseForms.length) {
+      this.exerciseForms.removeAt(index);
+    }
+  }
 }

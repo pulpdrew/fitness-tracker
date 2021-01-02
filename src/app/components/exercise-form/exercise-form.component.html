@@ -1,5 +1,18 @@
 <mat-card>
-  <mat-card-title>{{ type.name }}</mat-card-title>
+  <div mat-card-title>
+    <span class="title">{{ type.name }}</span>
+    <span>
+      <button mat-icon-button (click)="moveUp()" color="accent">
+        <mat-icon>keyboard_arrow_up</mat-icon>
+      </button>
+      <button mat-icon-button (click)="moveDown()" color="accent">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </button>
+      <button mat-icon-button (click)="removeExercise()" color="accent">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </span>
+  </div>
   <mat-card-content>
     <div [formGroup]="form">
       <div [formArrayName]="SETS_ARRAY_KEY">
