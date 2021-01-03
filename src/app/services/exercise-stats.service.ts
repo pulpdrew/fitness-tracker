@@ -1,12 +1,23 @@
 import { Inject, Injectable } from '@angular/core';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DATA_SOURCE_INJECTION_TOKEN } from '../constants';
 import DataSource from '../types/data-source';
+import { ExerciseType } from '../types/exercise-type';
 import { ExerciseSet, WeightUnit, Workout } from '../types/workout';
 import { SettingsService } from './settings.service';
 
-export interface ExerciseStatsSummary {
+export interface ExerciseStats {
+  type: ExerciseType;
+  history: WorkoutSummary[];
+  lastSet: ExerciseSet;
+  maxWeight: number;
+  maxWeightUnits: WeightUnit;
+  maxReps: number;
+  maxDuration: number;
+}
+export interface WorkoutSummary {
+  workoutId: string;
   date: Date;
   sets: ExerciseSet[];
   totalWeight: number;
@@ -22,7 +33,7 @@ export interface ExerciseStatsSummary {
   providedIn: 'root',
 })
 export class ExerciseStatsService {
-  stats$ = combineLatest([
+  stats$: Observable<Map<string, ExerciseStats>> = combineLatest([
     this.data.workouts$,
     this.settings.defaultWeightUnit$,
   ]).pipe(map(([workouts, unit]) => this.calculateStats(workouts, unit)));
@@ -40,84 +51,72 @@ export class ExerciseStatsService {
   private calculateStats(
     workouts: Workout[],
     weightUnits: WeightUnit
-  ): Map<string, ExerciseStatsSummary[]> {
-    const sets = new Map<string, Map<Date, ExerciseSet[]>>();
-    for (const workout of workouts) {
-      const date = workout.date;
-      for (const exercise of workout.exercises) {
-        const id = exercise.type.id;
+  ): Map<string, ExerciseStats> {
+    // Get the all of the exercise types that have been completed
+    const types = workouts
+      .flatMap((exercise) => exercise.exercises)
+      .map((exercise) => exercise.type)
+      .reduce((uniq, type) => uniq.add(type), new Set<ExerciseType>());
 
-        if (!sets.has(id)) {
-          sets.set(id, new Map());
-        }
+    const stats = new Map<string, ExerciseStats>();
+    for (const type of types) {
+      const workoutSummaries = workouts.map((w) =>
+        this.summarizeWorkout(w, type.id, weightUnits)
+      );
 
-        const existingSets = sets.get(id)?.get(date) || [];
-        const newSets = existingSets.concat(exercise.sets);
-        sets.get(id)?.set(date, newSets);
-      }
-    }
+      const lastWorkout = workoutSummaries[workoutSummaries.length - 1];
+      const lastSet = lastWorkout.sets[lastWorkout.sets.length];
 
-    const stats = new Map<string, ExerciseStatsSummary[]>();
-    for (const [id, map] of sets.entries()) {
-      const summaries = Array.from(map.entries())
-        .map(([date, sets]) => this.buildDaySummary(date, sets, weightUnits))
-        .sort(
-          (a, b) => b.date.getUTCMilliseconds() - a.date.getUTCMilliseconds()
-        );
-      stats.set(id, summaries);
+      stats.set(type.id, {
+        type,
+        history: workoutSummaries,
+        lastSet,
+        maxDuration: Math.max(...workoutSummaries.map((s) => s.maxDuration)),
+        maxReps: Math.max(...workoutSummaries.map((s) => s.maxReps)),
+        maxWeight: Math.max(...workoutSummaries.map((s) => s.maxWeight)),
+        maxWeightUnits: weightUnits,
+      });
     }
 
     return stats;
   }
 
-  private buildDaySummary(
-    date: Date,
-    sets: ExerciseSet[],
+  private summarizeWorkout(
+    workout: Workout,
+    exerciseTypeId: string,
     weightUnits: WeightUnit
-  ): ExerciseStatsSummary {
-    const summary: ExerciseStatsSummary = {
-      date,
+  ): WorkoutSummary {
+    const sets = workout.exercises
+      .filter((e) => e.type.id === exerciseTypeId)
+      .flatMap((e) => e.sets);
+    return {
       sets,
+      workoutId: workout.id,
+      date: workout.date,
       weightUnits,
-      maxDuration: 0,
-      totalDuration: 0,
-      maxReps: 0,
-      totalReps: 0,
-      maxWeight: 0,
-      totalWeight: 0,
+      maxDuration: Math.max(...sets.map((s) => s.duration || 0), 0),
+      maxReps: Math.max(...sets.map((s) => s.reps || 0), 0),
+      maxWeight: Math.max(
+        ...sets
+          .filter((s) => !!s.weight)
+          .map((s) => this.ensureUnit(s.weight!, s.weightUnits!, weightUnits)),
+        0
+      ),
+      totalDuration: sets
+        .map((s) => s.duration || 0)
+        .reduce((sum, next) => sum + next, 0),
+      totalReps: sets
+        .map((s) => s.reps || 0)
+        .reduce((sum, next) => sum + next, 0),
+      totalWeight: sets
+        .filter((s) => !!s.weight)
+        .map(
+          (s) =>
+            this.ensureUnit(s.weight!, s.weightUnits!, weightUnits) *
+            (s.reps || 1)
+        )
+        .reduce((sum, next) => sum + next, 0),
     };
-
-    for (const set of sets) {
-      const weight = set.weight
-        ? this.ensureUnit(set.weight!, set.weightUnits!, weightUnits)
-        : 0;
-
-      if (weight && weight > summary.maxWeight) {
-        summary.maxWeight = weight;
-      }
-
-      if (weight) {
-        summary.totalWeight += weight * (set.reps || 1);
-      }
-
-      if (set.reps && set.reps > summary.maxReps) {
-        summary.maxReps = set.reps;
-      }
-
-      if (set.reps) {
-        summary.totalReps += set.reps;
-      }
-
-      if (set.duration && set.duration > summary.maxDuration) {
-        summary.maxDuration = set.duration;
-      }
-
-      if (set.duration) {
-        summary.totalDuration += set.duration;
-      }
-    }
-
-    return summary;
   }
 
   private ensureUnit(

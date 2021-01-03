@@ -106,7 +106,10 @@ export class RxdbService implements DataSource {
 
     // Join the raw workouts and the exercise types
     this.workouts$ = combineLatest([this._workouts$, this.exerciseTypes$]).pipe(
-      map(([workouts, types]) => this.join(workouts, types))
+      map(([workouts, types]) => this.join(workouts, types)),
+      map((workouts) =>
+        workouts.sort((a, b) => b.date.getTime() - a.date.getTime())
+      )
     );
   }
 

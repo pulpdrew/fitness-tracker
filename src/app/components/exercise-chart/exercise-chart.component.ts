@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import {
+  ExerciseStats,
   ExerciseStatsService,
-  ExerciseStatsSummary,
 } from 'src/app/services/exercise-stats.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ExerciseType } from 'src/app/types/exercise-type';
@@ -59,73 +59,87 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
 
   private buildSeries(
     type: string,
-    stats: Map<string, ExerciseStatsSummary[]>
+    stats: Map<string, ExerciseStats>
   ): Series[] {
     const data = [];
 
-    if (stats.get(type)?.some((day) => day.totalReps != 0)) {
+    const history = stats.get(type)?.history || [];
+
+    if (history.some((day) => day.totalReps != 0)) {
       data.push({
         name: 'Total Reps',
         series:
-          stats.get(type)?.map((day) => ({
-            name: day.date,
-            value: day.totalReps,
-          })) || [],
+          history
+            .filter((day) => !!day.totalReps)
+            .map((day) => ({
+              name: day.date,
+              value: day.totalReps,
+            })) || [],
       });
     }
 
-    if (stats.get(type)?.some((day) => day.maxReps != 0)) {
+    if (history.some((day) => day.maxReps != 0)) {
       data.push({
         name: 'Max Reps',
         series:
-          stats.get(type)?.map((day) => ({
-            name: day.date,
-            value: day.maxReps,
-          })) || [],
+          history
+            .filter((day) => !!day.maxReps)
+            .map((day) => ({
+              name: day.date,
+              value: day.maxReps,
+            })) || [],
       });
     }
 
-    if (stats.get(type)?.some((day) => day.totalDuration != 0)) {
+    if (history.some((day) => day.totalDuration != 0)) {
       data.push({
         name: 'Total Duration',
         series:
-          stats.get(type)?.map((day) => ({
-            name: day.date,
-            value: day.totalDuration,
-          })) || [],
+          history
+            .filter((day) => !!day.totalDuration)
+            .map((day) => ({
+              name: day.date,
+              value: day.totalDuration,
+            })) || [],
       });
     }
 
-    if (stats.get(type)?.some((day) => day.maxDuration != 0)) {
+    if (history.some((day) => day.maxDuration != 0)) {
       data.push({
         name: 'Max Duration',
         series:
-          stats.get(type)?.map((day) => ({
-            name: day.date,
-            value: day.maxDuration,
-          })) || [],
+          history
+            .filter((day) => !!day.maxDuration)
+            .map((day) => ({
+              name: day.date,
+              value: day.maxDuration,
+            })) || [],
       });
     }
 
-    if (stats.get(type)?.some((day) => day.totalWeight != 0)) {
+    if (history.some((day) => day.totalWeight != 0)) {
       data.push({
         name: 'Total Weight',
         series:
-          stats.get(type)?.map((day) => ({
-            name: day.date,
-            value: day.totalWeight,
-          })) || [],
+          history
+            .filter((day) => !!day.totalWeight)
+            .map((day) => ({
+              name: day.date,
+              value: day.totalWeight,
+            })) || [],
       });
     }
 
-    if (stats.get(type)?.some((day) => day.maxWeight != 0)) {
+    if (history.some((day) => day.maxWeight != 0)) {
       data.push({
         name: 'Max Weight',
         series:
-          stats.get(type)?.map((day) => ({
-            name: day.date,
-            value: day.maxWeight,
-          })) || [],
+          history
+            .filter((day) => !!day.maxWeight)
+            .map((day) => ({
+              name: day.date,
+              value: day.maxWeight,
+            })) || [],
       });
     }
 

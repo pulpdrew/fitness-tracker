@@ -27,9 +27,7 @@ export class WorkoutLogPageComponent {
     this.data.exerciseTypes$,
   ]).pipe(
     map(([workouts, exercises]) =>
-      workouts
-        .map((w) => this.formatWorkout(w, exercises))
-        .sort((a, b) => b.date.getTime() - a.date.getTime())
+      workouts.map((w) => this.formatWorkout(w, exercises))
     )
   );
 
