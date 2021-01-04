@@ -1,4 +1,4 @@
-<div class="container">
+<div>
   <span class="header">
     <h2>{{ type.name }}</h2>
     <span>Categories: {{ type.categories | displayCategories }}</span>
@@ -9,13 +9,42 @@
   </span>
 
   <app-exercise-chart
-    [history]="history$ | async"
-    [weightUnit]="weightUnit$ | async"
+    [history]="(history$ | async)!"
+    [weightUnit]="(weightUnit$ | async)!"
     class="chart"
   ></app-exercise-chart>
 
-  <h3>History:</h3>
-  <div class="history-container">
-    <div class="history-entry" *ngFor=""></div>
+  <h3>Best Efforts:</h3>
+  <div class="best-efforts">
+    <span *ngIf="maxWeight$ | async">
+      Max Weight: {{ maxWeight$ | async }}
+    </span>
+    <span *ngIf="maxReps$ | async"> Max Reps: {{ maxReps$ | async }} </span>
+    <span *ngIf="maxDuration$ | async">
+      Max Duration: {{ maxDuration$ | async }}
+    </span>
+    <span
+      *ngIf="
+        !(maxWeight$ | async) && !(maxReps$ | async) && !(maxDuration$ | async)
+      "
+      >Complete this exercise to see best efforts</span
+    >
   </div>
+
+  <h3>History:</h3>
+  <div
+    *ngIf="!!(history$ | async)?.length; else emptyHistory"
+    class="history-container"
+  >
+    <app-exercise-history-item
+      *ngFor="let workout of history$ | async"
+      [workout]="workout"
+    ></app-exercise-history-item>
+  </div>
+
+  <ng-template #emptyHistory
+    ><span class="empty-history"
+      >Complete this exercise to see its history</span
+    ></ng-template
+  >
 </div>

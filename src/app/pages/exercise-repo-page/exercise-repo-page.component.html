@@ -11,7 +11,7 @@
 
   <app-exercise-details
     *ngIf="!!(currentlyViewing$ | async)"
-    [type]="currentlyViewing$ | async"
+    [type]="(currentlyViewing$ | async)!"
     class="details"
     (edit)="edit($event)"
   >

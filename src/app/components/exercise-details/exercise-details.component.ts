@@ -8,8 +8,11 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { ExerciseStatsService } from 'src/app/services/exercise-stats.service';
+import { map } from 'rxjs/operators';
+import {
+  emptyExerciseStats,
+  ExerciseStatsService,
+} from 'src/app/services/exercise-stats.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 
@@ -25,13 +28,26 @@ export class ExerciseDetailsComponent implements OnInit, OnChanges {
   private _type$ = new BehaviorSubject<ExerciseType>(this.type);
   private type$ = this._type$.asObservable();
 
-  weightUnit$ = this.settings.defaultWeightUnit$;
   stats$ = combineLatest([this.type$, this.statsService.stats$]).pipe(
-    filter(([type, stats]) => stats.has(type.id)),
-    map(([type, stats]) => stats.get(type.id)!)
+    map(([type, stats]) => stats.get(type.id) || emptyExerciseStats())
   );
 
+  weightUnit$ = this.settings.defaultWeightUnit$;
   history$ = this.stats$.pipe(map((stats) => stats.history));
+
+  maxWeight$ = this.stats$.pipe(
+    map((stats) =>
+      stats.maxWeight ? `${stats.maxWeight} ${stats.maxWeightUnits}` : ''
+    )
+  );
+
+  maxReps$ = this.stats$.pipe(
+    map((stats) => (stats.maxReps ? `${stats.maxReps}` : ''))
+  );
+
+  maxDuration$ = this.stats$.pipe(
+    map((stats) => (stats.maxDuration ? `${stats.maxDuration} seconds` : ''))
+  );
 
   constructor(
     private statsService: ExerciseStatsService,

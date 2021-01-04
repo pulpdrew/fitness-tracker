@@ -45,6 +45,7 @@ import { RxdbService } from './services/rxdb.service';
 import { DATA_SOURCE_INJECTION_TOKEN } from './constants';
 import { ExerciseDetailsComponent } from './components/exercise-details/exercise-details.component';
 import { ExerciseTypeListItemComponent } from './components/exercise-type-list-item/exercise-type-list-item.component';
+import { ExerciseHistoryItemComponent } from './components/exercise-history-item/exercise-history-item.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { ExerciseTypeListItemComponent } from './components/exercise-type-list-i
     SettingsPageComponent,
     ExerciseDetailsComponent,
     ExerciseTypeListItemComponent,
+    ExerciseHistoryItemComponent,
   ],
   imports: [
     BrowserModule,

@@ -3,19 +3,33 @@ import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DATA_SOURCE_INJECTION_TOKEN } from '../constants';
 import DataSource from '../types/data-source';
-import { ExerciseType } from '../types/exercise-type';
+import { emptyExerciseType, ExerciseType } from '../types/exercise-type';
 import { ExerciseSet, WeightUnit, Workout } from '../types/workout';
 import { SettingsService } from './settings.service';
 
 export interface ExerciseStats {
   type: ExerciseType;
   history: WorkoutSummary[];
-  lastSet: ExerciseSet;
+  lastSet?: ExerciseSet;
   maxWeight: number;
   maxWeightUnits: WeightUnit;
   maxReps: number;
   maxDuration: number;
 }
+
+export function emptyExerciseStats(
+  type: ExerciseType = emptyExerciseType()
+): ExerciseStats {
+  return {
+    type,
+    history: [],
+    maxWeight: 0,
+    maxWeightUnits: WeightUnit.KG,
+    maxReps: 0,
+    maxDuration: 0,
+  };
+}
+
 export interface WorkoutSummary {
   workoutId: string;
   date: Date;

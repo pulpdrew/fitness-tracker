@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 1em;
+  margin-left: 2ex;
+
+  .sets {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 2ex;
+
+    .set {
+      margin-bottom: 0.5em;
+    }
+  }
+}

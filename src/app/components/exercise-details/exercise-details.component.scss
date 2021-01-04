@@ -1,6 +1,3 @@
-.container {
-}
-
 .header {
   display: flex;
   flex-direction: row;
@@ -25,7 +22,17 @@
   }
 }
 
+.best-efforts {
+  span {
+    margin-left: 2ex;
+  }
+}
+
 .chart {
   display: block;
   height: 30em;
+}
+
+.empty-history {
+  margin-left: 2ex;
 }

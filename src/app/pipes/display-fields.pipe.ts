@@ -6,7 +6,7 @@ import { fmtDisplaySetField, SetField } from '../types/workout';
 })
 export class DisplayFieldsPipe implements PipeTransform {
   transform(value: SetField[]): string {
-    return value.map((v) => fmtDisplaySetField(v)).join(', ');
+    return value.map((v) => fmtDisplaySetField(v)).join(', ') || 'None';
   }
 }
 

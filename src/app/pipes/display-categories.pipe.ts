@@ -9,7 +9,9 @@ import {
 })
 export class DisplayCategoriesPipe implements PipeTransform {
   transform(values: ExerciseCategory[]): string {
-    return values.map((v) => fmtDisplayExerciseCategory(v)).join(', ');
+    return (
+      values.map((v) => fmtDisplayExerciseCategory(v)).join(', ') || 'None'
+    );
   }
 }
 
