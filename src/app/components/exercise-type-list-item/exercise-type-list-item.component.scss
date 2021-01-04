@@ -1,0 +1,19 @@
+.exercise {
+  margin-bottom: 1em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  line-height: 2.5em;
+
+  .name {
+    font-size: large;
+    font-weight: bold;
+    flex: 1;
+    margin: 0;
+  }
+}
+
+.exercise:hover {
+  background-color: #eeeeee;
+  cursor: pointer;
+}

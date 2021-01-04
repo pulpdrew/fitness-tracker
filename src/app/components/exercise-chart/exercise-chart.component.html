@@ -1,4 +1,4 @@
-<div class="container" *ngIf="!dataIsEmpty; else empty">
+<div class="container" *ngIf="data.length > 0; else empty">
   <ngx-charts-line-chart
     [results]="data"
     [xAxis]="true"

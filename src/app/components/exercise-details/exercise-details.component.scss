@@ -1,0 +1,31 @@
+.container {
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  margin: 0;
+  margin-bottom: 1em;
+  line-height: 2.5em;
+
+  h2 {
+    margin: 0;
+  }
+
+  button {
+    margin-left: 2ex;
+    display: inline;
+    align-self: flex-start;
+  }
+
+  span {
+    margin: 0;
+    margin-left: 2ex;
+  }
+}
+
+.chart {
+  display: block;
+  height: 30em;
+}

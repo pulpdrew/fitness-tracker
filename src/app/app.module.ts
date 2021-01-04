@@ -43,6 +43,8 @@ import { SetPipe } from './pipes/set.pipe';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 import { RxdbService } from './services/rxdb.service';
 import { DATA_SOURCE_INJECTION_TOKEN } from './constants';
+import { ExerciseDetailsComponent } from './components/exercise-details/exercise-details.component';
+import { ExerciseTypeListItemComponent } from './components/exercise-type-list-item/exercise-type-list-item.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +65,8 @@ import { DATA_SOURCE_INJECTION_TOKEN } from './constants';
     ExerciseChartComponent,
     SetPipe,
     SettingsPageComponent,
+    ExerciseDetailsComponent,
+    ExerciseTypeListItemComponent,
   ],
   imports: [
     BrowserModule,

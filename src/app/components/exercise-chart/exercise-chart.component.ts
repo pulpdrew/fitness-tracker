@@ -1,11 +1,5 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import {
-  ExerciseStats,
-  ExerciseStatsService,
-} from 'src/app/services/exercise-stats.service';
-import { SettingsService } from 'src/app/services/settings.service';
-import { ExerciseType } from 'src/app/types/exercise-type';
+import { WorkoutSummary } from 'src/app/services/exercise-stats.service';
 import { WeightUnit } from 'src/app/types/workout';
 
 interface Series {
@@ -22,48 +16,25 @@ interface Series {
   styleUrls: ['./exercise-chart.component.scss'],
 })
 export class ExerciseChartComponent implements OnInit, OnChanges {
-  @Input() exerciseType: ExerciseType | null = null;
+  @Input() history: WorkoutSummary[] = [];
+  @Input() weightUnit: WeightUnit = WeightUnit.KG;
 
-  private dataSubscription = this.getDataSubscription();
   data: Series[] = [];
 
-  dataIsEmpty = true;
-  weightUnit = WeightUnit.KG;
-
-  constructor(
-    private statsService: ExerciseStatsService,
-    private settings: SettingsService
-  ) {
-    this.settings.defaultWeightUnit$.subscribe(
-      (unit) => (this.weightUnit = unit)
-    );
-  }
-
   ngOnInit(): void {
-    this.dataSubscription.unsubscribe();
-    this.dataSubscription = this.getDataSubscription();
+    if (this.history) {
+      this.data = this.buildSeries(this.history);
+    }
   }
 
   ngOnChanges(): void {
-    this.dataSubscription.unsubscribe();
-    this.dataSubscription = this.getDataSubscription();
+    if (this.history) {
+      this.data = this.buildSeries(this.history);
+    }
   }
 
-  private getDataSubscription(): Subscription {
-    return this.statsService.stats$.subscribe((stats) => {
-      const type = this.exerciseType?.id || '';
-      this.data = this.buildSeries(type, stats);
-      this.dataIsEmpty = this.data.length == 0;
-    });
-  }
-
-  private buildSeries(
-    type: string,
-    stats: Map<string, ExerciseStats>
-  ): Series[] {
+  private buildSeries(history: WorkoutSummary[]): Series[] {
     const data = [];
-
-    const history = stats.get(type)?.history || [];
 
     if (history.some((day) => day.totalReps != 0)) {
       data.push({

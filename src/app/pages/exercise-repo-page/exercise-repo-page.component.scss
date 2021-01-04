@@ -1,26 +1,22 @@
-.exercise {
-  margin-bottom: 1em;
-}
-
-.exercise-container {
-  display: flex;
-  flex-direction: column;
-  width: 45ex;
-  padding: 1em 1ex;
-  overflow-y: scroll;
-}
-
-.chart-container {
-  flex: 1;
-  overflow-y: scroll;
-  padding: 1em 2ex;
-}
-
 .container {
   display: flex;
   flex-direction: row;
   justify-content: center;
   height: calc(100vh - 64px);
+
+  .exercise-list {
+    display: flex;
+    flex-direction: column;
+    width: 45ex;
+    padding: 1em 1ex;
+    overflow-y: scroll;
+  }
+
+  .details {
+    flex: 1;
+    overflow-y: scroll;
+    padding: 1em 2ex;
+  }
 }
 
 #add-button {

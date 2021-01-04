@@ -1,31 +1,21 @@
 <div class="container">
-  <div class="exercise-container">
-    <mat-card *ngFor="let exercise of exercises$ | async" class="exercise">
-      <mat-card-title>{{ exercise.name }}</mat-card-title>
-      <mat-card-content>
-        <p>{{ exercise.fields | displayFields }}</p>
-        <p>Categories: {{ exercise.categories | displayCategories }}</p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-stroked-button color="accent" (click)="edit(exercise)">
-          Edit
-        </button>
-        <button mat-stroked-button color="accent" (click)="view(exercise)">
-          View History
-        </button>
-        <button mat-stroked-button color="accent" (click)="remove(exercise)">
-          Delete
-        </button>
-      </mat-card-actions>
-    </mat-card>
+  <div class="exercise-list">
+    <app-exercise-type-list-item
+      *ngFor="let type of exercises$ | async"
+      [name]="type.name"
+      (view)="view(type)"
+      (edit)="edit(type)"
+      (remove)="remove(type)"
+    ></app-exercise-type-list-item>
   </div>
 
-  <div *ngIf="!!(currentlyViewing$ | async)" class="chart-container">
-    <h2>Progress for {{ (currentlyViewing$ | async)?.name }}</h2>
-    <app-exercise-chart
-      [exerciseType]="currentlyViewing$ | async"
-    ></app-exercise-chart>
-  </div>
+  <app-exercise-details
+    *ngIf="!!(currentlyViewing$ | async)"
+    [type]="currentlyViewing$ | async"
+    class="details"
+    (edit)="edit($event)"
+  >
+  </app-exercise-details>
 </div>
 
 <button id="add-button" mat-fab color="primary" (click)="edit()">
