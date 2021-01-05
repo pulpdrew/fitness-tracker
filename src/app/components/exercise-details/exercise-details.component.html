@@ -9,8 +9,8 @@
   </span>
 
   <app-exercise-chart
-    [history]="(history$ | async)!"
-    [weightUnit]="(weightUnit$ | async)!"
+    [stats]="stats$ | async"
+    [weightUnit]="weightUnit$ | async"
     class="chart"
   ></app-exercise-chart>
 

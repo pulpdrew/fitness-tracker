@@ -1,6 +1,15 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { CHART_COLORS } from 'src/app/constants';
-import { WorkoutSummary } from 'src/app/services/exercise-stats.service';
+import {
+  ExerciseStats,
+  WorkoutSummary,
+} from 'src/app/services/exercise-stats.service';
 import { WeightUnit } from 'src/app/types/workout';
 
 type SeriesDescription = {
@@ -60,53 +69,93 @@ const seriesDescriptions: SeriesDescription[] = [
   styleUrls: ['./exercise-chart.component.scss'],
 })
 export class ExerciseChartComponent implements OnInit, OnChanges {
-  @Input() history: WorkoutSummary[] = [];
-  @Input() weightUnit: WeightUnit = WeightUnit.KG;
+  @Input() stats?: ExerciseStats | null;
+  @Input() weightUnit?: WeightUnit | null;
 
+  private get history(): WorkoutSummary[] {
+    return this.stats?.history || [];
+  }
+
+  /**
+   * Whether the user has previously altered the selected
+   * series for the current exercise.
+   */
   private hasSelected = false;
-  seriesData: Series[] = [];
+
+  /**
+   * The names of the series that are available for the
+   * current exercise.
+   */
   availableSeriesNames: string[] = [];
-  selectedSeriesNames: string[] = [];
+
+  /**
+   * The colors corresponding to the series in `availableSeries`,
+   * in the same order as the corresponding series.
+   */
   availableColors: string[] = [];
-  colorScheme: ColorScheme = {
+
+  /**
+   * The names of the series that are toggled on (selected)
+   * in the chart legend. Updated by the legend component.
+   */
+  selectedSeriesNames: string[] = [];
+
+  /**
+   * The data that should be plotted on the line chart.
+   */
+  displayedData: Series[] = [];
+
+  /**
+   * The colors corresponding to the series in `displayedData`
+   */
+  displayedColors: ColorScheme = {
     domain: CHART_COLORS,
   };
 
   ngOnInit(): void {
-    if (this.history) {
-      this.updateChart();
-    }
+    this.updateChart();
   }
 
-  ngOnChanges(): void {
-    if (this.history) {
-      this.updateChart();
+  ngOnChanges(changes: SimpleChanges): void {
+    const change = changes['stats'];
+    if (
+      change &&
+      change.currentValue?.type.id !== change.previousValue?.type.id
+    ) {
+      this.hasSelected = false;
     }
+    this.updateChart();
   }
 
   onSeriesSelectedChange(selected: string[]): void {
     this.selectedSeriesNames = selected;
+    this.hasSelected = true;
     this.updateChart();
   }
 
   private updateChart(): void {
     const series = ExerciseChartComponent.buildSeries(this.history);
 
-    if (!this.hasSelected && this.selectedSeriesNames.length == 0) {
-      this.selectedSeriesNames = series.map((desc) => desc.name);
-      this.hasSelected = true;
-    }
-
+    // The available series are any series for which data was available
     this.availableSeriesNames = series.map((series) => series.name);
+
+    // Filter for the colors corresponding to the available series
     this.availableColors = seriesDescriptions
       .filter((desc) => this.availableSeriesNames.includes(desc.name))
       .map((desc) => desc.color);
 
-    this.seriesData = series.filter((series) =>
+    // If the user hasn't selected series with the legend, show all of the available series
+    if (!this.hasSelected) {
+      this.selectedSeriesNames = series.map((desc) => desc.name);
+    }
+
+    // Display only the selected series
+    this.displayedData = series.filter((series) =>
       this.selectedSeriesNames.includes(series.name)
     );
 
-    this.colorScheme = {
+    // Filter for the corresponding colors to display
+    this.displayedColors = {
       domain: seriesDescriptions
         .filter(
           (desc) =>

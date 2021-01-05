@@ -2,24 +2,25 @@
   <app-chart-toggle-legend
     class="legend"
     [series]="availableSeriesNames"
+    [selected]="selectedSeriesNames"
     [colors]="availableColors"
     (change)="onSeriesSelectedChange($event)"
   ></app-chart-toggle-legend>
 
   <ngx-charts-line-chart
     class="chart"
-    [results]="seriesData"
+    [results]="displayedData"
+    [scheme]="displayedColors"
     [xAxis]="true"
     [yAxis]="true"
     [autoScale]="false"
     [timeline]="true"
     xAxisLabel="Day"
-    [yAxisLabel]="weightUnit"
+    [yAxisLabel]="'' + weightUnit! + ' or seconds'"
     [showXAxisLabel]="true"
     [showYAxisLabel]="true"
     [rotateXAxisTicks]="true"
     [legend]="false"
-    [scheme]="colorScheme"
   >
   </ngx-charts-line-chart>
 </div>

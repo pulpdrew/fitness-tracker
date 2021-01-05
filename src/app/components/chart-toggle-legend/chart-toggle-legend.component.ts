@@ -5,7 +5,6 @@ import {
   OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
 } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
@@ -18,6 +17,7 @@ const SERIES_KEY = 'series';
 })
 export class ChartToggleLegendComponent implements OnInit, OnChanges {
   @Input() series: string[] = [];
+  @Input() selected: string[] = [];
   @Input() colors: string[] = [];
   @Output() change = new EventEmitter<string[]>();
 
@@ -38,33 +38,30 @@ export class ChartToggleLegendComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.updateForm(this.series);
+    this.updateForm();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['series']) {
-      this.updateForm(
-        changes['series'].currentValue,
-        changes['series'].previousValue
-      );
-    }
+  ngOnChanges(): void {
+    this.updateForm();
   }
 
+  /**
+   * Fired when a checkbox is checked or unchecked.
+   * Updates `this.selected` and emits a change event.
+   */
   onCheckboxChange(): void {
+    this.selected = this.currentlySelected;
     this.change.emit(this.currentlySelected);
   }
 
-  private updateForm(current: string[], previous: string[] = []): void {
-    const previouslySelected = this.filterSelected(previous);
-    const currentlySelected = current.filter(
-      (series) =>
-        previouslySelected.includes(series) || !previous.includes(series)
-    );
-
+  /**
+   * Use `this.series` and `this.selected` to update the form state.
+   */
+  private updateForm(): void {
     this.form = new FormGroup({
       [SERIES_KEY]: new FormArray(
-        current.map(
-          (series) => new FormControl(currentlySelected.includes(series))
+        this.series.map(
+          (series) => new FormControl(this.selected.includes(series))
         )
       ),
     });
