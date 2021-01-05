@@ -74,9 +74,9 @@ export class ExerciseStatsService {
 
     const stats = new Map<string, ExerciseStats>();
     for (const type of types) {
-      const workoutSummaries = workouts.map((w) =>
-        this.summarizeWorkout(w, type.id, weightUnits)
-      );
+      const workoutSummaries = workouts
+        .filter((w) => !!w.exercises.find((e) => e.type.id === type.id))
+        .map((w) => this.summarizeWorkout(w, type.id, weightUnits));
 
       const lastWorkout = workoutSummaries[workoutSummaries.length - 1];
       const lastSet = lastWorkout.sets[lastWorkout.sets.length];
