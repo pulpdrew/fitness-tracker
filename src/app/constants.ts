@@ -11,3 +11,11 @@ export const ADD_EXERCISE_DIALOG_WIDTH = '50ex';
 export const SETS_ARRAY_KEY = 'sets';
 export const EXERCISE_TYPE_KEY = 'exercise-type';
 export const DATA_SOURCE_INJECTION_TOKEN = 'DataSource';
+export const CHART_COLORS = [
+  '#ef4723',
+  '#2389ef',
+  '#2323ef',
+  '#8923ef',
+  '#04681c',
+  '#041e68',
+];

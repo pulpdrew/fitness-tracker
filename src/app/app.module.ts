@@ -46,6 +46,7 @@ import { DATA_SOURCE_INJECTION_TOKEN } from './constants';
 import { ExerciseDetailsComponent } from './components/exercise-details/exercise-details.component';
 import { ExerciseTypeListItemComponent } from './components/exercise-type-list-item/exercise-type-list-item.component';
 import { ExerciseHistoryItemComponent } from './components/exercise-history-item/exercise-history-item.component';
+import { ChartToggleLegendComponent } from './components/chart-toggle-legend/chart-toggle-legend.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { ExerciseHistoryItemComponent } from './components/exercise-history-item
     ExerciseDetailsComponent,
     ExerciseTypeListItemComponent,
     ExerciseHistoryItemComponent,
+    ChartToggleLegendComponent,
   ],
   imports: [
     BrowserModule,
@@ -86,6 +88,7 @@ import { ExerciseHistoryItemComponent } from './components/exercise-history-item
     MatAutocompleteModule,
     MatSelectModule,
     MatDatepickerModule,
+    MatCheckboxModule,
     MatNativeDateModule,
     NgxChartsModule,
   ],

@@ -1,0 +1,50 @@
+.container {
+  margin-left: 2ex;
+  margin-bottom: 1em;
+}
+
+.legend-item {
+  margin-left: 2ex;
+}
+
+::ng-deep
+  .mat-checkbox-checked.mat-accent.color-ef4723
+  .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent.color-ef4723 .mat-checkbox-background {
+  background-color: #ef4723 !important;
+}
+
+::ng-deep
+  .mat-checkbox-checked.mat-accent.color-2389ef
+  .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent.color-2389ef .mat-checkbox-background {
+  background-color: #2389ef !important;
+}
+
+::ng-deep
+  .mat-checkbox-checked.mat-accent.color-2323ef
+  .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent.color-2323ef .mat-checkbox-background {
+  background-color: #2323ef !important;
+}
+
+::ng-deep
+  .mat-checkbox-checked.mat-accent.color-8923ef
+  .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent.color-8923ef .mat-checkbox-background {
+  background-color: #8923ef !important;
+}
+
+::ng-deep
+  .mat-checkbox-checked.mat-accent.color-04681c
+  .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent.color-04681c .mat-checkbox-background {
+  background-color: #04681c !important;
+}
+
+::ng-deep
+  .mat-checkbox-checked.mat-accent.color-041e68
+  .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent.color-041e68 .mat-checkbox-background {
+  background-color: #041e68 !important;
+}

@@ -1,0 +1,13 @@
+<div class="container" [formGroup]="form">
+  <div formArrayName="series">
+    <span class="legend-item" *ngFor="let series of series; let i = index">
+      <mat-checkbox
+        [ngClass]="colorNames[i]"
+        (change)="onCheckboxChange()"
+        [formControlName]="i"
+        [disableRipple]="true"
+        >{{ series }}</mat-checkbox
+      >
+    </span>
+  </div>
+</div>

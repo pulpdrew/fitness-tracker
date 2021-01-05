@@ -1,6 +1,14 @@
-<div class="container" *ngIf="data.length > 0; else empty">
+<div class="container" *ngIf="availableSeriesNames.length > 0; else empty">
+  <app-chart-toggle-legend
+    class="legend"
+    [series]="availableSeriesNames"
+    [colors]="availableColors"
+    (change)="onSeriesSelectedChange($event)"
+  ></app-chart-toggle-legend>
+
   <ngx-charts-line-chart
-    [results]="data"
+    class="chart"
+    [results]="seriesData"
     [xAxis]="true"
     [yAxis]="true"
     [autoScale]="false"
@@ -10,7 +18,8 @@
     [showXAxisLabel]="true"
     [showYAxisLabel]="true"
     [rotateXAxisTicks]="true"
-    [legend]="true"
+    [legend]="false"
+    [scheme]="colorScheme"
   >
   </ngx-charts-line-chart>
 </div>
