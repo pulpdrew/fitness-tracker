@@ -1,12 +1,14 @@
+@import "../../breakpoints.scss";
+
 .container {
-  padding: 2em 5em;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-gap: 1em 2ex;
+  grid-template-columns: auto;
+  padding: 1em;
 }
 
-app-dashboard-card {
-  width: 25%;
-  margin: 1em;
+@media (min-width: $breakpoint-mobile) {
+  .container {
+    grid-template-columns: auto auto auto;
+  }
 }
