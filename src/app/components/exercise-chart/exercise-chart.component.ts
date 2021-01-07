@@ -136,8 +136,10 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
   private updateChart(): void {
     const series = ExerciseChartComponent.buildSeries(this.history);
 
-    // The available series are any series for which data was available
-    this.availableSeriesNames = series.map((series) => series.name);
+    // The available series are any series for which at least 2 days of data is available
+    this.availableSeriesNames = series
+      .filter((series) => series.series.length > 1)
+      .map((series) => series.name);
 
     // Filter for the colors corresponding to the available series
     this.availableColors = seriesDescriptions
