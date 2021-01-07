@@ -49,7 +49,10 @@ export class AddExerciseDialogComponent {
     const ref = this.dialog.open(EditExerciseTypeDialogComponent, {
       minWidth: '40ex',
       minHeight: '20em',
-      data: emptyExerciseType(),
+      data: {
+        ...emptyExerciseType(),
+        name: this.selected.value || '',
+      },
     });
 
     ref.afterClosed().subscribe((newType) => {
