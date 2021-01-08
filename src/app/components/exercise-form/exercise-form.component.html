@@ -20,36 +20,11 @@
           *ngFor="let set of sets.controls; let i = index"
           [formGroupName]="i"
         >
-          <!-- Each Set has an index (i + 1) and some data fields-->
-          <span class="set-field">{{ i + 1 }}: </span>
-          <span *ngFor="let field of type.fields">
-            <!-- The data field is just an input -->
-            <mat-form-field class="set-field">
-              <mat-label>{{ field | displayField }}</mat-label>
-              <input
-                matInput
-                [placeholder]="field | displayField"
-                [formControlName]="field"
-              />
-            </mat-form-field>
-
-            <!-- Weight requires an associated weight unit, this is a select -->
-            <span *ngIf="field == SetField.WEIGHT">
-              <mat-form-field class="set-field">
-                <mat-label>Unit</mat-label>
-                <mat-select [formControlName]="SetField.WEIGHT_UNITS">
-                  <mat-option *ngFor="let unit of units" [value]="unit">
-                    {{ unit }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </span>
-          </span>
-
-          <!-- A button to delete a set -->
-          <button mat-icon-button color="accent" (click)="removeSet(i)">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <app-set-form
+            [form]="rawSets[i]"
+            [type]="type"
+            (remove)="removeSet(i)"
+          ></app-set-form>
         </div>
       </div>
     </div>

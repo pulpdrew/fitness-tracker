@@ -1,14 +1,14 @@
-.set-field {
-  margin-right: 1ex;
-  max-width: 20%;
-}
+@import "../../breakpoints.scss";
 
 .title {
+  flex: 1;
   margin-top: 0;
   font-size: large;
+  margin-top: 0.5em;
 }
 
 .mat-card-title {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
 }

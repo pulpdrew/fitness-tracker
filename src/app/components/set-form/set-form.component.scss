@@ -1,0 +1,36 @@
+@import "../../breakpoints.scss";
+
+.row {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  .field {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+
+    .input {
+      flex: 1;
+      margin-right: 1ex;
+    }
+
+    .small-input {
+      max-width: 10ex;
+    }
+  }
+
+  .action {
+    align-self: flex-end;
+  }
+}
+
+@media (min-width: $breakpoint-mobile) {
+  .row {
+    flex-direction: row;
+
+    .action {
+      align-self: center;
+    }
+  }
+}

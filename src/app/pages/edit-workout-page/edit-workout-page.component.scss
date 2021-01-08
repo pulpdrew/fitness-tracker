@@ -1,40 +1,53 @@
+@import "../../breakpoints.scss";
+
+$mobile-horizontal-padding: 1ex;
+
 .container {
-  width: 50%;
-  min-width: 50ex;
-  margin: 3em auto;
+  padding: 1em $mobile-horizontal-padding;
+
+  .name-date-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 1em;
+
+    #save-changes {
+      margin-right: 1ex;
+    }
+  }
+
+  .exercise {
+    margin-bottom: 1em;
+  }
 }
 
-.mat-fab {
-  position: absolute;
-  bottom: 5vh;
-  right: 30vw;
-}
+@media (min-width: $breakpoint-mobile) {
+  .container {
+    width: 50%;
+    min-width: calc(#{$breakpoint-mobile} - 4 * #{$mobile-horizontal-padding});
+    margin: 3em auto;
 
-.buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: 3em;
-}
+    .name-date-container {
+      flex-direction: row;
 
-.exercise {
-  margin-bottom: 1em;
-}
+      .name {
+        flex: 1;
+      }
 
-.name-date-container {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-}
+      .date {
+        margin-left: 2ex;
+      }
+    }
 
-.name {
-  flex: 1;
-}
-
-.date {
-  margin-left: 2ex;
-}
-
-#save-changes-button {
-  margin-right: 1ex;
+    .buttons {
+      margin-bottom: 3em;
+    }
+  }
 }

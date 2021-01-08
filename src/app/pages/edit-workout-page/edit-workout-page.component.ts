@@ -38,15 +38,24 @@ export class EditWorkoutPageComponent {
     id: '',
   });
 
+  /**
+   * The ID of the workout being edited
+   */
   id$: Observable<string> = this.route.params.pipe(
     map((params) => params['id'])
   );
 
+  /**
+   * The pre-existing workout with this id, if such a workout exists
+   */
   preexistingWorkout$: Observable<Workout | undefined> = combineLatest([
     this.id$,
     this.data.workouts$,
   ]).pipe(map(([id, workouts]) => workouts.find((w) => w.id === id)));
 
+  /**
+   * Whether `this.id$` is the id of workout that exists in the database
+   */
   isEditingExisting$: Observable<boolean> = this.preexistingWorkout$.pipe(
     map((w) => !!w)
   );
@@ -108,6 +117,9 @@ export class EditWorkoutPageComponent {
     return this.exerciseForms.at(index) as FormGroup;
   }
 
+  /**
+   * Move the exercise towards the beginning of the list of exercises
+   */
   moveUp(index: number): void {
     if (index > 0 && index < this.exerciseForms.length) {
       const moved = this.exerciseForms.at(index);
@@ -116,6 +128,9 @@ export class EditWorkoutPageComponent {
     }
   }
 
+  /**
+   * Move the exercise towards the end of the list of exercises
+   */
   moveDown(index: number): void {
     if (index >= 0 && index < this.exerciseForms.length - 1) {
       const moved = this.exerciseForms.at(index);
@@ -124,6 +139,9 @@ export class EditWorkoutPageComponent {
     }
   }
 
+  /**
+   * Remove the exercise from the list of exercises
+   */
   remove(index: number): void {
     if (index >= 0 && index < this.exerciseForms.length) {
       this.exerciseForms.removeAt(index);

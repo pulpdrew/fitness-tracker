@@ -1,0 +1,27 @@
+<div [formGroup]="form" class="row">
+  <span *ngFor="let field of type?.fields" class="field">
+    <mat-form-field class="input">
+      <mat-label>{{ field | displayField }}</mat-label>
+      <input
+        matInput
+        [placeholder]="field | displayField"
+        [formControlName]="field"
+      />
+    </mat-form-field>
+
+    <!-- Weight requires an associated weight unit, this is a select -->
+    <mat-form-field *ngIf="field == SetField.WEIGHT" class="input small-input">
+      <mat-label>Weight Unit</mat-label>
+      <mat-select [formControlName]="SetField.WEIGHT_UNITS">
+        <mat-option *ngFor="let unit of units" [value]="unit">
+          {{ unit }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </span>
+
+  <!-- A button to delete a set -->
+  <button mat-icon-button color="accent" (click)="onRemove()" class="action">
+    <mat-icon>delete</mat-icon>
+  </button>
+</div>

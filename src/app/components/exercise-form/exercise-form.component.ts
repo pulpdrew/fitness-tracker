@@ -63,6 +63,10 @@ export class ExerciseFormComponent implements OnInit {
     return this.form.get(SETS_ARRAY_KEY) as FormArray;
   }
 
+  get rawSets(): FormGroup[] {
+    return this.sets.controls as FormGroup[];
+  }
+
   addSet(): void {
     if (this.sets.length > 0) {
       this.sets.push(

@@ -47,6 +47,7 @@ import { ExerciseDetailsComponent } from './components/exercise-details/exercise
 import { ExerciseTypeListItemComponent } from './components/exercise-type-list-item/exercise-type-list-item.component';
 import { ExerciseHistoryItemComponent } from './components/exercise-history-item/exercise-history-item.component';
 import { ChartToggleLegendComponent } from './components/chart-toggle-legend/chart-toggle-legend.component';
+import { SetFormComponent } from './components/set-form/set-form.component';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { ChartToggleLegendComponent } from './components/chart-toggle-legend/cha
     ExerciseTypeListItemComponent,
     ExerciseHistoryItemComponent,
     ChartToggleLegendComponent,
+    SetFormComponent,
   ],
   imports: [
     BrowserModule,
