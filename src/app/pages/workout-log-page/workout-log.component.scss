@@ -1,38 +1,57 @@
+@import "../../breakpoints.scss";
+
+$mobile-horizontal-margin: 1ex;
+$top-margin: 1em;
+
 .container {
-  width: 50%;
-  min-width: 40ex;
-  margin: 3em auto;
+  margin: $top-margin $mobile-horizontal-margin;
+
+  mat-card {
+    margin-bottom: 1em;
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      align-items: stretch;
+      justify-content: space-between;
+
+      .exercise {
+        margin-bottom: 0.5em;
+
+        .exercise-name {
+          font-weight: bold;
+        }
+
+        .set {
+          margin-left: 1ex;
+        }
+      }
+
+      .chart {
+        height: 15em;
+        max-width: calc(#{$breakpoint-mobile} / 2.5);
+      }
+    }
+  }
 }
 
-mat-card {
-  width: 100%;
-  margin-bottom: 1em;
-}
+@media (min-width: $breakpoint-mobile) {
+  .container {
+    width: 50%;
+    min-width: calc(#{$breakpoint-mobile} - 4 * #{$mobile-horizontal-margin});
+    margin: $top-margin auto;
 
-.content {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: stretch;
-}
+    mat-card {
+      width: 100%;
 
-.chart {
-  flex: 1;
-  min-width: 40ex;
-}
+      .content {
+        flex-direction: row;
 
-.exercise {
-  margin-bottom: 0.5em;
-}
-
-.exercises {
-  min-width: 40ex;
-}
-
-.exercise-name {
-  font-weight: bold;
-}
-
-.set {
-  margin-left: 1ex;
+        .exercises {
+          width: calc(#{$breakpoint-mobile} / 2.5);
+        }
+      }
+    }
+  }
 }
