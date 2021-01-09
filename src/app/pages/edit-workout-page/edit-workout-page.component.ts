@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Observable } from 'rxjs';
 import { first, map } from 'rxjs/operators';
@@ -64,7 +65,8 @@ export class EditWorkoutPageComponent {
     @Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) {
     this.preexistingWorkout$.subscribe((workout) => {
       if (workout) this.form = workoutToForm(workout);
@@ -97,7 +99,14 @@ export class EditWorkoutPageComponent {
    */
   saveChanges(): void {
     this.id$.pipe(first()).subscribe((id) => {
-      this.data.upsertWorkout(formToWorkout(this.form, id));
+      this.data
+        .upsertWorkout(formToWorkout(this.form, id))
+        .then(() => {
+          this.snackBar.open('Saved!');
+        })
+        .catch(() => {
+          this.snackBar.open('Failed to save. Try Again.');
+        });
     });
   }
 
@@ -106,7 +115,14 @@ export class EditWorkoutPageComponent {
    */
   saveAsNew(): void {
     const id = uuidv4();
-    this.data.upsertWorkout(formToWorkout(this.form, id));
+    this.data
+      .upsertWorkout(formToWorkout(this.form, id))
+      .then(() => {
+        this.snackBar.open('Saved!');
+      })
+      .catch(() => {
+        this.snackBar.open('Failed to save. Try Again.');
+      });
     this.router.navigate([WORKOUT_ROUTE, id]);
   }
 
