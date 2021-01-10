@@ -1,17 +1,25 @@
+@import "../../breakpoints.scss";
+
 .container {
   display: flex;
   flex-direction: row;
   margin-bottom: 1em;
-  margin-left: 2ex;
 
   .sets {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     margin-left: 2ex;
 
     .set {
-      margin-bottom: 0.5em;
+      margin-left: 0.5em;
     }
+  }
+}
+
+@media (min-width: $breakpoint-mobile) {
+  .container {
+    margin-left: 2ex;
   }
 }

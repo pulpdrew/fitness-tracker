@@ -23,6 +23,7 @@ import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 })
 export class ExerciseDetailsComponent implements OnInit, OnChanges {
   @Output() edit = new EventEmitter<ExerciseType>();
+  @Output() remove = new EventEmitter<ExerciseType>();
 
   @Input() type = emptyExerciseType();
   private _type$ = new BehaviorSubject<ExerciseType>(this.type);
@@ -69,5 +70,9 @@ export class ExerciseDetailsComponent implements OnInit, OnChanges {
 
   onEdit(): void {
     this.edit.emit(this.type);
+  }
+
+  onRemove(): void {
+    this.remove.emit(this.type);
   }
 }

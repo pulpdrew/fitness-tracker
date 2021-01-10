@@ -1,13 +1,20 @@
 <div>
   <span class="header">
-    <h2>{{ type.name }}</h2>
-    <span>Categories: {{ type.categories | displayCategories }}</span>
-    <span>Display: {{ type.fields | displayFields }}</span>
-    <button mat-icon-button color="accent" (click)="onEdit()">
-      <mat-icon>edit</mat-icon>
-    </button>
+    <div class="info">
+      <div>Categories: {{ type.categories | displayCategories }}</div>
+      <div>Display: {{ type.fields | displayFields }}</div>
+    </div>
+    <div class="actions">
+      <button mat-icon-button color="accent" (click)="onEdit()">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="accent" (click)="onRemove()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
   </span>
 
+  <h3>Progress:</h3>
   <app-exercise-chart
     [stats]="stats$ | async"
     [weightUnit]="weightUnit$ | async"

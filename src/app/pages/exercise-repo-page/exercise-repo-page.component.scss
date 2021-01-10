@@ -1,26 +1,26 @@
+@import "../../breakpoints.scss";
+
+$horizontal-padding: 1ex;
+$vertical-padding: 1em;
+
 .container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  height: calc(100vh - 64px);
+  padding: $vertical-padding $horizontal-padding;
+}
 
-  .exercise-list {
-    display: flex;
-    flex-direction: column;
-    width: 45ex;
-    padding: 1em 1ex;
-    overflow-y: scroll;
-  }
-
-  .details {
-    flex: 1;
-    overflow-y: scroll;
-    padding: 1em 2ex;
-  }
+mat-panel-title {
+  font-weight: 500;
 }
 
 #add-button {
-  position: absolute;
-  left: 40ex;
-  bottom: 3vh;
+  position: fixed;
+  right: 15%;
+  bottom: 1.5em;
+}
+
+@media (min-width: $breakpoint-mobile) {
+  .container {
+    max-width: 75%;
+    min-width: calc(#{$breakpoint-mobile} - 4 * #{$horizontal-padding});
+    margin: $vertical-padding auto;
+  }
 }

@@ -1,23 +1,23 @@
 <div class="container">
-  <div class="exercise-list">
-    <app-exercise-type-list-item
-      *ngFor="let type of exercises$ | async"
-      [name]="type.name"
-      (view)="view(type)"
-      (edit)="edit(type)"
-      (remove)="remove(type)"
-    ></app-exercise-type-list-item>
-  </div>
+  <mat-accordion>
+    <mat-expansion-panel *ngFor="let type of exercises$ | async">
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ type.name }}</mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-template matExpansionPanelContent>
+        <app-exercise-details
+          *ngIf="!!(currentlyViewing$ | async)"
+          [type]="type"
+          class="details"
+          (edit)="edit(type)"
+          (remove)="remove(type)"
+        >
+        </app-exercise-details>
+      </ng-template>
+    </mat-expansion-panel>
+  </mat-accordion>
 
-  <app-exercise-details
-    *ngIf="!!(currentlyViewing$ | async)"
-    [type]="(currentlyViewing$ | async)!"
-    class="details"
-    (edit)="edit($event)"
-  >
-  </app-exercise-details>
+  <button id="add-button" mat-fab color="primary" (click)="edit()">
+    <mat-icon>add</mat-icon>
+  </button>
 </div>
-
-<button id="add-button" mat-fab color="primary" (click)="edit()">
-  <mat-icon>add</mat-icon>
-</button>

@@ -17,6 +17,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { EditWorkoutPageComponent } from './pages/edit-workout-page/edit-workout-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
@@ -31,7 +32,6 @@ import { ExerciseFormComponent } from './components/exercise-form/exercise-form.
 import { EditExerciseTypeDialogComponent } from './components/edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 import { AddExerciseDialogComponent } from './components/add-exercise-dialog/add-exercise-dialog.component';
 import { ExerciseDetailsComponent } from './components/exercise-details/exercise-details.component';
-import { ExerciseTypeListItemComponent } from './components/exercise-type-list-item/exercise-type-list-item.component';
 import { ExerciseHistoryItemComponent } from './components/exercise-history-item/exercise-history-item.component';
 import { ChartToggleLegendComponent } from './components/chart-toggle-legend/chart-toggle-legend.component';
 import { SetFormComponent } from './components/set-form/set-form.component';
@@ -70,7 +70,6 @@ import { DATA_SOURCE_INJECTION_TOKEN } from './constants';
     SetPipe,
     SettingsPageComponent,
     ExerciseDetailsComponent,
-    ExerciseTypeListItemComponent,
     ExerciseHistoryItemComponent,
     ChartToggleLegendComponent,
     SetFormComponent,
@@ -95,6 +94,7 @@ import { DATA_SOURCE_INJECTION_TOKEN } from './constants';
     MatNativeDateModule,
     NgxChartsModule,
     MatSnackBarModule,
+    MatExpansionModule,
   ],
   providers: [
     DisplayCategoryPipe,

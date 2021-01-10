@@ -1,5 +1,5 @@
 <div *ngIf="workout" class="container">
-  <span>{{ workout.date | date: "MMM dd YYYY" }}</span>
+  <span>{{ workout.date | date: "MMM dd, YYYY" }}: </span>
   <div class="sets">
     <span *ngFor="let set of workout.sets" class="set">{{ set | set }}</span>
   </div>
