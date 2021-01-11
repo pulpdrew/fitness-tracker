@@ -1,6 +1,4 @@
-@import "../../breakpoints.scss";
-
-$mobile-horizontal-padding: 1ex;
+@import "../../shared.scss";
 
 .container {
   padding: 1em $mobile-horizontal-padding;

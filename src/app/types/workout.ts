@@ -59,7 +59,7 @@ export enum WeightUnit {
 /**
  * A list of all the available WeightUnits
  */
-export const weightUnits: WeightUnit[] = [WeightUnit.KG, WeightUnit.LB];
+export const WEIGHT_UNITS: WeightUnit[] = [WeightUnit.KG, WeightUnit.LB];
 
 /**
  * One Set of a single exercise, with associated data fields

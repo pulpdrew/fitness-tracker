@@ -1,5 +1,5 @@
 import { JsonSchema, RxJsonSchema } from 'rxdb';
-import { ExerciseSet, weightUnits } from '../types/workout';
+import { ExerciseSet, WEIGHT_UNITS } from '../types/workout';
 
 const setSchema: JsonSchema = {
   type: 'object',
@@ -9,7 +9,7 @@ const setSchema: JsonSchema = {
     },
     weightUnits: {
       type: 'string',
-      enum: weightUnits,
+      enum: WEIGHT_UNITS,
     },
     reps: {
       type: 'number',

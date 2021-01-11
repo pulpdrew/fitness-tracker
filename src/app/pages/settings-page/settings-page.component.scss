@@ -1,9 +1,13 @@
+@import "../../shared.scss";
+
 .container {
-  width: 50%;
-  min-width: 50ex;
-  margin: 2em auto;
+  padding: 1em $mobile-horizontal-padding;
 }
 
-h2 {
-  margin: 3em 0;
+@media (min-width: $breakpoint-mobile) {
+  .container {
+    width: 50%;
+    min-width: calc(#{$breakpoint-mobile} - 4 * #{$mobile-horizontal-padding});
+    margin: 1em auto;
+  }
 }

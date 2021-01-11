@@ -8,7 +8,7 @@ import {
   emptySetForm,
   exerciseToForm,
   SetField,
-  weightUnits,
+  WEIGHT_UNITS,
 } from 'src/app/types/workout';
 
 @Component({
@@ -51,7 +51,7 @@ export class ExerciseFormComponent implements OnInit {
   // Imports used in the template
   SETS_ARRAY_KEY = SETS_ARRAY_KEY;
   SetField = SetField;
-  units = weightUnits;
+  units = WEIGHT_UNITS;
 
   constructor(private settings: SettingsService) {}
 

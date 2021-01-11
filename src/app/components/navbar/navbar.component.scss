@@ -1,0 +1,25 @@
+@import "../../shared.scss";
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  height: $navbar-height;
+  z-index: $navbar-z-index;
+  box-shadow: 0 3px 5px #bbb;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+@media (min-width: $breakpoint-mobile) {
+  .nav {
+    position: relative;
+  }
+}

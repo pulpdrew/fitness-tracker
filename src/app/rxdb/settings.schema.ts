@@ -1,5 +1,5 @@
 import { RxJsonSchema } from 'rxdb';
-import { WeightUnit, weightUnits } from '../types/workout';
+import { WeightUnit, WEIGHT_UNITS } from '../types/workout';
 import { Settings } from '../types/settings';
 
 /**
@@ -18,7 +18,7 @@ export const settingsSchema: RxJsonSchema<Settings> = {
     },
     defaultWeightUnit: {
       type: 'string',
-      enum: weightUnits,
+      enum: WEIGHT_UNITS,
       default: WeightUnit.LB,
     },
   },

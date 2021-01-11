@@ -1,11 +1,20 @@
+@import "./shared.scss";
+
 .container {
   height: 100vh;
   width: 100vw;
   overflow-x: hidden;
   overflow-y: visible;
+
+  .router-outlet {
+    margin-top: $navbar-height;
+  }
 }
 
-.nav a {
-  text-decoration: none;
-  color: inherit;
+@media (min-width: $breakpoint-mobile) {
+  .container {
+    .router-outlet {
+      margin-top: 0;
+    }
+  }
 }

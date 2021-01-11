@@ -1,11 +1,37 @@
 <div class="container">
   <h2>Settings</h2>
-  <mat-form-field class="set-field">
+
+  <mat-form-field>
     <mat-label>Default Weight Units</mat-label>
     <mat-select [formControl]="defaultWeightUnitControl">
-      <mat-option *ngFor="let unit of weightUnits" [value]="unit">
+      <mat-option *ngFor="let unit of WEIGHT_UNITS" [value]="unit">
         {{ unit }}
       </mat-option>
     </mat-select>
   </mat-form-field>
+
+  <h3>Import</h3>
+  <p>Import data from a previous Fitness Center data export.</p>
+  <input
+    type="file"
+    [value]="file"
+    (change)="onImportFileChange($event)"
+    accept=".json"
+  />
+  <button mat-raised-button color="primary" (click)="onClickImport()">
+    Import
+  </button>
+
+  <h3>Export</h3>
+  <p>
+    Export all of your Fitness Center data in JSON format, so that you can
+    import it later.
+  </p>
+  <a
+    mat-raised-button
+    color="primary"
+    [href]="downloadUrl"
+    download="fitness-center-export.json"
+    >Export</a
+  >
 </div>

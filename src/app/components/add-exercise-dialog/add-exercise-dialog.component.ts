@@ -51,7 +51,7 @@ export class AddExerciseDialogComponent {
       minHeight: '20em',
       data: {
         ...emptyExerciseType(),
-        name: this.selected.value.name || this.selected.value || '',
+        name: this.selected?.value?.name || this.selected.value || '',
       },
     });
 

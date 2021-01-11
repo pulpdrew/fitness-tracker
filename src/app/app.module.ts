@@ -23,7 +23,6 @@ import { EditWorkoutPageComponent } from './pages/edit-workout-page/edit-workout
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { WorkoutLogPageComponent } from './pages/workout-log-page/workout-log.component';
 import { ExerciseRepoPageComponent } from './pages/exercise-repo-page/exercise-repo-page.component';
-import { ImportExportPageComponent } from './pages/import-export-page/import-export-page.component';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -37,6 +36,7 @@ import { ChartToggleLegendComponent } from './components/chart-toggle-legend/cha
 import { SetFormComponent } from './components/set-form/set-form.component';
 import { ExerciseChartComponent } from './components/exercise-chart/exercise-chart.component';
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 import {
   DisplayFieldsPipe,
@@ -65,7 +65,6 @@ import { DATA_SOURCE_INJECTION_TOKEN } from './constants';
     DisplayFieldPipe,
     DisplayCategoriesPipe,
     DisplayCategoryPipe,
-    ImportExportPageComponent,
     ExerciseChartComponent,
     SetPipe,
     SettingsPageComponent,
@@ -73,6 +72,7 @@ import { DATA_SOURCE_INJECTION_TOKEN } from './constants';
     ExerciseHistoryItemComponent,
     ChartToggleLegendComponent,
     SetFormComponent,
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,

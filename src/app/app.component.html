@@ -1,7 +1,6 @@
 <div class="container">
-  <mat-toolbar color="primary" class="nav">
-    <a [routerLink]="dashboardRoute">Fitness Tracker</a>
-  </mat-toolbar>
-
-  <router-outlet></router-outlet>
+  <app-navbar></app-navbar>
+  <div class="router-outlet">
+    <router-outlet></router-outlet>
+  </div>
 </div>

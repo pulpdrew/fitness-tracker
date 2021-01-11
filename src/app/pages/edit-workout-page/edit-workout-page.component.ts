@@ -102,10 +102,14 @@ export class EditWorkoutPageComponent {
       this.data
         .upsertWorkout(formToWorkout(this.form, id))
         .then(() => {
-          this.snackBar.open('Saved!');
+          this.snackBar.open('Saved!', undefined, {
+            duration: 3000,
+          });
         })
         .catch(() => {
-          this.snackBar.open('Failed to save. Try Again.');
+          this.snackBar.open('Failed to save. Try Again.', undefined, {
+            duration: 3000,
+          });
         });
     });
   }
@@ -118,10 +122,14 @@ export class EditWorkoutPageComponent {
     this.data
       .upsertWorkout(formToWorkout(this.form, id))
       .then(() => {
-        this.snackBar.open('Saved!');
+        this.snackBar.open('Saved!', undefined, {
+          duration: 3000,
+        });
       })
       .catch(() => {
-        this.snackBar.open('Failed to save. Try Again.');
+        this.snackBar.open('Failed to save. Try Again.', undefined, {
+          duration: 3000,
+        });
       });
     this.router.navigate([WORKOUT_ROUTE, id]);
   }

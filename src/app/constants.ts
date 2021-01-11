@@ -1,7 +1,6 @@
 export const WORKOUT_LOG_ROUTE = 'workout-log';
 export const DASHBOARD_ROUTE = 'dashboard';
 export const EXERCISE_TYPES_ROUTE = 'exercises';
-export const DATA_MANAGEMENT_ROUTE = 'import-export';
 export const WORKOUT_ROUTE = 'workout';
 export const SETTINGS_ROUTE = 'settings';
 export const NAME_KEY = 'name';

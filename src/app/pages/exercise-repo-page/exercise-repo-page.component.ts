@@ -49,4 +49,8 @@ export class ExerciseRepoPageComponent {
   view(exercise: ExerciseType): void {
     this._currentlyViewing$.next(exercise);
   }
+
+  getId(index: number, type: ExerciseType): string {
+    return type.id;
+  }
 }

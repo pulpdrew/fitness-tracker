@@ -1,6 +1,8 @@
 <div class="container">
   <mat-accordion>
-    <mat-expansion-panel *ngFor="let type of exercises$ | async">
+    <mat-expansion-panel
+      *ngFor="let type of exercises$ | async; trackBy: getId"
+    >
       <mat-expansion-panel-header>
         <mat-panel-title>{{ type.name }}</mat-panel-title>
       </mat-expansion-panel-header>
