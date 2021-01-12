@@ -14,12 +14,10 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
+    "allowSyntheticDefaultImports": true,
     "target": "es2015",
     "module": "es2020",
-    "lib": [
-      "es2019",
-      "dom"
-    ]
+    "lib": ["es2019", "dom"]
   },
   "angularCompilerOptions": {
     "strictInjectionParameters": true,
