@@ -1,54 +1,125 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import DataSource from '../types/data-source';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { ExerciseType } from '../types/exercise-type';
 import { getDefaultSettings, Settings } from '../types/settings';
-import { Workout } from '../types/workout';
+import { ExerciseSet, Workout } from '../types/workout';
 import localforage from 'localforage';
 import { filter, map, take } from 'rxjs/operators';
 
-export default class LocalForageService implements DataSource {
-  private readonly _isInitialized$ = new BehaviorSubject<boolean>(false);
-  private readonly _exerciseTypes$ = new BehaviorSubject<ExerciseType[]>([]);
-  private readonly _workouts$ = new BehaviorSubject<Workout[]>([]);
-  private readonly _settings$ = new BehaviorSubject<Settings>(
-    getDefaultSettings()
-  );
+interface SerializedWorkout {
+  id: string;
+  name: string;
+  date: string;
+  exercises: SerializedExercise[];
+}
 
-  readonly exerciseTypes$: Observable<
-    ExerciseType[]
-  > = this._exerciseTypes$
-    .asObservable()
-    .pipe(map((types) => types.sort((a, b) => a.name.localeCompare(b.name))));
+interface SerializedExercise {
+  typeId: string;
+  sets: ExerciseSet[];
+}
 
-  readonly workouts$: Observable<Workout[]> = this._workouts$.asObservable();
-  readonly settings$: Observable<Settings> = this._settings$.asObservable();
+interface Dump {
+  workouts: SerializedWorkout[];
+  types: ExerciseType[];
+  settings: Settings;
+}
 
-  private exerciseTypeInstance: LocalForage = localforage.createInstance({
-    name: 'exercise-types',
-  });
+export default class LocalForageService {
+  private readonly _isInitialized$: BehaviorSubject<boolean>;
+  private readonly _exerciseTypes$: BehaviorSubject<Map<string, ExerciseType>>;
+  private readonly _workouts$: BehaviorSubject<SerializedWorkout[]>;
+  private readonly _settings$: BehaviorSubject<Settings>;
+
+  readonly exerciseTypes$: Observable<Map<string, ExerciseType>>;
+  readonly workouts$: Observable<Workout[]>;
+  readonly settings$: Observable<Settings>;
+
+  /**
+   * The LocalForage Instance that holds Exercise Types
+   */
+  private _dbExerciseTypes: LocalForage;
+
+  /**
+   * The LocalForage Instance that holds Application Settings
+   */
+  private _dbSettings: LocalForage;
+
+  /**
+   * The LocalForage Instance that holds SerializedWorkout
+   */
+  private _dbWorkouts: LocalForage;
 
   constructor() {
+    // Create the Local Forage Instances.
+    this._dbExerciseTypes = localforage.createInstance({
+      name: 'ExerciseTypes',
+    });
+    this._dbSettings = localforage.createInstance({
+      name: 'Settings',
+    });
+    this._dbWorkouts = localforage.createInstance({
+      name: 'Workouts',
+    });
+
+    // Initialize behavior subjects caching the local forage data and service state
+    this._isInitialized$ = new BehaviorSubject<boolean>(false);
+    this._exerciseTypes$ = new BehaviorSubject(new Map());
+    this._workouts$ = new BehaviorSubject<SerializedWorkout[]>([]);
+    this._settings$ = new BehaviorSubject(getDefaultSettings());
+
+    // Initialize the public observables
+    this.exerciseTypes$ = this._exerciseTypes$.asObservable();
+    this.settings$ = this._settings$.asObservable();
+    this.workouts$ = combineLatest([
+      this._workouts$.asObservable(),
+      this.exerciseTypes$,
+    ]).pipe(
+      map(([workouts, types]) => workouts.map((w) => this.toWorkout(w, types))),
+      map((workouts) =>
+        workouts.sort((a, b) => a.date.getTime() - b.date.getTime())
+      )
+    );
+
+    // Initialize the service
     this.init().then(() => {
       this._isInitialized$.next(true);
     });
   }
 
-  private async init() {
-    await this.loadExerciseTypes();
+  private async init(): Promise<void> {
+    await Promise.all([
+      this.loadExerciseTypes(),
+      this.loadWorkouts(),
+      this.loadSettings(),
+    ]);
   }
 
-  upsertWorkout(workout: Workout): Promise<void> {
-    throw new Error('Method not implemented.');
+  async upsertWorkout(workout: Workout): Promise<void> {
+    try {
+      await this.waitForInit();
+      await this._dbWorkouts.setItem(
+        workout.id,
+        this.toPersistentWorkout(workout)
+      );
+      await this.loadWorkouts();
+    } catch (err) {
+      console.error('Error upserting workout: ' + err);
+    }
   }
 
-  deleteWorkout(workout: Workout): Promise<void> {
-    throw new Error('Method not implemented.');
+  async deleteWorkout(workout: Workout): Promise<void> {
+    try {
+      await this.waitForInit();
+      await this._dbWorkouts.removeItem(workout.id);
+      await this.loadWorkouts();
+    } catch (err) {
+      console.error('Error deleting workout: ' + err);
+    }
   }
 
   async upsertExerciseType(type: ExerciseType): Promise<void> {
     try {
       await this.waitForInit();
-      await this.exerciseTypeInstance.setItem(type.id, type);
+      await this._dbExerciseTypes.setItem(type.id, type);
       await this.loadExerciseTypes();
     } catch (err) {
       console.error('Error upserting exercise type: ' + err);
@@ -58,29 +129,86 @@ export default class LocalForageService implements DataSource {
   async deleteExerciseType(type: ExerciseType): Promise<void> {
     try {
       await this.waitForInit();
-      await this.exerciseTypeInstance.removeItem(type.id);
+      await this._dbExerciseTypes.removeItem(type.id);
       await this.loadExerciseTypes();
     } catch (err) {
       console.error('Error deleting exercise type: ' + err);
     }
   }
 
-  exportData(): Promise<string> {
-    throw new Error('Method not implemented.');
+  async exportData(): Promise<string> {
+    await this.waitForInit();
+
+    const dump: Dump = {
+      settings: this._settings$.value,
+      workouts: this._workouts$.value,
+      types: Array.from(this._exerciseTypes$.value.values()),
+    };
+
+    return JSON.stringify(dump);
   }
 
-  importData(json: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async importData(json: string): Promise<void> {
+    await this.waitForInit();
+    await this.clear();
+
+    let dump: Dump = {
+      types: [],
+      workouts: [],
+      settings: getDefaultSettings(),
+    };
+
+    try {
+      dump = JSON.parse(json);
+    } catch (err) {
+      console.error('Failed to parse the import file: ' + err);
+    }
+
+    await Promise.all([
+      this.updateSettings(dump.settings),
+      Promise.all(
+        dump.types.map((type) => this._dbExerciseTypes.setItem(type.id, type))
+      ),
+      Promise.all(
+        dump.workouts.map((workout) =>
+          this._dbWorkouts.setItem(workout.id, workout)
+        )
+      ),
+    ]);
+
+    await Promise.all([
+      this.loadExerciseTypes(),
+      this.loadSettings(),
+      this.loadWorkouts(),
+    ]);
   }
 
-  updateSettings(settings: Settings): Promise<void> {
-    throw new Error('Method not implemented.');
+  async updateSettings(settings: Settings): Promise<void> {
+    try {
+      await this.waitForInit();
+      await Promise.all(
+        Object.entries(settings).map((prop) =>
+          this._dbSettings.setItem(prop[0], prop[1])
+        )
+      );
+      await this.loadSettings();
+    } catch (err) {
+      console.error('Error updating settings: ' + err);
+    }
   }
 
   async clear(): Promise<void> {
     await this.waitForInit();
-    await this.exerciseTypeInstance.clear();
-    await this.loadExerciseTypes();
+    await Promise.all([
+      this._dbExerciseTypes.clear(),
+      this._dbSettings.clear(),
+      this._dbWorkouts.clear(),
+    ]);
+    await Promise.all([
+      this.loadExerciseTypes(),
+      this.loadSettings(),
+      this.loadWorkouts(),
+    ]);
   }
 
   async waitForInit(): Promise<void> {
@@ -94,10 +222,56 @@ export default class LocalForageService implements DataSource {
   }
 
   private async loadExerciseTypes(): Promise<void> {
-    const updatedTypes: ExerciseType[] = [];
-    await this.exerciseTypeInstance.iterate((type: ExerciseType) => {
-      updatedTypes.push(type);
+    const types: Map<string, ExerciseType> = new Map();
+    await this._dbExerciseTypes.iterate((type: ExerciseType) => {
+      types.set(type.id, type);
     });
-    this._exerciseTypes$.next(updatedTypes);
+    this._exerciseTypes$.next(types);
+  }
+
+  private async loadWorkouts(): Promise<void> {
+    const workouts: SerializedWorkout[] = [];
+    await this._dbWorkouts.iterate((workout: SerializedWorkout) => {
+      workouts.push(workout);
+    });
+    this._workouts$.next(workouts);
+  }
+
+  private async loadSettings(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const settings: any = getDefaultSettings();
+    await this._dbSettings.iterate((val, key: string) => {
+      settings[key] = val;
+    });
+    this._settings$.next(settings as Settings);
+  }
+
+  private toWorkout(
+    persistent: SerializedWorkout,
+    types: Map<string, ExerciseType>
+  ): Workout {
+    return {
+      date: new Date(persistent.date),
+      id: persistent.id,
+      name: persistent.name,
+      exercises: persistent.exercises
+        .filter((e) => types.has(e.typeId))
+        .map((e) => ({
+          type: types.get(e.typeId)!,
+          sets: e.sets,
+        })),
+    };
+  }
+
+  private toPersistentWorkout(workout: Workout): SerializedWorkout {
+    return {
+      id: workout.id,
+      name: workout.name,
+      date: workout.date.toUTCString(),
+      exercises: workout.exercises.map((e) => ({
+        typeId: e.type.id,
+        sets: e.sets,
+      })),
+    };
   }
 }
