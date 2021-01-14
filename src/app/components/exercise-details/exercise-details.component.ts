@@ -7,13 +7,11 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { BehaviorSubject, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import {
-  emptyExerciseStats,
-  ExerciseStatsService,
-} from 'src/app/services/exercise-stats.service';
+import { HistoryService } from 'src/app/services/history.service';
 import { SettingsService } from 'src/app/services/settings.service';
+import { ExerciseStats, StatsService } from 'src/app/services/stats.service';
 import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 
 @Component({
@@ -29,16 +27,19 @@ export class ExerciseDetailsComponent implements OnInit, OnChanges {
   private _type$ = new BehaviorSubject<ExerciseType>(this.type);
   private type$ = this._type$.asObservable();
 
-  stats$ = combineLatest([this.type$, this.statsService.stats$]).pipe(
-    map(([type, stats]) => stats.get(type.id) || emptyExerciseStats())
-  );
+  stats$: Observable<ExerciseStats> = combineLatest([
+    this.type$,
+    this.statsService.stats$,
+  ]).pipe(map(([type, stats]) => stats.get(type.id) || { type, workouts: [] }));
 
   weightUnit$ = this.settings.defaultWeightUnit$;
-  history$ = this.stats$.pipe(map((stats) => stats.history));
+  history$ = combineLatest([this.historyService.history$, this.type$]).pipe(
+    map(([histories, type]) => histories.get(type.id))
+  );
 
   maxWeight$ = this.stats$.pipe(
     map((stats) =>
-      stats.maxWeight ? `${stats.maxWeight} ${stats.maxWeightUnits}` : ''
+      stats.maxWeight ? `${stats.maxWeight} ${stats.weightUnits}` : ''
     )
   );
 
@@ -51,7 +52,8 @@ export class ExerciseDetailsComponent implements OnInit, OnChanges {
   );
 
   constructor(
-    private statsService: ExerciseStatsService,
+    private statsService: StatsService,
+    private historyService: HistoryService,
     private settings: SettingsService
   ) {}
 

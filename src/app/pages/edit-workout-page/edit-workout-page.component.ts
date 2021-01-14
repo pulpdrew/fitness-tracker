@@ -10,9 +10,8 @@ import {
   EXERCISE_ARRAY_KEY,
   ADD_EXERCISE_DIALOG_WIDTH,
   WORKOUT_ROUTE,
-  DATA_SOURCE_INJECTION_TOKEN,
 } from 'src/app/constants';
-import DataSource from 'src/app/types/data-source';
+import DataStore, { DATA_STORE } from 'src/app/types/data-store';
 import { ExerciseType } from 'src/app/types/exercise-type';
 import {
   Workout,
@@ -62,7 +61,7 @@ export class EditWorkoutPageComponent {
   );
 
   constructor(
-    @Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource,
+    @Inject(DATA_STORE) private data: DataStore,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,

@@ -1,9 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DATA_SOURCE_INJECTION_TOKEN, WORKOUT_ROUTE } from 'src/app/constants';
+import { WORKOUT_ROUTE } from 'src/app/constants';
 import { DisplayCategoryPipe } from 'src/app/pipes/display-categories.pipe';
-import DataSource from 'src/app/types/data-source';
+import DataStore, { DATA_STORE } from 'src/app/types/data-store';
 import { ExerciseCategory, ExerciseType } from 'src/app/types/exercise-type';
 import { Workout } from 'src/app/types/workout';
 
@@ -32,7 +32,7 @@ export class WorkoutLogPageComponent {
   );
 
   constructor(
-    @Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource,
+    @Inject(DATA_STORE) private data: DataStore,
     private displayCategory: DisplayCategoryPipe
   ) {}
 
@@ -42,7 +42,7 @@ export class WorkoutLogPageComponent {
 
   private formatWorkout(
     workout: Workout,
-    types: ExerciseType[]
+    types: Map<string, ExerciseType>
   ): WorkoutDisplay {
     return {
       link: `/${WORKOUT_ROUTE}/${workout.id}`,
@@ -53,12 +53,11 @@ export class WorkoutLogPageComponent {
 
   private countCategories(
     workout: Workout,
-    types: ExerciseType[]
+    types: Map<string, ExerciseType>
   ): CategoryCount[] {
     const counts = new Map<ExerciseCategory, number>();
     for (const exercise of workout.exercises) {
-      const categories =
-        types.find((t) => t.id === exercise.type.id)?.categories || [];
+      const categories = types.get(exercise.type.id)?.categories || [];
       for (const category of categories) {
         counts.set(category, (counts.get(category) || 0) + 1);
       }

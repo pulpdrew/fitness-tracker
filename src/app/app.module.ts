@@ -47,8 +47,6 @@ import {
   DisplayCategoryPipe,
 } from './pipes/display-categories.pipe';
 import { SetPipe } from './pipes/set.pipe';
-import { RxdbService } from './services/rxdb.service';
-import { DATA_SOURCE_INJECTION_TOKEN } from './constants';
 import LocalForageService from './services/local-forage.service';
 import { DATA_STORE } from './types/data-store';
 
@@ -100,7 +98,6 @@ import { DATA_STORE } from './types/data-store';
   ],
   providers: [
     DisplayCategoryPipe,
-    { provide: DATA_SOURCE_INJECTION_TOKEN, useClass: RxdbService },
     { provide: DATA_STORE, useClass: LocalForageService },
   ],
   bootstrap: [AppComponent],

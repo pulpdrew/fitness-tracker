@@ -45,7 +45,7 @@
   >
     <app-exercise-history-item
       *ngFor="let workout of history$ | async"
-      [workout]="workout"
+      [entry]="workout"
     ></app-exercise-history-item>
   </div>
 

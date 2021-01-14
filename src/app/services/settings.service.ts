@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { concat, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { DATA_SOURCE_INJECTION_TOKEN } from '../constants';
-import DataSource from '../types/data-source';
+import DataStore, { DATA_STORE } from '../types/data-store';
 import { getDefaultSettings } from '../types/settings';
 import { WeightUnit } from '../types/workout';
 
@@ -15,7 +14,7 @@ export class SettingsService {
   defaultWeightUnit: WeightUnit = WeightUnit.KG;
   defaultWeightUnit$ = this.settings$.pipe(map((s) => s.defaultWeightUnit));
 
-  constructor(@Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource) {
+  constructor(@Inject(DATA_STORE) private data: DataStore) {
     this.defaultWeightUnit$.subscribe(
       (unit) => (this.defaultWeightUnit = unit)
     );

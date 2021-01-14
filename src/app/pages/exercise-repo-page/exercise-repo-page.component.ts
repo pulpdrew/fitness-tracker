@@ -3,8 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EditExerciseTypeDialogComponent } from 'src/app/components/edit-exercise-type-dialog/edit-exercise-type-dialog.component';
-import { DATA_SOURCE_INJECTION_TOKEN } from 'src/app/constants';
-import DataSource from 'src/app/types/data-source';
+import DataStore, { DATA_STORE } from 'src/app/types/data-store';
 import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 
 @Component({
@@ -14,14 +13,16 @@ import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 })
 export class ExerciseRepoPageComponent {
   exercises$ = this.data.exerciseTypes$.pipe(
-    map((types) => types.sort((a, b) => a.name.localeCompare(b.name)))
+    map((types) =>
+      Array.from(types.values()).sort((a, b) => a.name.localeCompare(b.name))
+    )
   );
 
   private _currentlyViewing$ = new BehaviorSubject<ExerciseType | null>(null);
   currentlyViewing$: Observable<ExerciseType | null> = this._currentlyViewing$.asObservable();
 
   constructor(
-    @Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource,
+    @Inject(DATA_STORE) private data: DataStore,
     private dialog: MatDialog
   ) {
     this.exercises$.subscribe((types) => {

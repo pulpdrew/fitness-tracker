@@ -1,9 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { DATA_SOURCE_INJECTION_TOKEN } from 'src/app/constants';
 import { SettingsService } from 'src/app/services/settings.service';
-import DataSource from 'src/app/types/data-source';
+import DataStore, { DATA_STORE } from 'src/app/types/data-store';
 import { WeightUnit, WEIGHT_UNITS } from 'src/app/types/workout';
 
 interface FileInputTarget extends EventTarget {
@@ -42,7 +41,7 @@ export class SettingsPageComponent implements OnInit {
 
   constructor(
     private settings: SettingsService,
-    @Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource,
+    @Inject(DATA_STORE) private data: DataStore,
     private sanitizer: DomSanitizer
   ) {
     // When a file is loaded, import it into the data store

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { WorkoutSummary } from 'src/app/services/exercise-stats.service';
+import { HistoryEntry } from 'src/app/services/history.service';
 
 @Component({
   selector: 'app-exercise-history-item',
@@ -7,5 +7,5 @@ import { WorkoutSummary } from 'src/app/services/exercise-stats.service';
   styleUrls: ['./exercise-history-item.component.scss'],
 })
 export class ExerciseHistoryItemComponent {
-  @Input() workout: WorkoutSummary | null = null;
+  @Input() entry: HistoryEntry | null = null;
 }

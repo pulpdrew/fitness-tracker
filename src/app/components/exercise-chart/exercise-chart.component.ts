@@ -6,16 +6,13 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { CHART_COLORS } from 'src/app/constants';
-import {
-  ExerciseStats,
-  WorkoutSummary,
-} from 'src/app/services/exercise-stats.service';
+import { ExerciseStats, WorkoutStats } from 'src/app/services/stats.service';
 import { WeightUnit } from 'src/app/types/workout';
 
 type SeriesDescription = {
   name: string;
   color: string;
-  extractor: (day: WorkoutSummary) => number;
+  extractor: (day: WorkoutStats) => number | undefined;
 };
 
 type ColorScheme = {
@@ -72,8 +69,8 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
   @Input() stats?: ExerciseStats | null;
   @Input() weightUnit?: WeightUnit | null;
 
-  private get history(): WorkoutSummary[] {
-    return this.stats?.history || [];
+  private get history(): WorkoutStats[] {
+    return this.stats?.workouts || [];
   }
 
   /**
@@ -168,7 +165,7 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
     };
   }
 
-  static buildSeries(history: WorkoutSummary[]): Series[] {
+  static buildSeries(history: WorkoutStats[]): Series[] {
     const seriesData: Series[] = [];
 
     for (const series of seriesDescriptions) {
@@ -176,8 +173,8 @@ export class ExerciseChartComponent implements OnInit, OnChanges {
         seriesData.push({
           name: series.name,
           series: history.filter(series.extractor).map((day) => ({
-            name: day.date,
-            value: series.extractor(day),
+            name: day.workoutDate,
+            value: series.extractor(day) || 0,
           })),
         });
       }

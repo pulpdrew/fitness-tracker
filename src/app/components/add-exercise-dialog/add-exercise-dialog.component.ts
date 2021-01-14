@@ -3,8 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, concat, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DATA_SOURCE_INJECTION_TOKEN } from 'src/app/constants';
-import DataSource from 'src/app/types/data-source';
+import DataStore, { DATA_STORE } from 'src/app/types/data-store';
 import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 import { EditExerciseTypeDialogComponent } from '../edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 
@@ -17,7 +16,9 @@ export class AddExerciseDialogComponent {
   selected = new FormControl();
 
   exercises$: Observable<ExerciseType[]> = this.data.exerciseTypes$.pipe(
-    map((types) => types.sort((a, b) => a.name.localeCompare(b.name)))
+    map((types) =>
+      Array.from(types.values()).sort((a, b) => a.name.localeCompare(b.name))
+    )
   );
 
   filter$: Observable<string> = concat(of(''), this.selected.valueChanges).pipe(
@@ -38,7 +39,7 @@ export class AddExerciseDialogComponent {
 
   constructor(
     private dialog: MatDialog,
-    @Inject(DATA_SOURCE_INJECTION_TOKEN) private data: DataSource
+    @Inject(DATA_STORE) private data: DataStore
   ) {}
 
   display(exercise: ExerciseType): string {

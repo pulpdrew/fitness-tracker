@@ -43,7 +43,6 @@ export class EditExerciseTypeDialogComponent {
 
     const updated: ExerciseType = {
       id: this.template.id,
-      userDefined: true,
       name,
       fields,
       categories,
