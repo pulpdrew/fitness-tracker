@@ -4,6 +4,7 @@ import { getDefaultSettings, Settings } from '../types/settings';
 import { ExerciseSet, Workout } from '../types/workout';
 import localforage from 'localforage';
 import { filter, map, take } from 'rxjs/operators';
+import DataStore from '../types/data-store';
 
 interface SerializedWorkout {
   id: string;
@@ -23,7 +24,11 @@ interface Dump {
   settings: Settings;
 }
 
-export default class LocalForageService {
+const EXERCISE_TYPE_INSTANCE_NAME = 'ExerciseTypes';
+const WORKOUT_INSTANCE_NAME = 'Workouts';
+const SETTINGS_INSTANCE_NAME = 'Settings';
+
+export default class LocalForageService implements DataStore {
   private readonly _isInitialized$: BehaviorSubject<boolean>;
   private readonly _exerciseTypes$: BehaviorSubject<Map<string, ExerciseType>>;
   private readonly _workouts$: BehaviorSubject<SerializedWorkout[]>;
@@ -51,13 +56,13 @@ export default class LocalForageService {
   constructor() {
     // Create the Local Forage Instances.
     this._dbExerciseTypes = localforage.createInstance({
-      name: 'ExerciseTypes',
+      name: EXERCISE_TYPE_INSTANCE_NAME,
     });
     this._dbSettings = localforage.createInstance({
-      name: 'Settings',
+      name: SETTINGS_INSTANCE_NAME,
     });
     this._dbWorkouts = localforage.createInstance({
-      name: 'Workouts',
+      name: WORKOUT_INSTANCE_NAME,
     });
 
     // Initialize behavior subjects caching the local forage data and service state
