@@ -320,6 +320,5 @@ const workoutB: Workout = {
 };
 
 const settings: Settings = {
-  id: '0',
   defaultWeightUnit: WeightUnit.LB,
 };

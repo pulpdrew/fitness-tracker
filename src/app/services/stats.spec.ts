@@ -73,6 +73,22 @@ describe('StatsService', () => {
       );
     });
 
+    it('should sets stats as undefined when they are unavailable', () => {
+      const pushupStats = service.stats$.pipe(
+        map((stats) => stats.get(pushups.id)!)
+      );
+
+      expect(pushupStats).toBeObservable(
+        cold('a', {
+          a: {
+            type: pushups,
+            workouts: jasmine.arrayContaining([]),
+            maxReps: 104,
+          },
+        })
+      );
+    });
+
     it('should have type for typeId that has not been completed', () => {
       const tricepType = service.stats$.pipe(
         map((stats) => stats.get(tricep.id)!.type)
