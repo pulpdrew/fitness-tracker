@@ -62,19 +62,17 @@ export interface ExerciseType {
   id: string;
   name: string;
   fields: SetField[];
-  userDefined: boolean;
   categories: ExerciseCategory[];
 }
 
 /**
  * Returns a new, generated, empty Exercise type
  */
-export function emptyExerciseType(userDefined = true): ExerciseType {
+export function emptyExerciseType(): ExerciseType {
   return {
     id: uuidv4(),
     name: '',
     fields: [],
-    userDefined,
     categories: [],
   };
 }

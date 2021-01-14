@@ -186,7 +186,9 @@ function setup(
   types: ExerciseType[],
   workouts: Workout[]
 ): { service: HistoryService; data: MockDataStore } {
-  const types$ = cold('a', { a: types });
+  const types$ = cold('a', {
+    a: new Map(types.map((type) => [type.id, type])),
+  });
   const workouts$ = cold('a', { a: workouts });
 
   const data: MockDataStore = new MockDataStore(types$, workouts$);
@@ -219,7 +221,6 @@ const typeA: ExerciseType = {
   fields: [],
   id: 'A',
   name: 'Exercise A',
-  userDefined: false,
 };
 
 const typeB: ExerciseType = {

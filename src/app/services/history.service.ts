@@ -12,8 +12,6 @@ export interface HistoryEntry {
   sets: ExerciseSet[];
 }
 
-export type History = Map<string, HistoryEntry[]>;
-
 @Injectable({
   providedIn: 'root',
 })
@@ -22,7 +20,7 @@ export class HistoryService {
    * An observable map from exercise type id --> a chronological history
    * of that exercise, grouped by the workout in which they were performed.
    */
-  public readonly history$: Observable<History>;
+  public readonly history$: Observable<Map<string, HistoryEntry[]>>;
 
   /**
    * An observable map from exercise type id --> the sets of that exercise
@@ -40,7 +38,7 @@ export class HistoryService {
   }
 
   private buildPrevious(
-    history: History
+    history: Map<string, HistoryEntry[]>
   ): Map<string, HistoryEntry | undefined> {
     const previous = new Map<string, HistoryEntry | undefined>();
     for (const [id, datedSets] of history.entries()) {
@@ -55,7 +53,7 @@ export class HistoryService {
   private buildHistory(
     types: Map<string, ExerciseType>,
     workouts: Workout[]
-  ): History {
+  ): Map<string, HistoryEntry[]> {
     const history = new Map<string, HistoryEntry[]>();
     for (const type of types.values()) {
       const sets: HistoryEntry[] = this.getDatedSets(type, workouts);

@@ -263,7 +263,6 @@ const typeA: ExerciseType = {
   name: 'A',
   categories: [ExerciseCategory.ABS],
   fields: [SetField.DURATION],
-  userDefined: true,
 };
 
 const typeAPrime: ExerciseType = {
