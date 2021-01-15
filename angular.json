@@ -90,11 +90,11 @@
             "scripts": []
           },
           "configurations": {
-            "testing": {
+            "test": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.testing.ts"
+                  "with": "src/environments/environment.test.ts"
                 }
               ]
             }

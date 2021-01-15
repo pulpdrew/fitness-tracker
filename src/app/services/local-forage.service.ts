@@ -5,6 +5,7 @@ import { ExerciseSet, Workout } from '../types/workout';
 import localforage from 'localforage';
 import { filter, map, take } from 'rxjs/operators';
 import DataStore from '../types/data-store';
+import { environment } from 'src/environments/environment';
 
 interface SerializedWorkout {
   id: string;
@@ -24,9 +25,9 @@ interface Dump {
   settings: Settings;
 }
 
-const EXERCISE_TYPE_INSTANCE_NAME = 'ExerciseTypes';
-const WORKOUT_INSTANCE_NAME = 'Workouts';
-const SETTINGS_INSTANCE_NAME = 'Settings';
+const EXERCISE_TYPE_INSTANCE_NAME = environment.dbNamePrefix + 'ExerciseTypes';
+const WORKOUT_INSTANCE_NAME = environment.dbNamePrefix + 'Workouts';
+const SETTINGS_INSTANCE_NAME = environment.dbNamePrefix + 'Settings';
 
 export default class LocalForageService implements DataStore {
   private readonly _isInitialized$: BehaviorSubject<boolean>;
