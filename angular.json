@@ -26,26 +26,10 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "aot": true,
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.scss"],
             "scripts": [],
-            "allowedCommonJsDependencies": [
-              "crypto-js/aes",
-              "modifyjs",
-              "is-my-json-valid",
-              "deep-equal",
-              "object-path",
-              "immediate",
-              "@babel/runtime/regenerator",
-              "crypto-js/enc-utf8",
-              "@babel/runtime/helpers/wrapNativeSuper",
-              "zone.js/dist/zone-error"
-            ]
+            "allowedCommonJsDependencies": ["zone.js/dist/zone-error"]
           },
           "configurations": {
             "production": {
@@ -101,14 +85,19 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.scss"],
             "scripts": []
+          },
+          "configurations": {
+            "testing": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.testing.ts"
+                }
+              ]
+            }
           }
         },
         "lint": {
@@ -119,9 +108,7 @@
               "tsconfig.spec.json",
               "e2e/tsconfig.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "e2e": {
