@@ -14,6 +14,16 @@
     </span>
   </div>
   <mat-card-content>
+    <div class="previous-container" *ngIf="previousEffort$ | async">
+      <span
+        >Last time ({{ (previousEffort$ | async)?.workoutDate | date }}):</span
+      >
+      <span
+        *ngFor="let set of (previousEffort$ | async)?.sets"
+        class="previous-set"
+        >{{ set | set }}</span
+      >
+    </div>
     <div [formGroup]="form">
       <div [formArrayName]="SETS_ARRAY_KEY">
         <div

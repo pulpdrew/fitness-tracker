@@ -39,6 +39,7 @@
   >
     <app-exercise-form
       [form]="getChildForm(i)"
+      [workoutId]="id$ | async"
       (up)="moveUp(i)"
       (down)="moveDown(i)"
       (remove)="remove(i)"

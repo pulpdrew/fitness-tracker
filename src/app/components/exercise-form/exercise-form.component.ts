@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { EXERCISE_TYPE_KEY, SETS_ARRAY_KEY } from 'src/app/constants';
+import { HistoryEntry, HistoryService } from 'src/app/services/history.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
 import {
@@ -26,6 +29,11 @@ export class ExerciseFormComponent implements OnInit {
   });
 
   /**
+   * The Id of the workout that is being edited
+   */
+  @Input() workoutId: string | null = '';
+
+  /**
    * Event that fires when this exercise is moved towards the beginning
    * of the list of exercises.
    */
@@ -48,15 +56,32 @@ export class ExerciseFormComponent implements OnInit {
    */
   type: ExerciseType = emptyExerciseType();
 
+  /**
+   * The sets completed in the most recent workout that wasn't this one
+   */
+  previousEffort$: Observable<HistoryEntry | undefined> = of();
+
   // Imports used in the template
   SETS_ARRAY_KEY = SETS_ARRAY_KEY;
   SetField = SetField;
   units = WEIGHT_UNITS;
 
-  constructor(private settings: SettingsService) {}
+  constructor(
+    private readonly settings: SettingsService,
+    private readonly history: HistoryService
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.type = this.form.get(EXERCISE_TYPE_KEY)?.value || emptyExerciseType();
+
+    this.previousEffort$ = this.history.history$.pipe(
+      map((history) =>
+        history
+          .get(this.type.id)
+          ?.reverse()
+          .find((e) => !!this.workoutId && e.workoutID !== this.workoutId)
+      )
+    );
   }
 
   get sets(): FormArray {

@@ -5,11 +5,13 @@ import DataStore, { DATA_STORE } from '../types/data-store';
 import { ExerciseType } from '../types/exercise-type';
 import { ExerciseSet, Workout } from '../types/workout';
 
-export interface HistoryEntry {
-  workoutID: string;
-  workoutDate: Date;
-  type: ExerciseType;
-  sets: ExerciseSet[];
+export class HistoryEntry {
+  constructor(
+    public readonly workoutID: string,
+    public readonly workoutDate: Date,
+    public readonly type: ExerciseType,
+    public readonly sets: ExerciseSet[]
+  ) {}
 }
 
 @Injectable({
@@ -74,12 +76,7 @@ export class HistoryService {
         .flatMap((e) => e.sets);
 
       if (sets.length > 0) {
-        datedSets.push({
-          sets,
-          type,
-          workoutDate: workout.date,
-          workoutID: workout.id,
-        });
+        datedSets.push(new HistoryEntry(workout.id, workout.date, type, sets));
       }
     }
 
