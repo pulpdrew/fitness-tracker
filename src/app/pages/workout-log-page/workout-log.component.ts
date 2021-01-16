@@ -6,6 +6,7 @@ import { DisplayCategoryPipe } from 'src/app/pipes/display-categories.pipe';
 import DataStore, { DATA_STORE } from 'src/app/types/data-store';
 import { ExerciseCategory, ExerciseType } from 'src/app/types/exercise-type';
 import { Workout } from 'src/app/types/workout';
+import { v4 as uuidv4 } from 'uuid';
 
 interface CategoryCount {
   name: string;
@@ -40,6 +41,15 @@ export class WorkoutLogPageComponent {
 
   deleteWorkout(workout: Workout): void {
     this.data.deleteWorkout(workout);
+  }
+
+  async copyWorkout(workout: Workout): Promise<void> {
+    const copy: Workout = {
+      ...workout,
+      name: `Copy of ${workout.name}`,
+      id: uuidv4(),
+    };
+    await this.data.upsertWorkout(copy);
   }
 
   private formatWorkout(

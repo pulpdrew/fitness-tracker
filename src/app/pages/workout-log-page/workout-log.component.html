@@ -26,6 +26,9 @@
 
     <mat-card-actions>
       <a mat-raised-button color="accent" [routerLink]="workout.link">Edit</a>
+      <button mat-raised-button color="accent" (click)="copyWorkout(workout)">
+        Copy
+      </button>
       <button mat-raised-button color="accent" (click)="deleteWorkout(workout)">
         Delete
       </button>
