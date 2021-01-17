@@ -41,34 +41,34 @@ describe('HistoryService', () => {
         [
           typeA.id,
           [
-            {
-              workoutDate: workoutA.date,
-              workoutID: workoutA.id,
-              sets: workoutA.exercises[0].sets,
-              type: typeA,
-            },
+            new HistoryEntry(
+              workoutA.id,
+              workoutA.date,
+              typeA,
+              workoutA.exercises[0].sets
+            ),
           ],
         ],
         [
           typeB.id,
           [
-            {
-              workoutDate: workoutA.date,
-              workoutID: workoutA.id,
-              sets: workoutA.exercises[1].sets,
-              type: typeB,
-            },
+            new HistoryEntry(
+              workoutA.id,
+              workoutA.date,
+              typeB,
+              workoutA.exercises[1].sets
+            ),
           ],
         ],
         [
           typeC.id,
           [
-            {
-              workoutDate: workoutA.date,
-              workoutID: workoutA.id,
-              sets: workoutA.exercises[2].sets,
-              type: typeC,
-            },
+            new HistoryEntry(
+              workoutA.id,
+              workoutA.date,
+              typeC,
+              workoutA.exercises[2].sets
+            ),
           ],
         ],
       ]),
@@ -86,40 +86,40 @@ describe('HistoryService', () => {
         [
           typeA.id,
           [
-            {
-              workoutDate: workoutA.date,
-              workoutID: workoutA.id,
-              sets: workoutA.exercises[0].sets,
-              type: typeA,
-            },
-            {
-              workoutDate: workoutB.date,
-              workoutID: workoutB.id,
-              sets: workoutB.exercises[0].sets,
-              type: typeA,
-            },
+            new HistoryEntry(
+              workoutA.id,
+              workoutA.date,
+              typeA,
+              workoutA.exercises[0].sets
+            ),
+            new HistoryEntry(
+              workoutB.id,
+              workoutB.date,
+              typeA,
+              workoutB.exercises[0].sets
+            ),
           ],
         ],
         [
           typeB.id,
           [
-            {
-              workoutDate: workoutA.date,
-              workoutID: workoutA.id,
-              sets: workoutA.exercises[1].sets,
-              type: typeB,
-            },
+            new HistoryEntry(
+              workoutA.id,
+              workoutA.date,
+              typeB,
+              workoutA.exercises[1].sets
+            ),
           ],
         ],
         [
           typeC.id,
           [
-            {
-              workoutDate: workoutA.date,
-              workoutID: workoutA.id,
-              sets: workoutA.exercises[2].sets,
-              type: typeC,
-            },
+            new HistoryEntry(
+              workoutA.id,
+              workoutA.date,
+              typeC,
+              workoutA.exercises[2].sets
+            ),
           ],
         ],
       ]),
@@ -136,30 +136,30 @@ describe('HistoryService', () => {
       a: new Map<string, HistoryEntry>([
         [
           typeA.id,
-          {
-            sets: workoutB.exercises[0].sets,
-            type: typeA,
-            workoutDate: workoutB.date,
-            workoutID: workoutB.id,
-          },
+          new HistoryEntry(
+            workoutB.id,
+            workoutB.date,
+            typeA,
+            workoutB.exercises[0].sets
+          ),
         ],
         [
           typeB.id,
-          {
-            sets: workoutA.exercises[1].sets,
-            type: typeB,
-            workoutDate: workoutA.date,
-            workoutID: workoutA.id,
-          },
+          new HistoryEntry(
+            workoutA.id,
+            workoutA.date,
+            typeB,
+            workoutA.exercises[1].sets
+          ),
         ],
         [
           typeC.id,
-          {
-            sets: workoutA.exercises[2].sets,
-            type: typeC,
-            workoutDate: workoutA.date,
-            workoutID: workoutA.id,
-          },
+          new HistoryEntry(
+            workoutA.id,
+            workoutA.date,
+            typeC,
+            workoutA.exercises[2].sets
+          ),
         ],
       ]),
     });
