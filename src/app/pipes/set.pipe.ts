@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { Duration } from '../types/duration';
 import { ExerciseSet } from '../types/workout';
 
 @Pipe({
@@ -22,10 +23,13 @@ export class SetPipe implements PipeTransform {
       display += `${set.weight}${set.weightUnits}`;
     }
 
-    if (set.duration && set.weight) {
-      display += `for ${set.duration} sec`;
-    } else if (set.duration) {
-      display += `${set.duration} sec`;
+    if (set.duration) {
+      const duration = new Duration(set.duration).toString();
+      if (set.weight) {
+        display += `for ${duration}`;
+      } else if (set.duration) {
+        display += `${duration}`;
+      }
     }
 
     return display || 'Empty Set';

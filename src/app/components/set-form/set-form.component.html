@@ -1,13 +1,29 @@
 <div [formGroup]="form" class="row">
   <span *ngFor="let field of type?.fields" class="field">
-    <mat-form-field class="input">
+    <mat-form-field
+      *ngIf="field !== SetField.DURATION; else duration"
+      class="input"
+    >
       <mat-label>{{ field | displayField }}</mat-label>
       <input
         matInput
         [placeholder]="field | displayField"
         [formControlName]="field"
+        type="number"
       />
     </mat-form-field>
+
+    <ng-template #duration>
+      <mat-form-field class="input">
+        <mat-label>Duration (hh:mm:ss)</mat-label>
+        <input
+          matInput
+          [placeholder]="field | displayField"
+          [formControlName]="field"
+          type="text"
+        />
+      </mat-form-field>
+    </ng-template>
 
     <!-- Weight requires an associated weight unit, this is a select -->
     <mat-form-field *ngIf="field == SetField.WEIGHT" class="input small-input">

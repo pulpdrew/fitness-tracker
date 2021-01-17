@@ -1,4 +1,4 @@
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   NAME_KEY,
   DATE_KEY,
@@ -8,6 +8,7 @@ import {
 } from '../constants';
 import { v4 as uuidv4 } from 'uuid';
 import { emptyExerciseType, ExerciseType } from './exercise-type';
+import { Duration } from './duration';
 
 /**
  * The fields that can be stored in an ExerciseSet
@@ -87,9 +88,9 @@ export function formToSet(form: FormGroup): ExerciseSet {
   }
 
   if (form.get(SetField.DURATION)?.value) {
-    set[SetField.DURATION] = Number.parseInt(
+    set[SetField.DURATION] = Duration.parse(
       form.get(SetField.DURATION)?.value
-    );
+    ).totalSeconds;
   }
 
   return set;
@@ -100,7 +101,10 @@ export function setToForm(set: ExerciseSet): FormGroup {
     [SetField.WEIGHT]: new FormControl(set[SetField.WEIGHT]),
     [SetField.WEIGHT_UNITS]: new FormControl(set[SetField.WEIGHT_UNITS]),
     [SetField.REPS]: new FormControl(set[SetField.REPS]),
-    [SetField.DURATION]: new FormControl(set[SetField.DURATION]),
+    [SetField.DURATION]: new FormControl(
+      new Duration(set[SetField.DURATION] || 0).toString(),
+      [Validators.pattern(/^(\d?\d:)?(\d?\d:)?\d?\d$/)]
+    ),
   });
 }
 

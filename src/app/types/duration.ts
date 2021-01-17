@@ -1,38 +1,32 @@
-const MS_PER_SECOND = 1000;
-const MS_PER_MINUTE = MS_PER_SECOND * 60;
-const MS_PER_HOUR = MS_PER_MINUTE * 60;
+const S_PER_MINUTE = 60;
+const S_PER_HOUR = S_PER_MINUTE * 60;
 
 export class Duration {
-  constructor(public totalMilliseconds: number) {}
-
-  get milliseconds(): number {
-    return this.totalMilliseconds % MS_PER_SECOND;
-  }
+  constructor(public totalSeconds: number) {}
 
   get seconds(): number {
-    return Math.floor((this.totalMilliseconds % MS_PER_MINUTE) / MS_PER_SECOND);
+    return this.totalSeconds % S_PER_MINUTE;
   }
 
   get minutes(): number {
-    return Math.floor((this.totalMilliseconds % MS_PER_HOUR) / MS_PER_MINUTE);
+    return Math.floor((this.totalSeconds % S_PER_HOUR) / S_PER_MINUTE);
   }
 
   get hours(): number {
-    return Math.floor(this.totalMilliseconds / MS_PER_HOUR);
+    return Math.floor(this.totalSeconds / S_PER_HOUR);
   }
 
-  static from(
-    hours: number,
-    minutes: number,
-    seconds: number,
-    milliseconds: number
-  ): Duration {
-    return new Duration(
-      hours * MS_PER_HOUR +
-        minutes * MS_PER_MINUTE +
-        seconds * MS_PER_SECOND +
-        milliseconds
-    );
+  static from(hours: number, minutes: number, seconds: number): Duration {
+    return new Duration(hours * S_PER_HOUR + minutes * S_PER_MINUTE + seconds);
+  }
+
+  static parse(duration: string): Duration {
+    const parts = duration.split(':');
+    const seconds =
+      parts
+        .map((p) => Number.parseInt(p))
+        .reduce((seconds, n) => seconds * 60 + n, 0) || 0;
+    return new Duration(seconds);
   }
 
   toString(): string {
@@ -45,8 +39,7 @@ export class Duration {
       this.seconds < 10
         ? '0' + this.seconds.toFixed(0)
         : this.seconds.toPrecision(2);
-    const milliseconds = (this.milliseconds / 1000).toFixed(3).substr(1);
 
-    return `${hours}:${minutes}:${seconds}${milliseconds}`;
+    return `${hours}:${minutes}:${seconds}`;
   }
 }
