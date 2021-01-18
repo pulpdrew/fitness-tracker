@@ -34,7 +34,7 @@ export class ExerciseDetailsComponent implements OnInit, OnChanges {
 
   weightUnit$ = this.settings.defaultWeightUnit$;
   history$ = combineLatest([this.historyService.history$, this.type$]).pipe(
-    map(([histories, type]) => histories.get(type.id))
+    map(([histories, type]) => histories.get(type.id)?.reverse())
   );
 
   maxWeight$ = this.stats$.pipe(
