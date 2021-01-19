@@ -3,7 +3,7 @@ import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import DataStore, { DATA_STORE } from '../types/data-store';
 import { ExerciseType } from '../types/exercise-type';
-import { WeightUnit } from '../types/workout';
+import { WeightUnit } from '../types/weight';
 import { HistoryEntry, HistoryService } from './history.service';
 
 export interface ExerciseStats {
@@ -95,11 +95,13 @@ export class StatsService {
     if (weightUnits) stats.weightUnits = weightUnits;
 
     const maxDuration =
-      this.max(...historyEntry.sets.map((set) => set.duration)) || undefined;
+      this.max(...historyEntry.sets.map((set) => set.duration?.totalSeconds)) ||
+      undefined;
     if (maxDuration) stats.maxDuration = maxDuration;
 
     const totalDuration =
-      this.sum(...historyEntry.sets.map((set) => set.duration)) || undefined;
+      this.sum(...historyEntry.sets.map((set) => set.duration?.totalSeconds)) ||
+      undefined;
     if (totalDuration) stats.totalDuration = totalDuration;
 
     const maxReps =

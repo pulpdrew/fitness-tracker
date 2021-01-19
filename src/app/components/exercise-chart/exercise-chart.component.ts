@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { CHART_COLORS } from 'src/app/constants';
 import { ExerciseStats, WorkoutStats } from 'src/app/services/stats.service';
-import { WeightUnit } from 'src/app/types/workout';
+import { WeightUnit } from 'src/app/types/weight';
 
 type SeriesDescription = {
   name: string;

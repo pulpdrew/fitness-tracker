@@ -3,9 +3,11 @@ import { cold } from 'jasmine-marbles';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import DataStore, { DATA_STORE } from '../types/data-store';
+import { DURATION, REPS, WEIGHT, WEIGHT_UNITS } from '../types/exercise-set';
 import { ExerciseCategory, ExerciseType } from '../types/exercise-type';
 import { getDefaultSettings } from '../types/settings';
-import { SetField, WeightUnit, Workout } from '../types/workout';
+import { WeightUnit } from '../types/weight';
+import { Workout } from '../types/workout';
 import { HistoryService } from './history.service';
 import { StatsService } from './stats.service';
 
@@ -168,7 +170,7 @@ class MockDataStore implements DataStore {
 
 const plank: ExerciseType = {
   categories: [ExerciseCategory.ABS],
-  fields: [SetField.DURATION],
+  fields: [DURATION],
   id: 'A',
   name: 'Plank',
 };
@@ -177,100 +179,113 @@ const shoulderPress: ExerciseType = {
   id: 'B',
   name: 'Shoulder Press',
   categories: [ExerciseCategory.SHOULDERS],
-  fields: [SetField.REPS, SetField.WEIGHT, SetField.WEIGHT_UNITS],
+  fields: [REPS, WEIGHT, WEIGHT_UNITS],
 };
 
 const pushups: ExerciseType = {
   id: 'C',
   name: 'Pushups',
   categories: [ExerciseCategory.CHEST],
-  fields: [SetField.REPS],
+  fields: [REPS],
 };
 
 const tricep: ExerciseType = {
   id: 'D',
   name: 'Tricep Curls',
   categories: [ExerciseCategory.TRICEPS],
-  fields: [SetField.REPS],
+  fields: [REPS],
 };
 
-const workoutA: Workout = {
-  date: new Date('2020-01-01 00:00:00'),
-  id: 'A',
-  name: 'Workout A',
-  exercises: [
-    {
-      type: shoulderPress,
-      sets: [
-        {
-          reps: 10,
-          weight: 11,
-          weightUnits: WeightUnit.KG,
-        },
-        {
-          reps: 11,
-          weight: 22,
-          weightUnits: WeightUnit.LB,
-        },
-      ],
-    },
-    {
-      type: plank,
-      sets: [
-        {
-          duration: 102,
-        },
-        {
-          duration: 103,
-        },
-      ],
-    },
-    {
-      type: pushups,
-      sets: [
-        {
-          reps: 104,
-        },
-      ],
-    },
-    {
-      type: pushups,
-      sets: [
-        {
-          reps: 104,
-        },
-      ],
-    },
-  ],
-};
+const types = new Map([
+  [tricep.id, tricep],
+  [pushups.id, pushups],
+  [shoulderPress.id, shoulderPress],
+  [plank.id, plank],
+]);
 
-const workoutB: Workout = {
-  date: new Date('2020-01-02 00:00:00'),
-  id: 'B',
-  name: 'Workout B',
-  exercises: [
-    {
-      type: shoulderPress,
-      sets: [
-        {
-          reps: 12,
-          weight: 44,
-          weightUnits: WeightUnit.LB,
-        },
-        {
-          reps: 13,
-          weight: 10,
-          weightUnits: WeightUnit.KG,
-        },
-      ],
-    },
-    {
-      type: pushups,
-      sets: [
-        {
-          reps: 104,
-        },
-      ],
-    },
-  ],
-};
+const workoutA: Workout = new Workout(
+  {
+    date: new Date('2020-01-01 00:00:00').toISOString(),
+    id: 'A',
+    name: 'Workout A',
+    exercises: [
+      {
+        typeId: shoulderPress.id,
+        sets: [
+          {
+            reps: 10,
+            weight: 11,
+            weightUnits: WeightUnit.KG,
+          },
+          {
+            reps: 11,
+            weight: 22,
+            weightUnits: WeightUnit.LB,
+          },
+        ],
+      },
+      {
+        typeId: plank.id,
+        sets: [
+          {
+            duration: 102,
+          },
+          {
+            duration: 103,
+          },
+        ],
+      },
+      {
+        typeId: pushups.id,
+        sets: [
+          {
+            reps: 104,
+          },
+        ],
+      },
+      {
+        typeId: pushups.id,
+        sets: [
+          {
+            reps: 104,
+          },
+        ],
+      },
+    ],
+  },
+  types
+);
+
+const workoutB: Workout = new Workout(
+  {
+    date: new Date('2020-01-02 00:00:00').toISOString(),
+    id: 'B',
+    name: 'Workout B',
+    exercises: [
+      {
+        typeId: shoulderPress.id,
+        sets: [
+          {
+            reps: 12,
+            weight: 44,
+            weightUnits: WeightUnit.LB,
+          },
+          {
+            reps: 13,
+            weight: 10,
+            weightUnits: WeightUnit.KG,
+          },
+        ],
+      },
+      {
+        typeId: pushups.id,
+        sets: [
+          {
+            reps: 104,
+          },
+        ],
+      },
+    ],
+  },
+  types
+);

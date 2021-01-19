@@ -2,17 +2,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { EXERCISE_TYPE_KEY, SETS_ARRAY_KEY } from 'src/app/constants';
 import { HistoryEntry, HistoryService } from 'src/app/services/history.service';
 import { SettingsService } from 'src/app/services/settings.service';
+import { Exercise, EXERCISE_TYPE, SETS } from 'src/app/types/exercise';
+import { ExerciseSet } from 'src/app/types/exercise-set';
 import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
-import {
-  copySetForm,
-  emptySetForm,
-  exerciseToForm,
-  SetField,
-  WEIGHT_UNITS,
-} from 'src/app/types/workout';
+import { ALL_WEIGHT_UNITS } from 'src/app/types/weight';
 
 @Component({
   selector: 'app-exercise-form',
@@ -23,10 +18,7 @@ export class ExerciseFormComponent implements OnInit {
   /**
    * The form backing the exercise data
    */
-  @Input() form: FormGroup = exerciseToForm({
-    sets: [],
-    type: emptyExerciseType(),
-  });
+  @Input() form: FormGroup = new Exercise([], emptyExerciseType()).toForm();
 
   /**
    * The Id of the workout that is being edited
@@ -62,9 +54,8 @@ export class ExerciseFormComponent implements OnInit {
   previousEffort$: Observable<HistoryEntry | undefined> = of();
 
   // Imports used in the template
-  SETS_ARRAY_KEY = SETS_ARRAY_KEY;
-  SetField = SetField;
-  units = WEIGHT_UNITS;
+  readonly SETS_ARRAY_KEY = SETS;
+  readonly units = ALL_WEIGHT_UNITS;
 
   constructor(
     private readonly settings: SettingsService,
@@ -72,7 +63,7 @@ export class ExerciseFormComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.type = this.form.get(EXERCISE_TYPE_KEY)?.value || emptyExerciseType();
+    this.type = this.form.get(EXERCISE_TYPE)?.value || emptyExerciseType();
 
     this.previousEffort$ = this.history.history$.pipe(
       map((history) =>
@@ -85,7 +76,7 @@ export class ExerciseFormComponent implements OnInit {
   }
 
   get sets(): FormArray {
-    return this.form.get(SETS_ARRAY_KEY) as FormArray;
+    return this.form.get(SETS) as FormArray;
   }
 
   get rawSets(): FormGroup[] {
@@ -95,13 +86,13 @@ export class ExerciseFormComponent implements OnInit {
   addSet(): void {
     if (this.sets.length > 0) {
       this.sets.push(
-        copySetForm(this.sets.at(this.sets.length - 1) as FormGroup)
+        ExerciseSet.fromForm(
+          this.sets.at(this.sets.length - 1) as FormGroup
+        ).toForm()
       );
     } else {
-      const setForm = emptySetForm();
-      setForm
-        .get(SetField.WEIGHT_UNITS)
-        ?.setValue(this.settings.defaultWeightUnit);
+      const setForm = new ExerciseSet({}).toForm();
+      setForm.get(ALL_WEIGHT_UNITS)?.setValue(this.settings.defaultWeightUnit);
       this.sets.push(setForm);
     }
   }

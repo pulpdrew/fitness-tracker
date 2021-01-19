@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { SetField } from './workout';
+import { SetField } from './exercise-set';
 
 /**
  * The muscle region used by an exercise.

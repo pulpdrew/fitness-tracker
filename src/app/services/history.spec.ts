@@ -235,66 +235,78 @@ const typeC: ExerciseType = {
   name: 'Exercise C',
 };
 
-const workoutA: Workout = {
-  date: new Date('2020-01-01 00:00:00'),
-  id: 'A',
-  name: 'Workout A',
-  exercises: [
-    {
-      type: typeA,
-      sets: [
-        {
-          duration: 100,
-        },
-        {
-          duration: 101,
-        },
-      ],
-    },
-    {
-      type: typeB,
-      sets: [
-        {
-          duration: 102,
-        },
-        {
-          duration: 103,
-        },
-      ],
-    },
-    {
-      type: typeC,
-      sets: [
-        {
-          duration: 104,
-        },
-        {
-          duration: 105,
-        },
-      ],
-    },
-  ],
-};
+const types = new Map([
+  [typeA.id, typeA],
+  [typeB.id, typeB],
+  [typeC.id, typeC],
+]);
 
-const workoutB: Workout = {
-  date: new Date('2020-01-02 00:00:00'),
-  id: 'B',
-  name: 'Workout B',
-  exercises: [
-    {
-      type: typeA,
-      sets: [
-        {
-          duration: 106,
-        },
-        {
-          duration: 107,
-        },
-      ],
-    },
-    {
-      type: typeB,
-      sets: [],
-    },
-  ],
-};
+const workoutA: Workout = new Workout(
+  {
+    date: new Date('2020-01-01 00:00:00').toISOString(),
+    id: 'A',
+    name: 'Workout A',
+    exercises: [
+      {
+        typeId: typeA.id,
+        sets: [
+          {
+            duration: 100,
+          },
+          {
+            duration: 101,
+          },
+        ],
+      },
+      {
+        typeId: typeB.id,
+        sets: [
+          {
+            duration: 102,
+          },
+          {
+            duration: 103,
+          },
+        ],
+      },
+      {
+        typeId: typeC.id,
+        sets: [
+          {
+            duration: 104,
+          },
+          {
+            duration: 105,
+          },
+        ],
+      },
+    ],
+  },
+  types
+);
+
+const workoutB: Workout = new Workout(
+  {
+    date: new Date('2020-01-02 00:00:00').toISOString(),
+    id: 'B',
+    name: 'Workout B',
+    exercises: [
+      {
+        typeId: typeA.id,
+        sets: [
+          {
+            duration: 106,
+          },
+          {
+            duration: 107,
+          },
+        ],
+      },
+      {
+        typeId: typeB.id,
+        sets: [],
+      },
+    ],
+  },
+  types
+);

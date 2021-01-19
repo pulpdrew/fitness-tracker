@@ -1,12 +1,15 @@
 <div class="container">
   <mat-card *ngFor="let workout of workouts$ | async">
-    <mat-card-title>{{ workout.name }}</mat-card-title>
-    <mat-card-subtitle>{{ workout.date | date }}</mat-card-subtitle>
+    <mat-card-title>{{ workout.workout.name }}</mat-card-title>
+    <mat-card-subtitle>{{ workout.workout.date | date }}</mat-card-subtitle>
 
     <mat-card-content class="content">
       <div class="exercises">
-        <div class="exercise" *ngFor="let exercise of workout.exercises">
-          <span class="exercise-name">{{ exercise.type.name }}:</span>
+        <div
+          class="exercise"
+          *ngFor="let exercise of workout.workout.exercises"
+        >
+          <span class="exercise-name">{{ exercise.exerciseType.name }}:</span>
           <span class="set" *ngFor="let set of exercise.sets; let i = index">
             {{ set | set }}
           </span>
@@ -26,10 +29,18 @@
 
     <mat-card-actions>
       <a mat-raised-button color="accent" [routerLink]="workout.link">Edit</a>
-      <button mat-raised-button color="accent" (click)="copyWorkout(workout)">
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="copyWorkout(workout.workout)"
+      >
         Copy
       </button>
-      <button mat-raised-button color="accent" (click)="deleteWorkout(workout)">
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="deleteWorkout(workout.workout)"
+      >
         Delete
       </button>
     </mat-card-actions>

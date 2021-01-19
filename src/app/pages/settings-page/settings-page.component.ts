@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SettingsService } from 'src/app/services/settings.service';
 import DataStore, { DATA_STORE } from 'src/app/types/data-store';
-import { WeightUnit, WEIGHT_UNITS } from 'src/app/types/workout';
+import { WeightUnit, ALL_WEIGHT_UNITS } from 'src/app/types/weight';
 
 interface FileInputTarget extends EventTarget {
   files?: File[];
@@ -21,7 +21,7 @@ type FileInputChangeEvent = {
 export class SettingsPageComponent implements OnInit {
   defaultWeightUnitControl = new FormControl(null);
 
-  readonly WEIGHT_UNITS = WEIGHT_UNITS;
+  readonly WEIGHT_UNITS = ALL_WEIGHT_UNITS;
 
   /**
    * A file reader used to read an import file

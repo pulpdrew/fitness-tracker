@@ -2,8 +2,10 @@ import { Inject, Injectable } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import DataStore, { DATA_STORE } from '../types/data-store';
+import { EXERCISE_TYPE } from '../types/exercise';
+import { ExerciseSet } from '../types/exercise-set';
 import { ExerciseType } from '../types/exercise-type';
-import { ExerciseSet, Workout } from '../types/workout';
+import { Workout } from '../types/workout';
 
 export class HistoryEntry {
   constructor(
@@ -72,7 +74,7 @@ export class HistoryService {
 
     for (const workout of workouts) {
       const sets = workout.exercises
-        .filter((e) => e.type.id === type.id)
+        .filter((e) => e[EXERCISE_TYPE].id === type.id)
         .flatMap((e) => e.sets);
 
       if (sets.length > 0) {

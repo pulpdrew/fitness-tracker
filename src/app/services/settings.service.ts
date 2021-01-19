@@ -3,7 +3,7 @@ import { concat, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import DataStore, { DATA_STORE } from '../types/data-store';
 import { getDefaultSettings } from '../types/settings';
-import { WeightUnit } from '../types/workout';
+import { WeightUnit } from '../types/weight';
 
 @Injectable({
   providedIn: 'root',

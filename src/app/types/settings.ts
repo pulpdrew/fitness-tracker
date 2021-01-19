@@ -1,4 +1,4 @@
-import { WeightUnit } from './workout';
+import { WeightUnit } from './weight';
 
 export interface Settings {
   defaultWeightUnit: WeightUnit;

@@ -1,26 +1,14 @@
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { ExerciseType } from '../types/exercise-type';
 import { getDefaultSettings, Settings } from '../types/settings';
-import { ExerciseSet, Workout } from '../types/workout';
+import { Workout, WorkoutData } from '../types/workout';
 import localforage from 'localforage';
 import { filter, map, take } from 'rxjs/operators';
 import DataStore from '../types/data-store';
 import { environment } from 'src/environments/environment';
 
-interface SerializedWorkout {
-  id: string;
-  name: string;
-  date: string;
-  exercises: SerializedExercise[];
-}
-
-interface SerializedExercise {
-  typeId: string;
-  sets: ExerciseSet[];
-}
-
 interface Dump {
-  workouts: SerializedWorkout[];
+  workouts: WorkoutData[];
   types: ExerciseType[];
   settings: Settings;
 }
@@ -32,7 +20,7 @@ const SETTINGS_INSTANCE_NAME = environment.dbNamePrefix + 'Settings';
 export default class LocalForageService implements DataStore {
   private readonly _isInitialized$: BehaviorSubject<boolean>;
   private readonly _exerciseTypes$: BehaviorSubject<Map<string, ExerciseType>>;
-  private readonly _workouts$: BehaviorSubject<SerializedWorkout[]>;
+  private readonly _workouts$: BehaviorSubject<WorkoutData[]>;
   private readonly _settings$: BehaviorSubject<Settings>;
 
   readonly exerciseTypes$: Observable<Map<string, ExerciseType>>;
@@ -69,7 +57,7 @@ export default class LocalForageService implements DataStore {
     // Initialize behavior subjects caching the local forage data and service state
     this._isInitialized$ = new BehaviorSubject<boolean>(false);
     this._exerciseTypes$ = new BehaviorSubject(new Map());
-    this._workouts$ = new BehaviorSubject<SerializedWorkout[]>([]);
+    this._workouts$ = new BehaviorSubject<WorkoutData[]>([]);
     this._settings$ = new BehaviorSubject(getDefaultSettings());
 
     // Initialize the public observables
@@ -236,8 +224,8 @@ export default class LocalForageService implements DataStore {
   }
 
   private async loadWorkouts(): Promise<void> {
-    const workouts: SerializedWorkout[] = [];
-    await this._dbWorkouts.iterate((workout: SerializedWorkout) => {
+    const workouts: WorkoutData[] = [];
+    await this._dbWorkouts.iterate((workout: WorkoutData) => {
       workouts.push(workout);
     });
     this._workouts$.next(workouts);
@@ -253,31 +241,26 @@ export default class LocalForageService implements DataStore {
   }
 
   private toWorkout(
-    persistent: SerializedWorkout,
+    persistent: WorkoutData,
     types: Map<string, ExerciseType>
   ): Workout {
-    return {
-      date: new Date(persistent.date),
-      id: persistent.id,
-      name: persistent.name,
-      exercises: persistent.exercises
-        .filter((e) => types.has(e.typeId))
-        .map((e) => ({
-          type: types.get(e.typeId)!,
-          sets: e.sets,
-        })),
-    };
+    return new Workout(
+      {
+        date: persistent.date,
+        id: persistent.id,
+        name: persistent.name,
+        exercises: persistent.exercises,
+      },
+      types
+    );
   }
 
-  private toPersistentWorkout(workout: Workout): SerializedWorkout {
+  private toPersistentWorkout(workout: Workout): WorkoutData {
     return {
       id: workout.id,
       name: workout.name,
-      date: workout.date.toUTCString(),
-      exercises: workout.exercises.map((e) => ({
-        typeId: e.type.id,
-        sets: e.sets,
-      })),
+      date: workout.date.toISOString(),
+      exercises: workout.exercises.map((e) => e.data),
     };
   }
 }

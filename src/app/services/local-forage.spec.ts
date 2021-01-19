@@ -1,10 +1,12 @@
 import LocalForageService from './local-forage.service';
 import { cold } from 'jasmine-marbles';
 import { ExerciseCategory, ExerciseType } from '../types/exercise-type';
-import { SetField, WeightUnit, Workout } from '../types/workout';
+import { Workout } from '../types/workout';
 import { getDefaultSettings, Settings } from '../types/settings';
+import { DURATION, WEIGHT, WEIGHT_UNITS } from '../types/exercise-set';
+import { WeightUnit } from '../types/weight';
 
-describe('NgForageService', () => {
+describe('LocalForageService', () => {
   let service: LocalForageService;
 
   beforeEach(async () => {
@@ -262,14 +264,14 @@ const typeA: ExerciseType = {
   id: '1',
   name: 'A',
   categories: [ExerciseCategory.ABS],
-  fields: [SetField.DURATION],
+  fields: [DURATION],
 };
 
 const typeAPrime: ExerciseType = {
   ...typeA,
   name: 'A-Prime',
   categories: [ExerciseCategory.BACK],
-  fields: [SetField.WEIGHT, SetField.WEIGHT_UNITS],
+  fields: [WEIGHT, WEIGHT_UNITS],
 };
 
 const typeB: ExerciseType = {
@@ -278,46 +280,60 @@ const typeB: ExerciseType = {
   name: 'B',
 };
 
-const workoutA: Workout = {
-  date: new Date('2000-01-01 00:00:00'),
-  id: '1',
-  name: 'Workout A',
-  exercises: [
-    {
-      type: typeA,
-      sets: [{ duration: 10 }],
-    },
-    {
-      type: typeB,
-      sets: [{ weight: 10, weightUnits: WeightUnit.KG }],
-    },
-  ],
-};
+const types = new Map([
+  [typeA.id, typeA],
+  [typeB.id, typeB],
+]);
 
-const workoutAPrime: Workout = {
-  ...workoutA,
-  name: 'Workout A Prime',
-  exercises: [
-    {
-      type: typeA,
-      sets: [{ duration: 12 }, { duration: 12 }],
-    },
-    {
-      type: typeB,
-      sets: [
-        { weight: 10, weightUnits: WeightUnit.KG },
-        { weight: 12, weightUnits: WeightUnit.LB },
-      ],
-    },
-  ],
-};
+const workoutA: Workout = new Workout(
+  {
+    date: new Date('2000-01-01 00:00:00').toISOString(),
+    id: '1',
+    name: 'Workout A',
+    exercises: [
+      {
+        typeId: typeA.id,
+        sets: [{ duration: 10 }],
+      },
+      {
+        typeId: typeB.id,
+        sets: [{ weight: 10, weightUnits: WeightUnit.KG }],
+      },
+    ],
+  },
+  types
+);
 
-const workoutB: Workout = {
-  ...workoutAPrime,
-  date: new Date('2000-01-02 00:00:00'),
-  id: '2',
-  name: 'Workout B',
-};
+const workoutAPrime: Workout = new Workout(
+  {
+    ...workoutA.data,
+    name: 'Workout A Prime',
+    exercises: [
+      {
+        typeId: typeA.id,
+        sets: [{ duration: 12 }, { duration: 12 }],
+      },
+      {
+        typeId: typeB.id,
+        sets: [
+          { weight: 10, weightUnits: WeightUnit.KG },
+          { weight: 12, weightUnits: WeightUnit.LB },
+        ],
+      },
+    ],
+  },
+  types
+);
+
+const workoutB: Workout = new Workout(
+  {
+    ...workoutAPrime.data,
+    date: new Date('2000-01-02 00:00:00').toISOString(),
+    id: '2',
+    name: 'Workout B',
+  },
+  types
+);
 
 const settings: Settings = {
   defaultWeightUnit: WeightUnit.LB,

@@ -6,20 +6,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Observable } from 'rxjs';
 import { first, map } from 'rxjs/operators';
 import { AddExerciseDialogComponent } from 'src/app/components/add-exercise-dialog/add-exercise-dialog.component';
-import {
-  EXERCISE_ARRAY_KEY,
-  ADD_EXERCISE_DIALOG_WIDTH,
-  WORKOUT_ROUTE,
-} from 'src/app/constants';
+import { ADD_EXERCISE_DIALOG_WIDTH, WORKOUT_ROUTE } from 'src/app/constants';
 import DataStore, { DATA_STORE } from 'src/app/types/data-store';
+import { Exercise } from 'src/app/types/exercise';
 import { ExerciseType } from 'src/app/types/exercise-type';
-import {
-  Workout,
-  formToWorkout,
-  emptyExerciseForm,
-  workoutToForm,
-  getDefaultWorkoutName,
-} from 'src/app/types/workout';
+import { EXERCISES, Workout } from 'src/app/types/workout';
 import { v4 as uuidv4 } from 'uuid';
 
 @Component({
@@ -31,12 +22,7 @@ export class EditWorkoutPageComponent {
   /**
    * The Reactive Form containing the Workout data
    */
-  form = workoutToForm({
-    date: new Date(),
-    exercises: [],
-    name: getDefaultWorkoutName(),
-    id: '',
-  });
+  form = Workout.empty().toForm();
 
   /**
    * The ID of the workout being edited
@@ -68,7 +54,7 @@ export class EditWorkoutPageComponent {
     private snackBar: MatSnackBar
   ) {
     this.preexistingWorkout$.subscribe((workout) => {
-      if (workout) this.form = workoutToForm(workout);
+      if (workout) this.form = workout.toForm();
     });
   }
 
@@ -76,7 +62,7 @@ export class EditWorkoutPageComponent {
    * The FormArray containing forms for each exercise in the workout
    */
   get exerciseForms(): FormArray {
-    return this.form.get(EXERCISE_ARRAY_KEY) as FormArray;
+    return this.form.get(EXERCISES) as FormArray;
   }
 
   /**
@@ -88,8 +74,8 @@ export class EditWorkoutPageComponent {
       width: ADD_EXERCISE_DIALOG_WIDTH,
     });
 
-    ref.afterClosed().subscribe((exercise: ExerciseType) => {
-      if (exercise) this.exerciseForms.push(emptyExerciseForm(exercise));
+    ref.afterClosed().subscribe((type: ExerciseType) => {
+      if (type) this.exerciseForms.push(new Exercise([], type).toForm());
     });
   }
 
@@ -97,40 +83,48 @@ export class EditWorkoutPageComponent {
    * Save the current Workout.
    */
   saveChanges(): void {
-    this.id$.pipe(first()).subscribe((id) => {
-      this.data
-        .upsertWorkout(formToWorkout(this.form, id))
-        .then(() => {
-          this.snackBar.open('Saved!', undefined, {
-            duration: 3000,
+    combineLatest([this.id$, this.data.exerciseTypes$])
+      .pipe(first())
+      .toPromise()
+      .then(([id, types]) => {
+        this.data
+          .upsertWorkout(Workout.fromForm(this.form, types, id))
+          .then(() => {
+            this.snackBar.open('Saved!', undefined, {
+              duration: 3000,
+            });
+          })
+          .catch(() => {
+            this.snackBar.open('Failed to save. Try Again.', undefined, {
+              duration: 3000,
+            });
           });
-        })
-        .catch(() => {
-          this.snackBar.open('Failed to save. Try Again.', undefined, {
-            duration: 3000,
-          });
-        });
-    });
+      });
   }
 
   /**
    * Save the current Workout as a copy with a new id.
    */
   saveAsNew(): void {
-    const id = uuidv4();
-    this.data
-      .upsertWorkout(formToWorkout(this.form, id))
-      .then(() => {
-        this.snackBar.open('Saved!', undefined, {
-          duration: 3000,
-        });
-      })
-      .catch(() => {
-        this.snackBar.open('Failed to save. Try Again.', undefined, {
-          duration: 3000,
-        });
+    this.data.exerciseTypes$
+      .pipe(first())
+      .toPromise()
+      .then((types) => {
+        const id = uuidv4();
+        this.data
+          .upsertWorkout(Workout.fromForm(this.form, types))
+          .then(() => {
+            this.snackBar.open('Saved!', undefined, {
+              duration: 3000,
+            });
+            this.router.navigate([WORKOUT_ROUTE, id]);
+          })
+          .catch(() => {
+            this.snackBar.open('Failed to save. Try Again.', undefined, {
+              duration: 3000,
+            });
+          });
       });
-    this.router.navigate([WORKOUT_ROUTE, id]);
   }
 
   /**

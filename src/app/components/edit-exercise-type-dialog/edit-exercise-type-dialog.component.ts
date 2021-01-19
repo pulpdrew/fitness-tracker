@@ -1,8 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DURATION, REPS, SetField, WEIGHT } from 'src/app/types/exercise-set';
 import { exerciseCategories, ExerciseType } from 'src/app/types/exercise-type';
-import { SetField } from 'src/app/types/workout';
 
 @Component({
   selector: 'app-edit-exercise-type-dialog',
@@ -18,15 +18,9 @@ export class EditExerciseTypeDialogComponent {
   form = new FormGroup({
     [this.NAME_KEY]: new FormControl(this.template.name),
     [this.CATEGORIES_KEY]: new FormControl(this.template.categories),
-    [SetField.REPS]: new FormControl(
-      this.template.fields.includes(SetField.REPS)
-    ),
-    [SetField.WEIGHT]: new FormControl(
-      this.template.fields.includes(SetField.WEIGHT)
-    ),
-    [SetField.DURATION]: new FormControl(
-      this.template.fields.includes(SetField.DURATION)
-    ),
+    [REPS]: new FormControl(this.template.fields.includes(REPS)),
+    [WEIGHT]: new FormControl(this.template.fields.includes(WEIGHT)),
+    [DURATION]: new FormControl(this.template.fields.includes(DURATION)),
   });
 
   constructor(
@@ -37,9 +31,9 @@ export class EditExerciseTypeDialogComponent {
   save(): void {
     const name = this.form.get(this.NAME_KEY)?.value || '';
     const categories = this.form.get(this.CATEGORIES_KEY)?.value || [];
-    const fields = [SetField.REPS, SetField.DURATION, SetField.WEIGHT].filter(
+    const fields = [REPS, DURATION, WEIGHT].filter(
       (f) => !!this.form.get(f)?.value
-    );
+    ) as SetField[];
 
     const updated: ExerciseType = {
       id: this.template.id,

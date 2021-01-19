@@ -1,18 +1,19 @@
 import { Component, Inject } from '@angular/core';
-import { combineLatest, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WORKOUT_ROUTE } from 'src/app/constants';
 import { DisplayCategoryPipe } from 'src/app/pipes/display-categories.pipe';
 import DataStore, { DATA_STORE } from 'src/app/types/data-store';
-import { ExerciseCategory, ExerciseType } from 'src/app/types/exercise-type';
+import { EXERCISE_TYPE } from 'src/app/types/exercise';
+import { ExerciseCategory } from 'src/app/types/exercise-type';
 import { Workout } from 'src/app/types/workout';
-import { v4 as uuidv4 } from 'uuid';
 
 interface CategoryCount {
   name: string;
   value: number;
 }
-interface WorkoutDisplay extends Workout {
+interface WorkoutDisplay {
+  workout: Workout;
   link: string;
   categoryData: CategoryCount[];
 }
@@ -23,14 +24,11 @@ interface WorkoutDisplay extends Workout {
   styleUrls: ['./workout-log.component.scss'],
 })
 export class WorkoutLogPageComponent {
-  workouts$: Observable<WorkoutDisplay[]> = combineLatest([
-    this.data.workouts$,
-    this.data.exerciseTypes$,
-  ]).pipe(
-    map(([workouts, exercises]) =>
+  workouts$: Observable<WorkoutDisplay[]> = this.data.workouts$.pipe(
+    map((workouts: Workout[]) =>
       workouts
-        .map((w) => this.formatWorkout(w, exercises))
-        .sort((a, b) => b.date.getTime() - a.date.getTime())
+        .map((w) => this.formatWorkout(w))
+        .sort((a, b) => b.workout.date.getTime() - a.workout.date.getTime())
     )
   );
 
@@ -44,32 +42,21 @@ export class WorkoutLogPageComponent {
   }
 
   async copyWorkout(workout: Workout): Promise<void> {
-    const copy: Workout = {
-      ...workout,
-      name: `Copy of ${workout.name}`,
-      id: uuidv4(),
-    };
-    await this.data.upsertWorkout(copy);
+    await this.data.upsertWorkout(workout.copy());
   }
 
-  private formatWorkout(
-    workout: Workout,
-    types: Map<string, ExerciseType>
-  ): WorkoutDisplay {
+  private formatWorkout(workout: Workout): WorkoutDisplay {
     return {
       link: `/${WORKOUT_ROUTE}/${workout.id}`,
-      categoryData: this.countCategories(workout, types),
-      ...workout,
+      categoryData: this.countCategories(workout),
+      workout,
     };
   }
 
-  private countCategories(
-    workout: Workout,
-    types: Map<string, ExerciseType>
-  ): CategoryCount[] {
+  private countCategories(workout: Workout): CategoryCount[] {
     const counts = new Map<ExerciseCategory, number>();
     for (const exercise of workout.exercises) {
-      const categories = types.get(exercise.type.id)?.categories || [];
+      const categories = exercise[EXERCISE_TYPE]?.categories || [];
       for (const category of categories) {
         counts.set(category, (counts.get(category) || 0) + 1);
       }

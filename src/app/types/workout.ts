@@ -1,204 +1,118 @@
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import {
-  NAME_KEY,
-  DATE_KEY,
-  EXERCISE_ARRAY_KEY,
-  SETS_ARRAY_KEY,
-  EXERCISE_TYPE_KEY,
-} from '../constants';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  Exercise,
+  ExerciseDataV1,
+  EXERCISE_TYPE,
+  EXERCISE_TYPE_ID,
+  SETS,
+} from './exercise';
 import { emptyExerciseType, ExerciseType } from './exercise-type';
-import { Duration } from './duration';
 
-/**
- * The fields that can be stored in an ExerciseSet
- */
-export enum SetField {
-  WEIGHT = 'weight',
-  WEIGHT_UNITS = 'weightUnits',
-  REPS = 'reps',
-  DURATION = 'duration',
-}
-
-/**
- * Format a SetField for display.
- *
- * @param field the field to format.
- * @returns the formatted display string
- */
-export function fmtDisplaySetField(field: SetField): string {
-  switch (field) {
-    case SetField.REPS:
-      return 'Reps';
-    case SetField.WEIGHT:
-      return 'Weight';
-    case SetField.WEIGHT_UNITS:
-      return 'Weight Units';
-    case SetField.DURATION:
-      return 'Duration';
-  }
-}
-
-/**
- * A list of all the available SetFields
- */
-export const setFields: SetField[] = [
-  SetField.REPS,
-  SetField.DURATION,
-  SetField.WEIGHT,
-  SetField.WEIGHT_UNITS,
-];
-
-/**
- * The available units of weight
- */
-export enum WeightUnit {
-  KG = 'kg',
-  LB = 'lb',
-}
-
-/**
- * A list of all the available WeightUnits
- */
-export const WEIGHT_UNITS: WeightUnit[] = [WeightUnit.KG, WeightUnit.LB];
-
-/**
- * One Set of a single exercise, with associated data fields
- */
-export interface ExerciseSet {
-  weight?: number;
-  weightUnits?: WeightUnit;
-  reps?: number;
-  duration?: number;
-}
-
-export function formToSet(form: FormGroup): ExerciseSet {
-  const set: ExerciseSet = {};
-
-  if (form.get(SetField.REPS)?.value) {
-    set[SetField.REPS] = Number.parseInt(form.get(SetField.REPS)?.value);
-  }
-
-  if (form.get(SetField.WEIGHT)?.value) {
-    set[SetField.WEIGHT] = Number.parseInt(form.get(SetField.WEIGHT)?.value);
-  }
-
-  if (form.get(SetField.WEIGHT_UNITS)?.value) {
-    set[SetField.WEIGHT_UNITS] = form.get(SetField.WEIGHT_UNITS)?.value;
-  }
-
-  if (form.get(SetField.DURATION)?.value) {
-    set[SetField.DURATION] = Duration.parse(
-      form.get(SetField.DURATION)?.value
-    ).totalSeconds;
-  }
-
-  return set;
-}
-
-export function setToForm(set: ExerciseSet): FormGroup {
-  return new FormGroup({
-    [SetField.WEIGHT]: new FormControl(set[SetField.WEIGHT]),
-    [SetField.WEIGHT_UNITS]: new FormControl(set[SetField.WEIGHT_UNITS]),
-    [SetField.REPS]: new FormControl(set[SetField.REPS]),
-    [SetField.DURATION]: new FormControl(
-      new Duration(set[SetField.DURATION] || 0).toString(),
-      [Validators.pattern(/^(\d?\d:)?(\d?\d:)?\d?\d$/)]
-    ),
-  });
-}
-
-export function emptySetForm(): FormGroup {
-  return setToForm({});
-}
-
-export function copySetForm(form: FormGroup): FormGroup {
-  return new FormGroup({
-    [SetField.WEIGHT]: new FormControl(form.get(SetField.WEIGHT)?.value || ''),
-    [SetField.WEIGHT_UNITS]: new FormControl(
-      form.get(SetField.WEIGHT_UNITS)?.value || ''
-    ),
-    [SetField.REPS]: new FormControl(form.get(SetField.REPS)?.value || ''),
-    [SetField.DURATION]: new FormControl(
-      form.get(SetField.DURATION)?.value || ''
-    ),
-  });
-}
-
-/**
- * One exercise, with sets
- */
-export interface Exercise {
-  type: ExerciseType;
-  sets: ExerciseSet[];
-}
-
-export function formToExercise(form: FormGroup): Exercise {
-  const setForms = (form.get(SETS_ARRAY_KEY) as FormArray)?.controls || [];
-  const sets = setForms.map((set) => formToSet(set as FormGroup));
-  const type = form.get(EXERCISE_TYPE_KEY)?.value || emptyExerciseType();
-
-  return {
-    type,
-    sets,
-  };
-}
-
-export function emptyExerciseForm(type: ExerciseType): FormGroup {
-  return exerciseToForm({
-    sets: [],
-    type,
-  });
-}
-
-export function exerciseToForm(exercise: Exercise): FormGroup {
-  return new FormGroup({
-    [EXERCISE_TYPE_KEY]: new FormControl(exercise.type),
-    [SETS_ARRAY_KEY]: new FormArray(exercise.sets.map(setToForm)),
-  });
-}
+export const NAME = 'name';
+export const DATE = 'date';
+export const ID = 'id';
+export const EXERCISES = 'exercises';
 
 /**
  * A collection of exercises completed at one time
  */
-export interface Workout {
-  id: string;
-  name: string;
-  date: Date;
-  exercises: Exercise[];
-}
+export class Workout {
+  public [ID]: string;
+  public [NAME]: string;
+  public [DATE]: Date;
+  public [EXERCISES]: Exercise[];
 
-export function workoutToForm(workout: Workout): FormGroup {
-  return new FormGroup({
-    [NAME_KEY]: new FormControl(workout.name),
-    [DATE_KEY]: new FormControl(new Date(workout.date)),
-    [EXERCISE_ARRAY_KEY]: new FormArray(workout.exercises.map(exerciseToForm)),
-  });
+  constructor(
+    public readonly data: WorkoutData,
+    types: Map<string, ExerciseType>
+  ) {
+    this[ID] = data[ID];
+    this[DATE] = new Date(data[DATE]);
+    this[NAME] = data[NAME];
+    this[EXERCISES] = data[EXERCISES].map(
+      (e) =>
+        new Exercise(
+          e[SETS],
+          types.get(e[EXERCISE_TYPE_ID]) || emptyExerciseType()
+        )
+    );
+  }
+
+  toForm(): FormGroup {
+    return new FormGroup({
+      [NAME]: new FormControl(this[NAME]),
+      [DATE]: new FormControl(this[DATE]),
+      [EXERCISES]: new FormArray(this[EXERCISES].map((e) => e.toForm())),
+    });
+  }
+
+  static fromForm(
+    form: FormGroup,
+    types: Map<string, ExerciseType>,
+    id: string = uuidv4()
+  ): Workout {
+    const date: Date = form.get(DATE)?.value || new Date();
+    const name = form.get(NAME)?.value || Workout.getDefaultName(date);
+
+    const exerciseForms = (form.get(EXERCISES) as FormArray).controls || [];
+    const exercises: ExerciseDataV1[] = exerciseForms.map(
+      (f) => Exercise.fromForm(f as FormGroup).data
+    );
+
+    return new Workout(
+      {
+        date: date.toISOString(),
+        id,
+        name,
+        exercises,
+      },
+      types
+    );
+  }
+
+  static getDefaultName(date: Date = new Date()): string {
+    return `Workout on ${date.toLocaleDateString()}`;
+  }
+
+  static empty(): Workout {
+    return new Workout(
+      {
+        date: new Date().toISOString(),
+        exercises: [],
+        name: Workout.getDefaultName(new Date()),
+        id: '',
+      },
+      new Map()
+    );
+  }
+
+  copy(): Workout {
+    const types = new Map<string, ExerciseType>(
+      this[EXERCISES].map((e) => [e[EXERCISE_TYPE].id, e[EXERCISE_TYPE]])
+    );
+    return new Workout(
+      {
+        ...this.data,
+        id: uuidv4(),
+        name: `Copy of ${this[NAME]}`,
+      },
+      types
+    );
+  }
 }
 
 /**
- * Convert the given FormGroup into a Workout;
- *
- * @param id the id of the new workout object, defaults to a new UUID.
+ * The most recent version of WorkoutData, used by Workout
  */
-export function formToWorkout(form: FormGroup, id = uuidv4()): Workout {
-  const date: Date = form.get(DATE_KEY)?.value || new Date();
-  const name = form.get(NAME_KEY)?.value || getDefaultWorkoutName(date);
+export type WorkoutData = WorkoutDataV1;
 
-  const exerciseForms =
-    (form.get(EXERCISE_ARRAY_KEY) as FormArray).controls || [];
-  const exercises: Exercise[] = exerciseForms.map((ex) =>
-    formToExercise(ex as FormGroup)
-  );
-
-  return {
-    id,
-    date,
-    name,
-    exercises,
-  };
-}
-
-export function getDefaultWorkoutName(date: Date = new Date()): string {
-  return `Workout on ${date.toLocaleDateString()}`;
+/**
+ * Version 1 of the serializable data held by a single Workout
+ */
+export interface WorkoutDataV1 {
+  [ID]: string;
+  [NAME]: string;
+  [DATE]: string;
+  [EXERCISES]: ExerciseDataV1[];
 }

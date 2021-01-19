@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { fmtDisplaySetField, SetField } from '../types/workout';
+import { fmtDisplaySetField, SetField } from '../types/exercise-set';
 
 @Pipe({
   name: 'displayFields',
@@ -14,7 +14,7 @@ export class DisplayFieldsPipe implements PipeTransform {
   name: 'displayField',
 })
 export class DisplayFieldPipe implements PipeTransform {
-  transform(value: SetField): string {
-    return fmtDisplaySetField(value);
+  transform(value: string): string {
+    return fmtDisplaySetField(value as SetField);
   }
 }
