@@ -12,7 +12,6 @@ import { emptyExerciseType, ExerciseType } from '../../types/exercise-type';
 export class SetFormComponent {
   @Input() form: FormGroup = new FormGroup({});
   @Input() type: ExerciseType = emptyExerciseType();
-  fields = this.type.fields;
 
   @Output() remove = new EventEmitter<void>();
 

@@ -1,11 +1,11 @@
 <div [formGroup]="form" class="row">
-  <span *ngFor="let field of fields" class="field">
+  <span *ngFor="let field of type?.fields" class="field">
     <mat-form-field *ngIf="field !== DURATION; else duration" class="input">
-      <mat-label>{{ field }}</mat-label>
+      <mat-label>{{ field | displayField }}</mat-label>
       <input
         matInput
         [placeholder]="field | displayField"
-        [formControlName]="field | displayField"
+        [formControlName]="field"
         type="number"
       />
     </mat-form-field>
