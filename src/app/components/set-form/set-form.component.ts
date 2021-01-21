@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { DURATION, WEIGHT, WEIGHT_UNITS } from 'src/app/types/exercise-set';
 import { ALL_WEIGHT_UNITS } from 'src/app/types/weight';
-import { emptyExerciseType, ExerciseType } from '../../types/exercise-type';
+import { ExerciseType } from '../../types/exercise-type';
 
 @Component({
   selector: 'app-set-form',
@@ -11,7 +11,7 @@ import { emptyExerciseType, ExerciseType } from '../../types/exercise-type';
 })
 export class SetFormComponent {
   @Input() form: FormGroup = new FormGroup({});
-  @Input() type: ExerciseType = emptyExerciseType();
+  @Input() type: ExerciseType = ExerciseType.empty();
 
   @Output() remove = new EventEmitter<void>();
 

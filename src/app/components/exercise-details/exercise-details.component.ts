@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
 import { HistoryService } from 'src/app/services/history.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ExerciseStats, StatsService } from 'src/app/services/stats.service';
-import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
+import { ExerciseType } from 'src/app/types/exercise-type';
 
 @Component({
   selector: 'app-exercise-details',
@@ -23,7 +23,7 @@ export class ExerciseDetailsComponent implements OnInit, OnChanges {
   @Output() edit = new EventEmitter<ExerciseType>();
   @Output() remove = new EventEmitter<ExerciseType>();
 
-  @Input() type = emptyExerciseType();
+  @Input() type = ExerciseType.empty();
   private _type$ = new BehaviorSubject<ExerciseType>(this.type);
   private type$ = this._type$.asObservable();
 

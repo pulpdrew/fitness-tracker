@@ -168,33 +168,33 @@ class MockDataStore implements DataStore {
   clear = jasmine.createSpy('clear');
 }
 
-const plank: ExerciseType = {
+const plank = new ExerciseType({
   categories: [ExerciseCategory.ABS],
   fields: [DURATION],
   id: 'A',
   name: 'Plank',
-};
+});
 
-const shoulderPress: ExerciseType = {
+const shoulderPress = new ExerciseType({
   id: 'B',
   name: 'Shoulder Press',
   categories: [ExerciseCategory.SHOULDERS],
   fields: [REPS, WEIGHT, WEIGHT_UNITS],
-};
+});
 
-const pushups: ExerciseType = {
+const pushups = new ExerciseType({
   id: 'C',
   name: 'Pushups',
   categories: [ExerciseCategory.CHEST],
   fields: [REPS],
-};
+});
 
-const tricep: ExerciseType = {
+const tricep = new ExerciseType({
   id: 'D',
   name: 'Tricep Curls',
   categories: [ExerciseCategory.TRICEPS],
   fields: [REPS],
-};
+});
 
 const types = new Map([
   [tricep.id, tricep],

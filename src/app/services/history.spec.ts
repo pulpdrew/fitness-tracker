@@ -216,24 +216,24 @@ class MockDataStore implements DataStore {
   clear = jasmine.createSpy('clear');
 }
 
-const typeA: ExerciseType = {
+const typeA = new ExerciseType({
   categories: [],
   fields: [],
   id: 'A',
   name: 'Exercise A',
-};
+});
 
-const typeB: ExerciseType = {
+const typeB = new ExerciseType({
   ...typeA,
   id: 'B',
   name: 'Exercise B',
-};
+});
 
-const typeC: ExerciseType = {
+const typeC = new ExerciseType({
   ...typeA,
   id: 'C',
   name: 'Exercise C',
-};
+});
 
 const types = new Map([
   [typeA.id, typeA],

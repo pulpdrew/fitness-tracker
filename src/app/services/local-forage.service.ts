@@ -1,5 +1,5 @@
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { ExerciseType } from '../types/exercise-type';
+import { ExerciseType, ExerciseTypeData, ID } from '../types/exercise-type';
 import { getDefaultSettings, Settings } from '../types/settings';
 import { Workout, WorkoutData } from '../types/workout';
 import localforage from 'localforage';
@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
 
 interface Dump {
   workouts: WorkoutData[];
-  types: ExerciseType[];
+  types: ExerciseTypeData[];
   settings: Settings;
 }
 
@@ -19,7 +19,7 @@ const SETTINGS_INSTANCE_NAME = environment.dbNamePrefix + 'Settings';
 
 export default class LocalForageService implements DataStore {
   private readonly _isInitialized$: BehaviorSubject<boolean>;
-  private readonly _exerciseTypes$: BehaviorSubject<Map<string, ExerciseType>>;
+  private readonly _exerciseTypes$: BehaviorSubject<ExerciseTypeData[]>;
   private readonly _workouts$: BehaviorSubject<WorkoutData[]>;
   private readonly _settings$: BehaviorSubject<Settings>;
 
@@ -56,13 +56,20 @@ export default class LocalForageService implements DataStore {
 
     // Initialize behavior subjects caching the local forage data and service state
     this._isInitialized$ = new BehaviorSubject<boolean>(false);
-    this._exerciseTypes$ = new BehaviorSubject(new Map());
+    this._exerciseTypes$ = new BehaviorSubject<ExerciseTypeData[]>([]);
     this._workouts$ = new BehaviorSubject<WorkoutData[]>([]);
     this._settings$ = new BehaviorSubject(getDefaultSettings());
 
     // Initialize the public observables
-    this.exerciseTypes$ = this._exerciseTypes$.asObservable();
     this.settings$ = this._settings$.asObservable();
+    this.exerciseTypes$ = this._exerciseTypes$
+      .asObservable()
+      .pipe(
+        map(
+          (types) =>
+            new Map(types.map((type) => [type[ID], new ExerciseType(type)]))
+        )
+      );
     this.workouts$ = combineLatest([
       this._workouts$.asObservable(),
       this.exerciseTypes$,
@@ -113,7 +120,7 @@ export default class LocalForageService implements DataStore {
   async upsertExerciseType(type: ExerciseType): Promise<void> {
     try {
       await this.waitForInit();
-      await this._dbExerciseTypes.setItem(type.id, type);
+      await this._dbExerciseTypes.setItem(type.id, type.data);
       await this.loadExerciseTypes();
     } catch (err) {
       console.error('Error upserting exercise type: ' + err);
@@ -136,7 +143,7 @@ export default class LocalForageService implements DataStore {
     const dump: Dump = {
       settings: this._settings$.value,
       workouts: this._workouts$.value,
-      types: Array.from(this._exerciseTypes$.value.values()),
+      types: this._exerciseTypes$.value,
     };
 
     return JSON.stringify(dump);
@@ -216,9 +223,9 @@ export default class LocalForageService implements DataStore {
   }
 
   private async loadExerciseTypes(): Promise<void> {
-    const types: Map<string, ExerciseType> = new Map();
-    await this._dbExerciseTypes.iterate((type: ExerciseType) => {
-      types.set(type.id, type);
+    const types: ExerciseTypeData[] = [];
+    await this._dbExerciseTypes.iterate((type: ExerciseTypeData) => {
+      types.push(type);
     });
     this._exerciseTypes$.next(types);
   }

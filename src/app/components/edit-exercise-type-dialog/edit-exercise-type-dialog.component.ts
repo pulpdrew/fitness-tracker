@@ -35,12 +35,12 @@ export class EditExerciseTypeDialogComponent {
       (f) => !!this.form.get(f)?.value
     ) as SetField[];
 
-    const updated: ExerciseType = {
+    const updated = new ExerciseType({
       id: this.template.id,
       name,
       fields,
       categories,
-    };
+    });
 
     this.dialogRef.close(updated);
   }

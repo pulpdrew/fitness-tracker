@@ -7,7 +7,7 @@ import {
   EXERCISE_TYPE_ID,
   SETS,
 } from './exercise';
-import { emptyExerciseType, ExerciseType } from './exercise-type';
+import { ExerciseType } from './exercise-type';
 
 export const NAME = 'name';
 export const DATE = 'date';
@@ -34,7 +34,7 @@ export class Workout {
       (e) =>
         new Exercise(
           e[SETS],
-          types.get(e[EXERCISE_TYPE_ID]) || emptyExerciseType()
+          types.get(e[EXERCISE_TYPE_ID]) || ExerciseType.empty()
         )
     );
   }

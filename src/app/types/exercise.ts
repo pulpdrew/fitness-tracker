@@ -4,7 +4,7 @@ import {
   ExerciseSetData,
   ExerciseSetDataV1,
 } from './exercise-set';
-import { emptyExerciseType, ExerciseType } from './exercise-type';
+import { ExerciseType } from './exercise-type';
 
 export const EXERCISE_TYPE = 'exerciseType';
 export const EXERCISE_TYPE_ID = 'typeId';
@@ -34,7 +34,7 @@ export class Exercise {
       (set) => ExerciseSet.fromForm(set as FormGroup).data
     );
     const type: ExerciseType =
-      form.get(EXERCISE_TYPE)?.value || emptyExerciseType();
+      form.get(EXERCISE_TYPE)?.value || ExerciseType.empty();
 
     return new Exercise(sets, type);
   }
@@ -56,6 +56,6 @@ export type ExerciseData = ExerciseDataV1;
  * Version 1 of the serializable data held by a single Exercise instance
  */
 export interface ExerciseDataV1 {
-  [EXERCISE_TYPE_ID]: string; // TODO change this to a versioned interface
+  [EXERCISE_TYPE_ID]: string;
   [SETS]: ExerciseSetDataV1[];
 }

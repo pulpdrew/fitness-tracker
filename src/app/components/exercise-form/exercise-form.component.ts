@@ -6,7 +6,7 @@ import { HistoryEntry, HistoryService } from 'src/app/services/history.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Exercise, EXERCISE_TYPE, SETS } from 'src/app/types/exercise';
 import { ExerciseSet } from 'src/app/types/exercise-set';
-import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
+import { ExerciseType } from 'src/app/types/exercise-type';
 import { ALL_WEIGHT_UNITS } from 'src/app/types/weight';
 
 @Component({
@@ -18,7 +18,7 @@ export class ExerciseFormComponent implements OnInit {
   /**
    * The form backing the exercise data
    */
-  @Input() form: FormGroup = new Exercise([], emptyExerciseType()).toForm();
+  @Input() form: FormGroup = new Exercise([], ExerciseType.empty()).toForm();
 
   /**
    * The Id of the workout that is being edited
@@ -46,7 +46,7 @@ export class ExerciseFormComponent implements OnInit {
   /**
    * The ExerciseType corresponding to the given exercise form
    */
-  type: ExerciseType = emptyExerciseType();
+  type: ExerciseType = ExerciseType.empty();
 
   /**
    * The sets completed in the most recent workout that wasn't this one
@@ -63,7 +63,7 @@ export class ExerciseFormComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.type = this.form.get(EXERCISE_TYPE)?.value || emptyExerciseType();
+    this.type = this.form.get(EXERCISE_TYPE)?.value || ExerciseType.empty();
 
     this.previousEffort$ = this.history.history$.pipe(
       map((history) =>

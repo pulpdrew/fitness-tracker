@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, concat, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import DataStore, { DATA_STORE } from 'src/app/types/data-store';
-import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
+import { ExerciseType } from 'src/app/types/exercise-type';
 import { EditExerciseTypeDialogComponent } from '../edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 
 @Component({
@@ -51,7 +51,7 @@ export class AddExerciseDialogComponent {
       minWidth: '40ex',
       minHeight: '20em',
       data: {
-        ...emptyExerciseType(),
+        ...ExerciseType.empty(),
         name: this.selected?.value?.name || this.selected.value || '',
       },
     });

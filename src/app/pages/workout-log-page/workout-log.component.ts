@@ -2,10 +2,12 @@ import { Component, Inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WORKOUT_ROUTE } from 'src/app/constants';
-import { DisplayCategoryPipe } from 'src/app/pipes/display-categories.pipe';
 import DataStore, { DATA_STORE } from 'src/app/types/data-store';
 import { EXERCISE_TYPE } from 'src/app/types/exercise';
-import { ExerciseCategory } from 'src/app/types/exercise-type';
+import {
+  DisplayCategoryPipe,
+  ExerciseCategory,
+} from 'src/app/types/exercise-type';
 import { Workout } from 'src/app/types/workout';
 
 interface CategoryCount {

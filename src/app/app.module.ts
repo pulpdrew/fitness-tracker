@@ -38,17 +38,17 @@ import { ExerciseChartComponent } from './components/exercise-chart/exercise-cha
 import { SettingsPageComponent } from './pages/settings-page/settings-page.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
+import LocalForageService from './services/local-forage.service';
+import { DATA_STORE } from './types/data-store';
 import {
   DisplayFieldsPipe,
   DisplayFieldPipe,
-} from './pipes/display-fields.pipe';
+  SetPipe,
+} from './types/exercise-set';
 import {
   DisplayCategoriesPipe,
   DisplayCategoryPipe,
-} from './pipes/display-categories.pipe';
-import { SetPipe } from './pipes/set.pipe';
-import LocalForageService from './services/local-forage.service';
-import { DATA_STORE } from './types/data-store';
+} from './types/exercise-type';
 
 @NgModule({
   declarations: [

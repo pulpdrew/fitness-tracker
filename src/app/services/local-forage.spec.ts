@@ -260,25 +260,25 @@ describe('LocalForageService', () => {
   });
 });
 
-const typeA: ExerciseType = {
+const typeA = new ExerciseType({
   id: '1',
   name: 'A',
   categories: [ExerciseCategory.ABS],
   fields: [DURATION],
-};
+});
 
-const typeAPrime: ExerciseType = {
+const typeAPrime = new ExerciseType({
   ...typeA,
   name: 'A-Prime',
   categories: [ExerciseCategory.BACK],
   fields: [WEIGHT, WEIGHT_UNITS],
-};
+});
 
-const typeB: ExerciseType = {
+const typeB = new ExerciseType({
   ...typeA,
   id: '2',
   name: 'B',
-};
+});
 
 const types = new Map([
   [typeA.id, typeA],

@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { EditExerciseTypeDialogComponent } from 'src/app/components/edit-exercise-type-dialog/edit-exercise-type-dialog.component';
 import DataStore, { DATA_STORE } from 'src/app/types/data-store';
-import { emptyExerciseType, ExerciseType } from 'src/app/types/exercise-type';
+import { ExerciseType } from 'src/app/types/exercise-type';
 
 @Component({
   selector: 'app-exercise-repo-page',
@@ -32,7 +32,7 @@ export class ExerciseRepoPageComponent {
     });
   }
 
-  edit(type: ExerciseType = emptyExerciseType()): void {
+  edit(type: ExerciseType = ExerciseType.empty()): void {
     const ref = this.dialog.open(EditExerciseTypeDialogComponent, {
       minWidth: '40ex',
       data: type,

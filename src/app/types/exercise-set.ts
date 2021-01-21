@@ -1,3 +1,4 @@
+import { Pipe, PipeTransform } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Duration } from './duration';
 import { WeightUnit } from './weight';
@@ -124,5 +125,32 @@ export function fmtDisplaySetField(field: SetField): string {
       return 'Weight';
     case WEIGHT_UNITS:
       return 'Weight Units';
+  }
+}
+
+@Pipe({
+  name: 'displayFields',
+})
+export class DisplayFieldsPipe implements PipeTransform {
+  transform(value: SetField[]): string {
+    return value.map((v) => fmtDisplaySetField(v)).join(', ') || 'None';
+  }
+}
+
+@Pipe({
+  name: 'displayField',
+})
+export class DisplayFieldPipe implements PipeTransform {
+  transform(value: string): string {
+    return fmtDisplaySetField(value as SetField);
+  }
+}
+
+@Pipe({
+  name: 'set',
+})
+export class SetPipe implements PipeTransform {
+  transform(set: ExerciseSet): string {
+    return set.toString();
   }
 }
