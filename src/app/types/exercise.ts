@@ -14,8 +14,8 @@ export const SETS = 'sets';
  * One exercise, with sets
  */
 export class Exercise {
-  public [EXERCISE_TYPE]: ExerciseType;
-  public [SETS]: ExerciseSet[] = [];
+  public readonly [EXERCISE_TYPE]: ExerciseType;
+  public readonly [SETS]: ExerciseSet[] = [];
   public readonly data: ExerciseData;
 
   constructor(sets: ExerciseSetData[], type: ExerciseType) {

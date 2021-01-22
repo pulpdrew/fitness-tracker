@@ -57,10 +57,10 @@ export function fmtDisplayExerciseCategory(category: ExerciseCategory): string {
  */
 
 export class ExerciseType {
-  public [ID]: string;
-  public [NAME]: string;
-  public [FIELDS]: SetField[];
-  public [CATEGORIES]: ExerciseCategory[];
+  public readonly [ID]: string;
+  public readonly [NAME]: string;
+  public readonly [FIELDS]: SetField[];
+  public readonly [CATEGORIES]: ExerciseCategory[];
 
   constructor(public readonly data: ExerciseTypeData) {
     this[ID] = data[ID];

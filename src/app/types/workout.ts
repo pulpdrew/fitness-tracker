@@ -18,10 +18,10 @@ export const EXERCISES = 'exercises';
  * A collection of exercises completed at one time
  */
 export class Workout {
-  public [ID]: string;
-  public [NAME]: string;
-  public [DATE]: Date;
-  public [EXERCISES]: Exercise[];
+  public readonly [ID]: string;
+  public readonly [NAME]: string;
+  public readonly [DATE]: Date;
+  public readonly [EXERCISES]: Exercise[];
 
   constructor(
     public readonly data: WorkoutData,

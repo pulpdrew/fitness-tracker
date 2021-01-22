@@ -6,7 +6,7 @@ export const DEFAULT_WEIGHT_UNIT = 'defaultWeightUnit';
  * Represents the current application settings
  */
 export class ApplicationSettings {
-  public [DEFAULT_WEIGHT_UNIT]: WeightUnit;
+  public readonly [DEFAULT_WEIGHT_UNIT]: WeightUnit;
 
   constructor(public readonly data: ApplicationSettingsData) {
     this[DEFAULT_WEIGHT_UNIT] = data.defaultWeightUnit;

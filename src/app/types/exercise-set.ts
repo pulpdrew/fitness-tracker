@@ -12,10 +12,10 @@ export const WEIGHT_UNITS = 'weightUnits';
  * One Set of a single exercise, with associated data fields
  */
 export class ExerciseSet {
-  public [WEIGHT]?: number;
-  public [WEIGHT_UNITS]?: WeightUnit;
-  public [DURATION]?: Duration;
-  public [REPS]?: number;
+  public readonly [WEIGHT]?: number;
+  public readonly [WEIGHT_UNITS]?: WeightUnit;
+  public readonly [DURATION]?: Duration;
+  public readonly [REPS]?: number;
 
   constructor(public readonly data: ExerciseSetData) {
     if (data[DURATION]) this[DURATION] = new Duration(data[DURATION]!);

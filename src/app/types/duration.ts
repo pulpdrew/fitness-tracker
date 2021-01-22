@@ -2,7 +2,7 @@ const S_PER_MINUTE = 60;
 const S_PER_HOUR = S_PER_MINUTE * 60;
 
 export class Duration {
-  constructor(public totalSeconds: number) {}
+  constructor(public readonly totalSeconds: number) {}
 
   get seconds(): number {
     return this.totalSeconds % S_PER_MINUTE;
