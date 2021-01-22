@@ -39,6 +39,20 @@ export class Workout {
     );
   }
 
+  copy(): Workout {
+    const types = new Map<string, ExerciseType>(
+      this[EXERCISES].map((e) => [e[EXERCISE_TYPE].id, e[EXERCISE_TYPE]])
+    );
+    return new Workout(
+      {
+        ...this.data,
+        id: uuidv4(),
+        name: `Copy of ${this[NAME]}`,
+      },
+      types
+    );
+  }
+
   toForm(): FormGroup {
     return new FormGroup({
       [NAME]: new FormControl(this[NAME]),
@@ -87,18 +101,8 @@ export class Workout {
     );
   }
 
-  copy(): Workout {
-    const types = new Map<string, ExerciseType>(
-      this[EXERCISES].map((e) => [e[EXERCISE_TYPE].id, e[EXERCISE_TYPE]])
-    );
-    return new Workout(
-      {
-        ...this.data,
-        id: uuidv4(),
-        name: `Copy of ${this[NAME]}`,
-      },
-      types
-    );
+  static chronological(a: Workout, b: Workout): number {
+    return a[DATE].getTime() - b[DATE].getTime();
   }
 }
 

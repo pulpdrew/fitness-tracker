@@ -75,9 +75,7 @@ export default class LocalForageService implements DataStore {
       this.exerciseTypes$,
     ]).pipe(
       map(([workouts, types]) => workouts.map((w) => this.toWorkout(w, types))),
-      map((workouts) =>
-        workouts.sort((a, b) => a.date.getTime() - b.date.getTime())
-      )
+      map((workouts) => workouts.sort(Workout.chronological))
     );
 
     // Initialize the service

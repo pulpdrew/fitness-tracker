@@ -30,7 +30,8 @@ export class WorkoutLogPageComponent {
     map((workouts: Workout[]) =>
       workouts
         .map((w) => this.formatWorkout(w))
-        .sort((a, b) => b.workout.date.getTime() - a.workout.date.getTime())
+        .sort((a, b) => Workout.chronological(a.workout, b.workout))
+        .reverse()
     )
   );
 
