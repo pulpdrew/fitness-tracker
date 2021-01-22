@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ExerciseType } from './exercise-type';
-import { Settings } from './settings';
+import { ApplicationSettings } from './settings';
 import { Workout } from './workout';
 
 export const DATA_STORE = new InjectionToken<DataStore>('DataStore');
@@ -20,7 +20,7 @@ export default interface DataStore {
   /**
    * The current settings for this application
    */
-  settings$: Observable<Settings>;
+  settings$: Observable<ApplicationSettings>;
 
   /**
    * Upsert the given workout into the database, matching to existing document by id.
@@ -63,11 +63,11 @@ export default interface DataStore {
   importData(json: string): Promise<void>;
 
   /**
-   * Update the user settings with the given Settings object.
+   * Update the user settings with the given ApplicationSettings object.
    *
    * @param settings the new settings.
    */
-  updateSettings(settings: Settings): Promise<void>;
+  updateSettings(settings: ApplicationSettings): Promise<void>;
 
   /**
    * Clear all data from the data store.

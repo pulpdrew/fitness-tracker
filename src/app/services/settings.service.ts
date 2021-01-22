@@ -2,14 +2,14 @@ import { Inject, Injectable } from '@angular/core';
 import { concat, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import DataStore, { DATA_STORE } from '../types/data-store';
-import { getDefaultSettings } from '../types/settings';
+import { ApplicationSettings } from '../types/settings';
 import { WeightUnit } from '../types/weight';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SettingsService {
-  settings$ = concat(of(getDefaultSettings()), this.data.settings$);
+  settings$ = concat(of(ApplicationSettings.default()), this.data.settings$);
 
   defaultWeightUnit: WeightUnit = WeightUnit.KG;
   defaultWeightUnit$ = this.settings$.pipe(map((s) => s.defaultWeightUnit));

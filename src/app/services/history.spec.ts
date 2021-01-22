@@ -2,7 +2,7 @@ import { cold } from 'jasmine-marbles';
 import { Observable } from 'rxjs';
 import DataStore from '../types/data-store';
 import { ExerciseType } from '../types/exercise-type';
-import { getDefaultSettings } from '../types/settings';
+import { ApplicationSettings } from '../types/settings';
 import { Workout } from '../types/workout';
 import { HistoryEntry, HistoryService } from './history.service';
 
@@ -198,7 +198,7 @@ function setup(
 }
 
 class MockDataStore implements DataStore {
-  settings$ = cold('a', { a: getDefaultSettings() });
+  settings$ = cold('a', { a: ApplicationSettings.default() });
 
   constructor(
     public exerciseTypes$: Observable<Map<string, ExerciseType>>,

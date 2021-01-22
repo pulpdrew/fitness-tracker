@@ -1,11 +1,11 @@
 import { RxJsonSchema } from 'rxdb';
 import { WeightUnit, WEIGHT_UNITS } from '../types/workout';
-import { Settings } from '../types/settings';
+import { ApplicationSettings } from '../types/settings';
 
 /**
  * The schema for the collection of Exercise Types
  */
-export const settingsSchema: RxJsonSchema<Settings> = {
+export const settingsSchema: RxJsonSchema<ApplicationSettings> = {
   version: 0,
   title: 'settings schema',
   description: '',

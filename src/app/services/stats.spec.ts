@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import DataStore, { DATA_STORE } from '../types/data-store';
 import { DURATION, REPS, WEIGHT, WEIGHT_UNITS } from '../types/exercise-set';
 import { ExerciseCategory, ExerciseType } from '../types/exercise-type';
-import { getDefaultSettings } from '../types/settings';
+import { ApplicationSettings } from '../types/settings';
 import { WeightUnit } from '../types/weight';
 import { Workout } from '../types/workout';
 import { HistoryService } from './history.service';
@@ -150,7 +150,7 @@ describe('StatsService', () => {
 });
 
 class MockDataStore implements DataStore {
-  settings$ = cold('a', { a: getDefaultSettings() });
+  settings$ = cold('a', { a: ApplicationSettings.default() });
 
   constructor(
     public exerciseTypes$: Observable<Map<string, ExerciseType>>,

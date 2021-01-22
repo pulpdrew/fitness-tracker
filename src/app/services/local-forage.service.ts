@@ -1,6 +1,6 @@
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { ExerciseType, ExerciseTypeData, ID } from '../types/exercise-type';
-import { getDefaultSettings, Settings } from '../types/settings';
+import { ApplicationSettings } from '../types/settings';
 import { Workout, WorkoutData } from '../types/workout';
 import localforage from 'localforage';
 import { filter, map, take } from 'rxjs/operators';
@@ -10,22 +10,22 @@ import { environment } from 'src/environments/environment';
 interface Dump {
   workouts: WorkoutData[];
   types: ExerciseTypeData[];
-  settings: Settings;
+  settings: ApplicationSettings;
 }
 
 const EXERCISE_TYPE_INSTANCE_NAME = environment.dbNamePrefix + 'ExerciseTypes';
 const WORKOUT_INSTANCE_NAME = environment.dbNamePrefix + 'Workouts';
-const SETTINGS_INSTANCE_NAME = environment.dbNamePrefix + 'Settings';
+const SETTINGS_INSTANCE_NAME = environment.dbNamePrefix + 'ApplicationSettings';
 
 export default class LocalForageService implements DataStore {
   private readonly _isInitialized$: BehaviorSubject<boolean>;
   private readonly _exerciseTypes$: BehaviorSubject<ExerciseTypeData[]>;
   private readonly _workouts$: BehaviorSubject<WorkoutData[]>;
-  private readonly _settings$: BehaviorSubject<Settings>;
+  private readonly _settings$: BehaviorSubject<ApplicationSettings>;
 
   readonly exerciseTypes$: Observable<Map<string, ExerciseType>>;
   readonly workouts$: Observable<Workout[]>;
-  readonly settings$: Observable<Settings>;
+  readonly settings$: Observable<ApplicationSettings>;
 
   /**
    * The LocalForage Instance that holds Exercise Types
@@ -33,7 +33,7 @@ export default class LocalForageService implements DataStore {
   private _dbExerciseTypes: LocalForage;
 
   /**
-   * The LocalForage Instance that holds Application Settings
+   * The LocalForage Instance that holds Application ApplicationSettings
    */
   private _dbSettings: LocalForage;
 
@@ -58,7 +58,7 @@ export default class LocalForageService implements DataStore {
     this._isInitialized$ = new BehaviorSubject<boolean>(false);
     this._exerciseTypes$ = new BehaviorSubject<ExerciseTypeData[]>([]);
     this._workouts$ = new BehaviorSubject<WorkoutData[]>([]);
-    this._settings$ = new BehaviorSubject(getDefaultSettings());
+    this._settings$ = new BehaviorSubject(ApplicationSettings.default());
 
     // Initialize the public observables
     this.settings$ = this._settings$.asObservable();
@@ -156,7 +156,7 @@ export default class LocalForageService implements DataStore {
     let dump: Dump = {
       types: [],
       workouts: [],
-      settings: getDefaultSettings(),
+      settings: ApplicationSettings.default(),
     };
 
     try {
@@ -184,7 +184,7 @@ export default class LocalForageService implements DataStore {
     ]);
   }
 
-  async updateSettings(settings: Settings): Promise<void> {
+  async updateSettings(settings: ApplicationSettings): Promise<void> {
     try {
       await this.waitForInit();
       await Promise.all(
@@ -240,11 +240,11 @@ export default class LocalForageService implements DataStore {
 
   private async loadSettings(): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const settings: any = getDefaultSettings();
+    const settings: any = ApplicationSettings.default();
     await this._dbSettings.iterate((val, key: string) => {
       settings[key] = val;
     });
-    this._settings$.next(settings as Settings);
+    this._settings$.next(settings as ApplicationSettings);
   }
 
   private toWorkout(

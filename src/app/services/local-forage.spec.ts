@@ -2,7 +2,7 @@ import LocalForageService from './local-forage.service';
 import { cold } from 'jasmine-marbles';
 import { ExerciseCategory, ExerciseType } from '../types/exercise-type';
 import { Workout } from '../types/workout';
-import { getDefaultSettings, Settings } from '../types/settings';
+import { ApplicationSettings } from '../types/settings';
 import { DURATION, WEIGHT, WEIGHT_UNITS } from '../types/exercise-set';
 import { WeightUnit } from '../types/weight';
 
@@ -35,7 +35,7 @@ describe('LocalForageService', () => {
     });
 
     const expectedSettings = cold('a', {
-      a: getDefaultSettings(),
+      a: ApplicationSettings.default(),
     });
 
     expect(service.settings$).toBeObservable(expectedSettings);
@@ -192,10 +192,10 @@ describe('LocalForageService', () => {
     });
   });
 
-  describe('Settings', () => {
+  describe('ApplicationSettings', () => {
     it('should have defaults', () => {
       const expected = cold('a', {
-        a: getDefaultSettings(),
+        a: ApplicationSettings.default(),
       });
 
       const actual = service.settings$;
@@ -335,6 +335,6 @@ const workoutB: Workout = new Workout(
   types
 );
 
-const settings: Settings = {
+const settings = new ApplicationSettings({
   defaultWeightUnit: WeightUnit.LB,
-};
+});
