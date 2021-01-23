@@ -1,17 +1,17 @@
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { ExerciseType, ExerciseTypeData, ID } from '../types/exercise-type';
-import { ApplicationSettings } from '../types/settings';
+import {
+  ApplicationSettings,
+  ApplicationSettingsData,
+  CURRENT_DUMP_VERSION,
+  DEFAULT_WEIGHT_UNIT,
+} from '../types/settings';
 import { Workout, WorkoutData } from '../types/workout';
 import localforage from 'localforage';
 import { filter, map, take } from 'rxjs/operators';
 import DataStore from '../types/data-store';
 import { environment } from 'src/environments/environment';
-
-interface Dump {
-  workouts: WorkoutData[];
-  types: ExerciseTypeData[];
-  settings: ApplicationSettings;
-}
+import { CurrentDump, Dump, migrate } from '../types/dump';
 
 const EXERCISE_TYPE_INSTANCE_NAME = environment.dbNamePrefix + 'ExerciseTypes';
 const WORKOUT_INSTANCE_NAME = environment.dbNamePrefix + 'Workouts';
@@ -21,7 +21,7 @@ export default class LocalForageService implements DataStore {
   private readonly _isInitialized$: BehaviorSubject<boolean>;
   private readonly _exerciseTypes$: BehaviorSubject<ExerciseTypeData[]>;
   private readonly _workouts$: BehaviorSubject<WorkoutData[]>;
-  private readonly _settings$: BehaviorSubject<ApplicationSettings>;
+  private readonly _settings$: BehaviorSubject<ApplicationSettingsData>;
 
   readonly exerciseTypes$: Observable<Map<string, ExerciseType>>;
   readonly workouts$: Observable<Workout[]>;
@@ -58,10 +58,13 @@ export default class LocalForageService implements DataStore {
     this._isInitialized$ = new BehaviorSubject<boolean>(false);
     this._exerciseTypes$ = new BehaviorSubject<ExerciseTypeData[]>([]);
     this._workouts$ = new BehaviorSubject<WorkoutData[]>([]);
-    this._settings$ = new BehaviorSubject(ApplicationSettings.default());
+    this._settings$ = new BehaviorSubject(ApplicationSettings.default().data);
 
     // Initialize the public observables
-    this.settings$ = this._settings$.asObservable();
+    this.settings$ = this._settings$
+      .asObservable()
+      .pipe(map((settings) => new ApplicationSettings(settings)));
+
     this.exerciseTypes$ = this._exerciseTypes$
       .asObservable()
       .pipe(
@@ -70,11 +73,12 @@ export default class LocalForageService implements DataStore {
             new Map(types.map((type) => [type[ID], new ExerciseType(type)]))
         )
       );
+
     this.workouts$ = combineLatest([
       this._workouts$.asObservable(),
       this.exerciseTypes$,
     ]).pipe(
-      map(([workouts, types]) => workouts.map((w) => this.toWorkout(w, types))),
+      map(([workouts, types]) => workouts.map((w) => new Workout(w, types))),
       map((workouts) => workouts.sort(Workout.chronological))
     );
 
@@ -85,21 +89,20 @@ export default class LocalForageService implements DataStore {
   }
 
   private async init(): Promise<void> {
-    await Promise.all([
-      this.loadExerciseTypes(),
-      this.loadWorkouts(),
-      this.loadSettings(),
-    ]);
+    // Export and import to run any migrations
+    const dump = await this._getDump();
+    await this._clear();
+    await this._insertDump(dump);
+
+    // Then load the data into the local variables
+    await this._loadData();
   }
 
   async upsertWorkout(workout: Workout): Promise<void> {
     try {
       await this.waitForInit();
-      await this._dbWorkouts.setItem(
-        workout.id,
-        this.toPersistentWorkout(workout)
-      );
-      await this.loadWorkouts();
+      await this._dbWorkouts.setItem(workout.id, workout.data);
+      this._workouts$.next(await this._loadWorkoutData());
     } catch (err) {
       console.error('Error upserting workout: ' + err);
     }
@@ -109,7 +112,7 @@ export default class LocalForageService implements DataStore {
     try {
       await this.waitForInit();
       await this._dbWorkouts.removeItem(workout.id);
-      await this.loadWorkouts();
+      this._workouts$.next(await this._loadWorkoutData());
     } catch (err) {
       console.error('Error deleting workout: ' + err);
     }
@@ -119,7 +122,7 @@ export default class LocalForageService implements DataStore {
     try {
       await this.waitForInit();
       await this._dbExerciseTypes.setItem(type.id, type.data);
-      await this.loadExerciseTypes();
+      this._exerciseTypes$.next(await this._loadExerciseTypeData());
     } catch (err) {
       console.error('Error upserting exercise type: ' + err);
     }
@@ -129,68 +132,29 @@ export default class LocalForageService implements DataStore {
     try {
       await this.waitForInit();
       await this._dbExerciseTypes.removeItem(type.id);
-      await this.loadExerciseTypes();
+      this._exerciseTypes$.next(await this._loadExerciseTypeData());
     } catch (err) {
       console.error('Error deleting exercise type: ' + err);
     }
   }
 
-  async exportData(): Promise<string> {
+  async exportData(): Promise<Dump> {
     await this.waitForInit();
-
-    const dump: Dump = {
-      settings: this._settings$.value,
-      workouts: this._workouts$.value,
-      types: this._exerciseTypes$.value,
-    };
-
-    return JSON.stringify(dump);
+    return await this._getDump();
   }
 
-  async importData(json: string): Promise<void> {
+  async importData(dump: Dump): Promise<void> {
     await this.waitForInit();
-    await this.clear();
-
-    let dump: Dump = {
-      types: [],
-      workouts: [],
-      settings: ApplicationSettings.default(),
-    };
-
-    try {
-      dump = JSON.parse(json);
-    } catch (err) {
-      console.error('Failed to parse the import file: ' + err);
-    }
-
-    await Promise.all([
-      this.updateSettings(dump.settings),
-      Promise.all(
-        dump.types.map((type) => this._dbExerciseTypes.setItem(type.id, type))
-      ),
-      Promise.all(
-        dump.workouts.map((workout) =>
-          this._dbWorkouts.setItem(workout.id, workout)
-        )
-      ),
-    ]);
-
-    await Promise.all([
-      this.loadExerciseTypes(),
-      this.loadSettings(),
-      this.loadWorkouts(),
-    ]);
+    await this._clear();
+    await this._insertDump(dump);
+    await this._loadData();
   }
 
   async updateSettings(settings: ApplicationSettings): Promise<void> {
     try {
       await this.waitForInit();
-      await Promise.all(
-        Object.entries(settings).map((prop) =>
-          this._dbSettings.setItem(prop[0], prop[1])
-        )
-      );
-      await this.loadSettings();
+      await this._storeSettingsData(settings.data);
+      this._settings$.next(await this._loadSettingsData());
     } catch (err) {
       console.error('Error updating settings: ' + err);
     }
@@ -198,18 +162,13 @@ export default class LocalForageService implements DataStore {
 
   async clear(): Promise<void> {
     await this.waitForInit();
-    await Promise.all([
-      this._dbExerciseTypes.clear(),
-      this._dbSettings.clear(),
-      this._dbWorkouts.clear(),
-    ]);
-    await Promise.all([
-      this.loadExerciseTypes(),
-      this.loadSettings(),
-      this.loadWorkouts(),
-    ]);
+    await this._clear();
+    await this._loadData();
   }
 
+  /**
+   * A promise that resolves when the service is initialized
+   */
   async waitForInit(): Promise<void> {
     await this._isInitialized$
       .asObservable()
@@ -220,52 +179,133 @@ export default class LocalForageService implements DataStore {
       .toPromise();
   }
 
-  private async loadExerciseTypes(): Promise<void> {
+  /**
+   * Get the Workout Data from the LocalForage instance
+   */
+  private async _loadWorkoutData(): Promise<WorkoutData[]> {
+    const workouts: WorkoutData[] = [];
+    await this._dbWorkouts.iterate((type: WorkoutData) => {
+      workouts.push(type);
+    });
+
+    return workouts;
+  }
+
+  /**
+   * Get the Exercise Type Data from the LocalForage instance
+   */
+  private async _loadExerciseTypeData(): Promise<ExerciseTypeData[]> {
     const types: ExerciseTypeData[] = [];
     await this._dbExerciseTypes.iterate((type: ExerciseTypeData) => {
       types.push(type);
     });
+
+    return types;
+  }
+
+  /**
+   * Get the Settings Data from the LocalForage instance
+   */
+  private async _loadSettingsData(): Promise<ApplicationSettingsData> {
+    const defaults = ApplicationSettings.default().data;
+
+    const settings: ApplicationSettingsData = {
+      [CURRENT_DUMP_VERSION]:
+        (await this._dbSettings.getItem(CURRENT_DUMP_VERSION)) ||
+        defaults[CURRENT_DUMP_VERSION],
+      [DEFAULT_WEIGHT_UNIT]:
+        (await this._dbSettings.getItem(DEFAULT_WEIGHT_UNIT)) ||
+        defaults[DEFAULT_WEIGHT_UNIT],
+    };
+
+    return settings;
+  }
+
+  /**
+   * Insert the given data into the Settings LocalForage Instance
+   *
+   * @param settings the data to store in settings
+   */
+  private async _storeSettingsData(
+    settings: ApplicationSettingsData
+  ): Promise<void> {
+    await Promise.all([
+      this._dbSettings.setItem(
+        CURRENT_DUMP_VERSION,
+        settings[CURRENT_DUMP_VERSION]
+      ),
+      this._dbSettings.setItem(
+        DEFAULT_WEIGHT_UNIT,
+        settings[DEFAULT_WEIGHT_UNIT]
+      ),
+    ]);
+  }
+
+  /**
+   * Read all of the data from the LocalForage Instances and
+   * insert it into the local variables.
+   */
+  private async _loadData(): Promise<void> {
+    const [types, settings, workouts] = await Promise.all([
+      this._loadExerciseTypeData(),
+      this._loadSettingsData(),
+      this._loadWorkoutData(),
+    ]);
+
+    this._settings$.next(settings);
+    this._workouts$.next(workouts);
     this._exerciseTypes$.next(types);
   }
 
-  private async loadWorkouts(): Promise<void> {
-    const workouts: WorkoutData[] = [];
-    await this._dbWorkouts.iterate((workout: WorkoutData) => {
-      workouts.push(workout);
-    });
-    this._workouts$.next(workouts);
+  private async _clear(): Promise<void> {
+    await Promise.all([
+      this._dbExerciseTypes.clear(),
+      this._dbSettings.clear(),
+      this._dbWorkouts.clear(),
+    ]);
   }
 
-  private async loadSettings(): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const settings: any = ApplicationSettings.default();
-    await this._dbSettings.iterate((val, key: string) => {
-      settings[key] = val;
-    });
-    this._settings$.next(settings as ApplicationSettings);
+  private async _insertDump(dump: Dump): Promise<void> {
+    // Update dump to the latest version
+    let updatedDump: CurrentDump;
+    try {
+      updatedDump = migrate(dump) as CurrentDump;
+    } catch (err) {
+      console.error(err);
+      return;
+    }
+
+    await Promise.all([
+      this._storeSettingsData(updatedDump.settings),
+      Promise.all(
+        updatedDump.types.map((type) =>
+          this._dbExerciseTypes.setItem(type.id, type)
+        )
+      ),
+      Promise.all(
+        updatedDump.workouts.map((workout) =>
+          this._dbWorkouts.setItem(workout.id, workout)
+        )
+      ),
+    ]);
   }
 
-  private toWorkout(
-    persistent: WorkoutData,
-    types: Map<string, ExerciseType>
-  ): Workout {
-    return new Workout(
-      {
-        date: persistent.date,
-        id: persistent.id,
-        name: persistent.name,
-        exercises: persistent.exercises,
-      },
-      types
-    );
-  }
-
-  private toPersistentWorkout(workout: Workout): WorkoutData {
-    return {
-      id: workout.id,
-      name: workout.name,
-      date: workout.date.toISOString(),
-      exercises: workout.exercises.map((e) => e.data),
+  /**
+   * Get a dump of the current state of the LocalForage database
+   */
+  private async _getDump(): Promise<Dump> {
+    const settings = {
+      ...ApplicationSettings.default().data,
+      ...(await this._loadSettingsData()),
     };
+
+    const dump: CurrentDump = {
+      version: settings[CURRENT_DUMP_VERSION],
+      workouts: (await this._loadWorkoutData()) || [],
+      types: (await this._loadExerciseTypeData()) || [],
+      settings: settings,
+    };
+
+    return dump;
   }
 }

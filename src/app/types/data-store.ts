@@ -1,5 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Dump } from './dump';
 import { ExerciseType } from './exercise-type';
 import { ApplicationSettings } from './settings';
 import { Workout } from './workout';
@@ -51,16 +52,16 @@ export default interface DataStore {
   deleteExerciseType(type: ExerciseType): Promise<void>;
 
   /**
-   * Export all user data as a JSON string.
+   * Export all user data as a Dump.
    */
-  exportData(): Promise<string>;
+  exportData(): Promise<Dump>;
 
   /**
-   * Import a json string as user data.
+   * Import a dump as user data.
    *
-   * @param json the user data to import.
+   * @param dump the user data to import.
    */
-  importData(json: string): Promise<void>;
+  importData(dump: Dump): Promise<void>;
 
   /**
    * Update the user settings with the given ApplicationSettings object.

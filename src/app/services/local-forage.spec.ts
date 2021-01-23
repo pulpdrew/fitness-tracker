@@ -5,14 +5,20 @@ import { Workout } from '../types/workout';
 import { ApplicationSettings } from '../types/settings';
 import { DURATION, WEIGHT, WEIGHT_UNITS } from '../types/exercise-set';
 import { WeightUnit } from '../types/weight';
+import { DumpVersion } from '../types/dump';
 
 describe('LocalForageService', () => {
   let service: LocalForageService;
 
   beforeEach(async () => {
     service = new LocalForageService();
+    await service.waitForInit();
     await service.clear();
   }, 1000);
+
+  afterEach(async () => {
+    await service.clear();
+  });
 
   it('should initialize', () => {
     expect(service).toBeTruthy();
@@ -337,4 +343,5 @@ const workoutB: Workout = new Workout(
 
 const settings = new ApplicationSettings({
   defaultWeightUnit: WeightUnit.LB,
+  currentDumpVersion: DumpVersion.V1,
 });

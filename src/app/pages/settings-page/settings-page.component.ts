@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SettingsService } from 'src/app/services/settings.service';
 import DataStore, { DATA_STORE } from 'src/app/types/data-store';
+import { Dump } from 'src/app/types/dump';
 import { WeightUnit, ALL_WEIGHT_UNITS } from 'src/app/types/weight';
 
 interface FileInputTarget extends EventTarget {
@@ -46,7 +47,13 @@ export class SettingsPageComponent implements OnInit {
   ) {
     // When a file is loaded, import it into the data store
     this.reader.onload = () => {
-      this.data.importData(this.reader.result?.toString() || '');
+      const dumpString = this.reader.result?.toString() || '';
+      try {
+        const dump = JSON.parse(dumpString) as Dump;
+        this.data.importData(dump);
+      } catch (err) {
+        console.error('Cannot parse import: ' + err);
+      }
     };
   }
 
@@ -63,7 +70,7 @@ export class SettingsPageComponent implements OnInit {
 
     // Create an object URL that can be used to download the datastore dump
     const data = await this.data.exportData();
-    const blob = new Blob([data], { type: 'text/json' });
+    const blob = new Blob([JSON.stringify(data)], { type: 'text/json' });
     this.downloadUrl = this.sanitizer.bypassSecurityTrustUrl(
       URL.createObjectURL(blob)
     );
