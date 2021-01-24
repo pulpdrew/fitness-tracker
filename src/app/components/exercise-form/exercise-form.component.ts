@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { HistoryEntry, HistoryService } from 'src/app/services/history.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Exercise, EXERCISE_TYPE, SETS } from 'src/app/types/exercise';
-import { ExerciseSet } from 'src/app/types/exercise-set';
+import { ExerciseSet, WEIGHT_UNITS } from 'src/app/types/exercise-set';
 import { ExerciseType } from 'src/app/types/exercise-type';
 import { ALL_WEIGHT_UNITS } from 'src/app/types/weight';
 
@@ -92,7 +92,7 @@ export class ExerciseFormComponent implements OnInit {
       );
     } else {
       const setForm = new ExerciseSet({}).toForm();
-      setForm.get(ALL_WEIGHT_UNITS)?.setValue(this.settings.defaultWeightUnit);
+      setForm.get(WEIGHT_UNITS)?.setValue(this.settings.defaultWeightUnit);
       this.sets.push(setForm);
     }
   }
