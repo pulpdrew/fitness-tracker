@@ -111,8 +111,16 @@ export class EditWorkoutPageComponent {
       .toPromise()
       .then((types) => {
         const id = uuidv4();
+        const workoutData = Workout.fromForm(this.form, types).data;
+        const workout = new Workout(
+          {
+            ...workoutData,
+            id,
+          },
+          types
+        );
         this.data
-          .upsertWorkout(Workout.fromForm(this.form, types))
+          .upsertWorkout(workout)
           .then(() => {
             this.snackBar.open('Saved!', undefined, {
               duration: 3000,
