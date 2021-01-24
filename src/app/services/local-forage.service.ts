@@ -5,6 +5,7 @@ import {
   ApplicationSettingsData,
   CURRENT_DUMP_VERSION,
   DEFAULT_WEIGHT_UNIT,
+  HAS_SEEN_WELCOME_SCREEN,
 } from '../types/settings';
 import { Workout, WorkoutData } from '../types/workout';
 import localforage from 'localforage';
@@ -216,6 +217,9 @@ export default class LocalForageService implements DataStore {
       [DEFAULT_WEIGHT_UNIT]:
         (await this._dbSettings.getItem(DEFAULT_WEIGHT_UNIT)) ||
         defaults[DEFAULT_WEIGHT_UNIT],
+      [HAS_SEEN_WELCOME_SCREEN]:
+        (await this._dbSettings.getItem(HAS_SEEN_WELCOME_SCREEN)) ||
+        defaults[HAS_SEEN_WELCOME_SCREEN],
     };
 
     return settings;
@@ -237,6 +241,10 @@ export default class LocalForageService implements DataStore {
       this._dbSettings.setItem(
         DEFAULT_WEIGHT_UNIT,
         settings[DEFAULT_WEIGHT_UNIT]
+      ),
+      this._dbSettings.setItem(
+        HAS_SEEN_WELCOME_SCREEN,
+        settings[HAS_SEEN_WELCOME_SCREEN]
       ),
     ]);
   }

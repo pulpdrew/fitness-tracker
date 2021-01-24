@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { HistoryEntry, HistoryService } from 'src/app/services/history.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Exercise, EXERCISE_TYPE, SETS } from 'src/app/types/exercise';
@@ -83,7 +83,7 @@ export class ExerciseFormComponent implements OnInit {
     return this.sets.controls as FormGroup[];
   }
 
-  addSet(): void {
+  async addSet(): Promise<void> {
     if (this.sets.length > 0) {
       this.sets.push(
         ExerciseSet.fromForm(
@@ -92,7 +92,11 @@ export class ExerciseFormComponent implements OnInit {
       );
     } else {
       const setForm = new ExerciseSet({}).toForm();
-      setForm.get(WEIGHT_UNITS)?.setValue(this.settings.defaultWeightUnit);
+      setForm
+        .get(WEIGHT_UNITS)
+        ?.setValue(
+          await this.settings.defaultWeightUnit$.pipe(take(1)).toPromise()
+        );
       this.sets.push(setForm);
     }
   }

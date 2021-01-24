@@ -344,4 +344,5 @@ const workoutB: Workout = new Workout(
 const settings = new ApplicationSettings({
   defaultWeightUnit: WeightUnit.LB,
   currentDumpVersion: DumpVersion.V1,
+  hasSeenWelcomeScreen: true,
 });
