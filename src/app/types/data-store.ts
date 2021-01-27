@@ -24,6 +24,11 @@ export default interface DataStore {
   settings$: Observable<ApplicationSettings>;
 
   /**
+   * A promise that resolves only once the data store is initialized.
+   */
+  waitForInit: Promise<void>;
+
+  /**
    * Upsert the given workout into the database, matching to existing document by id.
    *
    * @param workout the workout to upsert
@@ -68,15 +73,10 @@ export default interface DataStore {
    *
    * @param settings the new settings.
    */
-  updateSettings(settings: ApplicationSettings): Promise<void>;
+  upsertSettings(settings: ApplicationSettings): Promise<void>;
 
   /**
    * Clear all data from the data store.
    */
   clear(): Promise<void>;
-
-  /**
-   * Get a promise that resolves only once the data store is initialized.
-   */
-  waitForInit(): Promise<void>;
 }

@@ -205,14 +205,15 @@ class MockDataStore implements DataStore {
     public workouts$: Observable<Workout[]>
   ) {}
 
+  waitForInit = Promise.resolve();
+
   upsertWorkout = jasmine.createSpy('upsertWorkout');
   deleteWorkout = jasmine.createSpy('deleteWorkout');
   upsertExerciseType = jasmine.createSpy('upsertExerciseType');
   deleteExerciseType = jasmine.createSpy('deleteExerciseType');
   exportData = jasmine.createSpy('exportData');
   importData = jasmine.createSpy('importData');
-  updateSettings = jasmine.createSpy('updateSettings');
-  waitForInit = jasmine.createSpy('waitForInit').and.resolveTo();
+  upsertSettings = jasmine.createSpy('updateSettings');
   clear = jasmine.createSpy('clear');
 }
 

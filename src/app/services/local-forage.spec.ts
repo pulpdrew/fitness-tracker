@@ -12,7 +12,7 @@ describe('LocalForageService', () => {
 
   beforeEach(async () => {
     service = new LocalForageService();
-    await service.waitForInit();
+    await service.waitForInit;
     await service.clear();
   }, 1000);
 
@@ -29,7 +29,7 @@ describe('LocalForageService', () => {
     await service.upsertExerciseType(typeB);
     await service.upsertWorkout(workoutA);
     await service.upsertWorkout(workoutB);
-    await service.updateSettings(settings);
+    await service.upsertSettings(settings);
     await service.clear();
 
     const expectedTypes = cold('a', {
@@ -111,7 +111,7 @@ describe('LocalForageService', () => {
       await service.upsertExerciseType(typeB);
 
       service = new LocalForageService();
-      await service.waitForInit();
+      await service.waitForInit;
       const actual = service.exerciseTypes$;
       const expected = cold('a', {
         a: new Map([
@@ -188,7 +188,7 @@ describe('LocalForageService', () => {
       await service.upsertWorkout(workoutB);
 
       service = new LocalForageService();
-      await service.waitForInit();
+      await service.waitForInit;
       const actual = service.workouts$;
       const expected = cold('a', {
         a: [workoutA, workoutB],
@@ -214,15 +214,15 @@ describe('LocalForageService', () => {
         a: settings,
       });
 
-      await service.updateSettings(settings);
+      await service.upsertSettings(settings);
 
       expect(actual).toBeObservable(expected);
     });
 
     it('should persist settings', async () => {
-      await service.updateSettings(settings);
+      await service.upsertSettings(settings);
       service = new LocalForageService();
-      await service.waitForInit();
+      await service.waitForInit;
 
       const actual = service.settings$;
       const expected = cold('a', {
@@ -238,7 +238,7 @@ describe('LocalForageService', () => {
     await service.upsertExerciseType(typeB);
     await service.upsertWorkout(workoutA);
     await service.upsertWorkout(workoutB);
-    await service.updateSettings(settings);
+    await service.upsertSettings(settings);
 
     const dump = await service.exportData();
     await service.clear();
@@ -274,14 +274,14 @@ const typeA = new ExerciseType({
 });
 
 const typeAPrime = new ExerciseType({
-  ...typeA,
+  ...typeA.data,
   name: 'A-Prime',
   categories: [ExerciseCategory.BACK],
   fields: [WEIGHT, WEIGHT_UNITS],
 });
 
 const typeB = new ExerciseType({
-  ...typeA,
+  ...typeA.data,
   id: '2',
   name: 'B',
 });
