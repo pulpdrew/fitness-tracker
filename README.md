@@ -1,6 +1,6 @@
 # Fitness Tracker
 
-This is an open source web-application for tracking individual performance and progress on exercises. Users can record workouts, complete with sets of customizable exercises, and track their progress over time. There are no ads and no tracking - all data is stored locally in an exportable format in the user's browser, never leaving the user's machine.
+This is an open source web-application for tracking individual performance and progress on exercises. Users can record workouts, complete sets of customizable exercises, and track their progress over time. There are no ads and no tracking - all data is stored locally in an exportable format in the user's browser, never leaving the user's machine.
 
 ## Install Dependencies:
 
